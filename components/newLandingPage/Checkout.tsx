@@ -146,7 +146,7 @@ const Checkout = ({ schema, logo }: any) => {
                         img.height = 1;
                         img.width = 1;
                         img.style.display = "none";
-                        img.src = `https://www.facebook.com/tr?id=${schema.pixel}&ev=Checkout&noscript=1`;
+                        img.src = `https://www.facebook.com/tr?id=${schema.pixel.id}&ev=Checkout&noscript=1`;
                         img.alt = "Facebook Pixel";
                         noscript.appendChild(img);
                         document.body.appendChild(noscript);
