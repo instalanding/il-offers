@@ -37,7 +37,6 @@ const getCampaign = async (offer_id: string) => {
   }
 };
 
-
 const recordImpressions = async (
   offer_id: string,
   advertiser_id: string,
@@ -105,15 +104,13 @@ const Coupon = async ({
       <>
         {data.pixel && (
           <>
-            <noscript>
-              <img
-                height="1"
-                width="1"
-                style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=${data.pixel.page_view}&noscript=1`}
-                alt="Facebook Pixel"
-              />
-            </noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=PageBiew&noscript=1`}
+              alt="Facebook Pixel"
+            />
           </>
         )}
         <RecordImpressions
@@ -141,15 +138,13 @@ const Coupon = async ({
       <>
         {data.pixel && (
           <>
-            <noscript>
-              <img
-                height="1"
-                width="1"
-                style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=${data.pixel.page_view}&noscript=1`}
-                alt="Facebook Pixel"
-              />
-            </noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=${data.pixel.page_view}&noscript=1`}
+              alt="Facebook Pixel"
+            />
           </>
         )}
 

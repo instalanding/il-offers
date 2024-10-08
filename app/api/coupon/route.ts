@@ -38,6 +38,9 @@ export const GET = async (req: Request) => {
 
         // Include the store logo in the response
         campaign.store_logo = advertiser.store_logo;
+        if(advertiser.pixel){
+            campaign.pixel = advertiser.pixel
+        }
 
         return NextResponse.json(campaign);
     } catch (error) {
