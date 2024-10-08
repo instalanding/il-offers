@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.hide-scrollbar-x {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+/* Flip card css */
+
+.flip-card {
+  background-color: transparent;
+  width: 310px;
+  height: 580px;
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.flip-card-back {
+  /* background-color: white; */
+  /* color: white; */
+  transform: rotateY(180deg);
+}
+
+.card {
+  -webkit-mask-image: radial-gradient(
+      circle at 10px 50px,
+      transparent 10px,
+      red 10.5px
+    ),
+    linear-gradient(90deg, transparent 25%, red 0, red 75%, transparent 0);
+  -webkit-mask-size: 100%, 10px 1px;
+  -webkit-mask-repeat: repeat, repeat-x;
+  -webkit-mask-position: -10px, 50% 49.5px;
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+}
+
+.downloadable-coupon {
+  -webkit-mask-image: radial-gradient(
+      circle at 151px 16px,
+      transparent 16px,
+      red 16.5px
+    ),
+    linear-gradient(transparent 25%, red 0, red 75%, transparent 0);
+  -webkit-mask-size: 100%, 1px 14px;
+  -webkit-mask-repeat: repeat, repeat-y;
+  -webkit-mask-position: 0 -16px, 150.5px;
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+}
+
+.gradient-custom {
+  /* background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%); */
+  /* background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%); */
+  background-image: linear-gradient(
+    45deg,
+    #dad4ec 0%,
+    #dad4ec 1%,
+    #f3e7e9 100%
+  );
+}
+
+.bg-gradient {
+  background-image: linear-gradient(to right, #ed6ea0 0%, #ec8c69 100%);
+}
+.text-editor-css ul ol {
+  padding: 1rem;
+}
+.text-editor-css h1 {
+  font-size: 22px;
+  font-weight: 600;
+  padding: 14px;
+  border: 1px solid #0000003a;
+  margin: 14px 0;
+  border-radius: 14px;
+  box-shadow: 0px 4px 0px 0px #0000001a;
+}
+.text-editor-css h2 {
+  font-size: 20px;
+  font-weight: 500;
+  padding: 14px;
+  border: 1px solid #0000003a;
+  margin: 14px 0;
+  border-radius: 14px;
+  box-shadow: 0px 4px 0px 0px #0000001a;
+}
+
+.text-editor-css h3 {
+  font-size: 16px;
+  font-weight: 500;
+  padding: 14px;
+  border: 1px solid #0000003a;
+  margin: 14px 0;
+  box-shadow: 0px 4px 0px 0px #0000001a;
+  border-radius: 14px;
+}
+
+.text-editor-css ol > li {
+  list-style-type: decimal;
+  font-size: 12px;
+  list-style-position: inside;
+}
+
+.text-editor-css ol > li::before {
+  content: "• ";
+  margin-right: 4px;
+}
+
+.text-editor-css ul > li::before {
+  content: "• ";
+  margin-right: 4px;
+}
+
+.text-editor-css ul > li {
+  list-style-type: disc;
+  font-size: 12px;
+  list-style-position: outside;
+}
+
+.loader {
+  border: 4px solid rgba(255, 255, 255, 0.3); /* Light grey */
+  border-top: 4px solid white; /* White spinner */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.shadow-new {
+  -webkit-box-shadow: 1px 14px 42px -4px rgba(0, 0, 0, 0.52);
+  -moz-box-shadow: 1px 14px 42px -4px rgba(0, 0, 0, 0.52);
+  box-shadow: 1px 14px 42px -4px rgba(0, 0, 0, 0.52);
+}
