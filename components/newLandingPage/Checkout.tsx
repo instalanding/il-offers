@@ -6,30 +6,15 @@ import { Button } from "@/components/ui/button";
 import InstalandingCheckout from "../landingPage/InstalandingCheckout/InstalandingCheckout";
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import Link from "next/link";
 
-const Checkout = ({
-  price,
-  backgroundColor,
-  textColor,
-  logo,
-  schema,
-  offer_id,
-  scrollToBottom,
-  handleAccordionToggle,
-  originalPrice,
-  pixel,
-  advertiser,
-  user_ip,
-  store_url,
-  text,
-  button_text,
-}: any) => {
+const Checkout = ({ schema, logo }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
   const offerIds = ["8fc08", "be418", "d0f47"];
   const domain = window.location.hostname;
 
-  console.log("window.location.origin", window.location.origin)
+  console.log("window.location.origin", window.location.origin);
   function calculatePercentageOff(
     originalPrice: number,
     offerPrice: number
@@ -115,33 +100,68 @@ const Checkout = ({
       <input type="hidden" value="saptamveda.com" id="sellerDomain" />
       <div className="shadow-new">
         <div className="bg-white">
-          {text && (
+          {schema.creative.footer_text && (
             <p
               style={{
-                backgroundColor: backgroundColor + "3a",
+                backgroundColor: schema.config.backgroundColor + "3a",
               }}
               className="top-0 right-0 text-black text-[12px] p-1 text-center"
             >
-              {text}
+              {schema.creative.footer_text}
             </p>
           )}
         </div>
         <div className="flex gap-2 bg-white p-4 items-center ">
           <div className=" flex flex-col">
             <p
-              style={{ color: backgroundColor }}
+              style={{ color: schema.config.backgroundColor }}
               className="font-bold text-[20px] text-center"
             >
-              ₹{price}
+              ₹{schema.price.offerPrice.value}
             </p>
-            {price.toString() !== originalPrice.toString() && (
+            {schema.price.offerPrice.value.toString() !==
+              schema.price.originalPrice.value.toString() && (
               <p className="text-slate-500 text-xs cursor-pointer text-center line-through">
-                ₹{originalPrice}
+                ₹{schema.price.originalPrice.value}
               </p>
             )}
           </div>
           <div className="flex-grow pl-2 flex flex-col">
-            {domain === "shop.saptamveda.com" ? (
+            {schema.variant_id ? (
+              <Link
+                href={`https://${schema.store_url}/cart/${schema.variant_id}:1`}
+                target="_blank"
+              >
+                <div className="flex flex-col gap-[5px] justify-end items-center">
+                  <Button
+                    className="w-full text-[16px] h-full"
+                    style={{
+                      backgroundColor: schema.config.backgroundColor,
+                      color: schema.config.textColor,
+                    }}
+                    onClick={() => {
+                      if (schema.pixel) {
+                        const noscript = document.createElement("noscript");
+                        const img = document.createElement("img");
+                        img.height = 1;
+                        img.width = 1;
+                        img.style.display = "none";
+                        img.src = `https://www.facebook.com/tr?id=${schema.pixel}&ev=Checkout&noscript=1`;
+                        img.alt = "Facebook Pixel";
+                        noscript.appendChild(img);
+                        document.body.appendChild(noscript);
+                        console.log("Checkout");
+                      }
+                    }}
+                  >
+                    {schema.config.button1Text}
+                  </Button>
+                </div>
+              </Link>
+            ) : (
+              <></>
+            )}
+            {/* {domain === "shop.saptamveda.com" ? (
               <div className="flex flex-col gap-[5px] justify-end items-center">
                 <Button
                   style={{ backgroundColor: backgroundColor, color: textColor }}
@@ -181,13 +201,13 @@ const Checkout = ({
               >
                 {button_text}
               </Button>
-            )}
+            )} */}
             <InstalandingCheckout
               logo={logo}
               schema={schema}
               open={open}
               setOpen={setOpen}
-              offer_id={offer_id}
+              offer_id={schema.offer_id}
             />
           </div>
         </div>

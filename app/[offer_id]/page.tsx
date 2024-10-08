@@ -108,7 +108,7 @@ const Coupon = async ({
               height="1"
               width="1"
               style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=PageBiew&noscript=1`}
+              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=PageView&noscript=1`}
               alt="Facebook Pixel"
             />
           </>
@@ -142,7 +142,7 @@ const Coupon = async ({
               height="1"
               width="1"
               style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=${data.pixel.page_view}&noscript=1`}
+              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=PageView&noscript=1`}
               alt="Facebook Pixel"
             />
           </>
