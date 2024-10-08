@@ -202,17 +202,14 @@
 
 .text-editor-css ol > li::before {
   content: "• ";
-  margin-right: 4px;
 }
 
-.text-editor-css ul > li::before {
-  content: "• ";
-  margin-right: 4px;
+.text-editor-css ul {
+  margin-left: 15px;
 }
 
 .text-editor-css ul > li {
   list-style-type: disc;
-  font-size: 12px;
   list-style-position: outside;
 }
 

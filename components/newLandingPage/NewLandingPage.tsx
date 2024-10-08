@@ -100,9 +100,9 @@ const NewLandingPage = ({
               <Image
                 alt={`logo`}
                 src={logo}
-                width={100}
+                width={1000}
                 height={100}
-                className="w-[150px] py-2 height-auto object-contain"
+                className="h-[70px] py-2 height-auto object-contain"
               />
             </Link>
           </div>
@@ -165,31 +165,20 @@ const NewLandingPage = ({
           </div>
         )}
 
-        <div className=" mb-3 bg-white px-4 rounded-lg">
-          <Accordion
-            type="single"
-            collapsible
-            defaultValue="item-1"
-            value={accordionState}
-            onValueChange={(value) => handleAccordionToggle(value)}
-          >
-            <AccordionItem value="item-1">
-              <AccordionTrigger>
-                <h1 className="text-[17px] font-semibold text-slate-500">
-                  Details
-                </h1>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div
-                  className="text-editor-css"
-                  dangerouslySetInnerHTML={{
-                    __html: schema.creative.terms_and_conditions,
-                  }}
-                ></div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
+        {schema.creative.terms_and_conditions && (
+          <div className=" my-3 bg-white px-4 rounded-lg">
+            <h1 className="text-[17px] mb-2 font-semibold text-slate-500">
+              Details
+            </h1>
+
+            <div
+              className="text-editor-css"
+              dangerouslySetInnerHTML={{
+                __html: schema.creative.terms_and_conditions,
+              }}
+            ></div>
+          </div>
+        )}
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
           <Checkout
