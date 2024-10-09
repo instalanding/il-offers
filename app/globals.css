@@ -168,35 +168,31 @@
 .text-editor-css h1 {
   font-size: 22px;
   font-weight: 600;
-  padding: 14px;
-  border: 1px solid #0000003a;
-  margin: 14px 0;
-  border-radius: 14px;
-  box-shadow: 0px 4px 0px 0px #0000001a;
+  margin-block: 10px;
 }
 .text-editor-css h2 {
   font-size: 20px;
   font-weight: 500;
-  padding: 14px;
-  border: 1px solid #0000003a;
-  margin: 14px 0;
-  border-radius: 14px;
-  box-shadow: 0px 4px 0px 0px #0000001a;
+  margin-block: 10px;
 }
 
 .text-editor-css h3 {
   font-size: 16px;
   font-weight: 500;
-  padding: 14px;
-  border: 1px solid #0000003a;
-  margin: 14px 0;
-  box-shadow: 0px 4px 0px 0px #0000001a;
-  border-radius: 14px;
+  margin-block: 10px;
+}
+
+.text-editor-css p{
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 23px;
 }
 
 .text-editor-css ol > li {
   list-style-type: decimal;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 23px;
   list-style-position: inside;
 }
 
@@ -211,6 +207,9 @@
 .text-editor-css ul > li {
   list-style-type: disc;
   list-style-position: outside;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 23px;
 }
 
 .loader {

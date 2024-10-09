@@ -101,8 +101,8 @@ const NewLandingPage = ({
                 alt={`logo`}
                 src={logo}
                 width={1000}
-                height={100}
-                className="h-[70px] py-2 height-auto object-contain"
+                height={1000}
+                className="h-[60px] py-2 height-auto object-contain"
               />
             </Link>
           </div>
