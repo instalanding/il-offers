@@ -167,10 +167,9 @@ const NewLandingPage = ({
 
         {schema.creative.terms_and_conditions && (
           <div className=" my-3 bg-white px-4 rounded-lg">
-            <h1 className="text-[17px] mb-2 font-semibold text-slate-500">
+            <h1 className="text-[17px] mb-2 font-semibold">
               Details
             </h1>
-
             <div
               className="text-editor-css"
               dangerouslySetInnerHTML={{

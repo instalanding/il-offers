@@ -166,26 +166,38 @@
   padding: 1rem;
 }
 .text-editor-css h1 {
-  font-size: 22px;
-  font-weight: 600;
+  color: #020817;
+  font-family: "Open Sans";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 166.667% */
   margin-block: 10px;
 }
 .text-editor-css h2 {
-  font-size: 20px;
-  font-weight: 500;
+  color: #020817;
+  font-family: "Open Sans";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 166.667% */
   margin-block: 10px;
 }
 
 .text-editor-css h3 {
-  font-size: 16px;
-  font-weight: 500;
+  color: #020817;
+  font-family: "Open Sans";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 166.667% */
   margin-block: 10px;
 }
 
-.text-editor-css p{
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 23px;
+.text-editor-css p {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
 }
 
 .text-editor-css ol > li {
@@ -207,9 +219,12 @@
 .text-editor-css ul > li {
   list-style-type: disc;
   list-style-position: outside;
-  font-size: 14px;
-  font-weight: 300;
-  line-height: 23px;
+  color: #020817;
+  font-family: "Open Sans";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 25px; /* 166.667% */
 }
 
 .loader {
