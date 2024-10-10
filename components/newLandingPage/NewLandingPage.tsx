@@ -120,7 +120,6 @@ const NewLandingPage = ({
                           src={image}
                           width={380}
                           height={310}
-                          className="w-full"
                         />
                       </CarouselItem>
                     )
