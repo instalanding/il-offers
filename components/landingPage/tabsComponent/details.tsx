@@ -33,7 +33,7 @@ const Details = ({ logo, schema, offer_id, userIp}: any) => {
                 }}
             >
             </div>
-            <div className="flex justify-between mt-auto w-full border-red-600 bottom-0 gap-3">
+            {/* <div className="flex justify-between mt-auto w-full border-red-600 bottom-0 gap-3">
                 <SaveOfferMultipleCta
                     offer_id={offer_id}
                     product_url="multiple-links"
@@ -46,7 +46,7 @@ const Details = ({ logo, schema, offer_id, userIp}: any) => {
                     shareLink={`https://vri.li/${offer_id}`}
                     offer_id={offer_id}
                 />
-            </div>
+            </div> */}
         </>
     )
 }

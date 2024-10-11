@@ -118,7 +118,7 @@ const NewLandingPage = ({
                         <Image
                           alt={"Image"}
                           src={image}
-                          width={100}
+                          width={380}
                           height={310}
                           className="w-full"
                         />
