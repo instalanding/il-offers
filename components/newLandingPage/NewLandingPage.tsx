@@ -137,7 +137,7 @@ const NewLandingPage = ({
           </h1>
         </div>
 
-        {schema.creative.amazon_product_id && (
+        
           <div>
             <div
               style={{ boxShadow: "0px 4px 0px 0px #063E0914" }}
@@ -160,10 +160,10 @@ const NewLandingPage = ({
               </div>
             </div>
             <div className="bg-white py-4 rounded-lg shadow-sm">
-              <Reviews productId={schema.creative.amazon_product_id} />
+              <Reviews offer_id={schema.offer_id} />
             </div>
           </div>
-        )}
+        
 
         {schema.creative.terms_and_conditions && (
           <div className=" my-3 bg-white px-4 rounded-lg">
