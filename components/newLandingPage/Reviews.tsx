@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import ReviewCard from "./ReviewCard";
 import axios from "axios";
+import Rating from "../landingPage/tabsComponent/rating";
+import Image from "next/image";
 
 const Reviews = ({ offer_id }: any) => {
   const [reviews, setReviews] = useState<any>(null);
@@ -24,6 +26,26 @@ const Reviews = ({ offer_id }: any) => {
   if (!reviews) {
     return (
       <>
+        <div
+          style={{ boxShadow: "0px 4px 0px 0px #063E0914" }}
+          className="flex justify-between items-center relative border m-3 p-4 rounded-2xl "
+        >
+          <Image
+            alt={"Image"}
+            src={
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png"
+            }
+            width={100}
+            height={100}
+            className="h-[25px] object-contain mt-2"
+          />
+          <div className="flex items-center gap-3 justify-center">
+            <p className="text-[14px] text-center font-normal text-blue-900">
+              2,527 ratings
+            </p>
+            <Rating rating={4} />
+          </div>
+        </div>
         <h1 className="text-[17px] text-slate-500 mx-4 mb-2 font-semibold">
           Reviews
         </h1>
@@ -37,13 +59,7 @@ const Reviews = ({ offer_id }: any) => {
   }
 
   if (reviews.length === 0) {
-    return (
-      <>
-        <h1 className="text-[13px] text-slate-500 mx-4 mb-2 font-semibold">
-          Reviews
-        </h1>
-      </>
-    );
+    return <></>;
   }
 
   return (
