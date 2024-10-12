@@ -46,7 +46,7 @@ const Reviews = ({ offer_id }: any) => {
             <Rating rating={4} />
           </div>
         </div>
-        <h1 className="text-[17px] text-slate-500 mx-4 mb-2 font-semibold">
+        <h1 className="text-[17px]  mx-4 mb-2 font-semibold">
           Reviews
         </h1>
         <div className="flex overflow-y-auto px-4 gap-4">
@@ -64,7 +64,7 @@ const Reviews = ({ offer_id }: any) => {
 
   return (
     <>
-      <h1 className="text-[17px] text-slate-500 mx-4 mb-2 font-semibold">
+      <h1 className="text-[17px] mx-4 mb-2 font-semibold">
         Reviews
       </h1>
       <div className="flex overflow-y-auto px-4 gap-4">
