@@ -139,26 +139,6 @@ const NewLandingPage = ({
 
         
           <div>
-            <div
-              style={{ boxShadow: "0px 4px 0px 0px #063E0914" }}
-              className="flex justify-between items-center relative border m-3 p-4 rounded-2xl "
-            >
-              <Image
-                alt={"Image"}
-                src={
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/2560px-Amazon_logo.svg.png"
-                }
-                width={100}
-                height={100}
-                className="h-[25px] object-contain mt-2"
-              />
-              <div className="flex items-center gap-3 justify-center">
-                <p className="text-[14px] text-center font-normal text-blue-900">
-                  2,527 ratings
-                </p>
-                <Rating rating={4} />
-              </div>
-            </div>
             <div className="bg-white py-4 rounded-lg shadow-sm">
               <Reviews offer_id={schema.offer_id} />
             </div>
