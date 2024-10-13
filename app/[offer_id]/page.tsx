@@ -117,9 +117,9 @@ const Coupon = async ({
               style={{ display: "none" }}
               src={`https://www.facebook.com/tr?id=${
                 data.pixel.id
-              }&ev=ViewContent&noscript=1&cd[content_name]=${encodeURIComponent(
-                data.creative?.title || "Offer"
-              )}&cd[content_category]=Offer&cd[content_ids]=${offer_id}&cd[content_type]=product&cd[value]=${
+              }&ev=ViewContent&noscript=1&cd[content_name]=${
+                data.creative.title || "Offer"
+              }&cd[content_category]=Offer&cd[content_ids]=${offer_id}&cd[content_type]=product&cd[value]=${
                 data.price.offerPrice.value || 0
               }&cd[currency]=INR`}
               alt="Facebook Pixel ViewContent"

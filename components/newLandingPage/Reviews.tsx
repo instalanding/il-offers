@@ -12,9 +12,13 @@ const Reviews = ({ offer_id }: any) => {
     try {
       const response = await axios.get(`api/reviews/?offer_id=${offer_id}`);
       console.log(response.data);
-      setReviews(response.data);
+      // Sort reviews by date in descending order and limit to 5
+      const sortedReviews = response.data
+        .sort((a: any, b: any) => new Date(b.review_date).getTime() - new Date(a.review_date).getTime())
+        .slice(0, 5);
+      setReviews(sortedReviews);
     } catch (error: any) {
-      console.error("Error saving the offer:", error);
+      console.error("Error fetching reviews:", error);
       console.log(error.response.status, "status");
     }
   };
