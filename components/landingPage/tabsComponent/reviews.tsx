@@ -39,6 +39,7 @@ const Reviews = ({ loading, reviews, schema, offer_id }: any) => {
             review.review_media.photos &&
             review.review_media.photos.length > 0 && (
               <div className="mt-2">
+              
                 <Image
                   src={review.review_media.photos[0]}
                   alt="Review image"
