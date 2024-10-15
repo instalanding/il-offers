@@ -140,7 +140,7 @@ const NewLandingPage = ({
         
           <div>
             <div className="bg-white py-4 rounded-lg shadow-sm">
-              <Reviews offer_id={schema.offer_id} />
+              <Reviews product_handle={schema.product_handle} />
             </div>
           </div>
         
