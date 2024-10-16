@@ -8,7 +8,7 @@ import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import Link from "next/link";
 
-const Checkout = ({ schema, logo }: any) => {
+const Checkout = ({ schema, logo, user_ip }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
   const offerIds = ["8fc08", "be418", "d0f47"];
@@ -140,6 +140,12 @@ const Checkout = ({ schema, logo }: any) => {
                       color: schema.config.textColor,
                     }}
                     onClick={() => {
+                      recordClicks(
+                        schema.offer_id,
+                        schema.advertiser,
+                        user_ip,
+                        "checkout init"
+                      );
                       if (schema.pixel) {
                         const noscript = document.createElement("noscript");
                         const img = document.createElement("img");
