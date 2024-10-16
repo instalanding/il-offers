@@ -26,7 +26,9 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/reviews?shopify_product_handle=${schema.product_handle}`);
+      const response = await axios.get(
+        `/api/reviews?shopify_product_handle=${schema.product_handle}`
+      );
       console.log(response.data);
       setReviews(response.data);
     } catch (error: any) {
@@ -47,13 +49,20 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
     >
       <div className="bg-white flex flex-col gap-4 sm:max-w-[380px] w-full sm:shadow-md shadow-none sm:rounded-xl rounded-none transition-transform duration-300 mb-3">
         <div className="flex justify-center items-center">
-          <Image
-            alt={`logo`}
-            src={logo}
-            width={100}
-            height={100}
-            className="h-[70px] height-auto object-contain py-3"
-          />
+          <Link
+            href={
+              "https://bombaysweetshop.com/?srsltid=AfmBOop3K9Q3OydDQVCfNS5AxmHliZGwlUw1hBJcP56IkOcOGpf-qcpt?utm_source=instalanding&utm_medium=instalanding"
+            }
+            target="_blank"
+          >
+            <Image
+              alt={`logo`}
+              src={logo}
+              width={100}
+              height={100}
+              className="h-[70px] height-auto object-contain py-3"
+            />
+          </Link>
         </div>
         <div>
           <Carousel>
