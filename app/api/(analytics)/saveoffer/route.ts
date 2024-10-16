@@ -18,6 +18,7 @@ export const POST = async (req: Request) => {
     if (!offerId) {
         return NextResponse.json({ error: 'offer_id query parameter is required' }, { status: 400 });
     }
+    
 
     try { 
         const apiData = ipFromShopify && ipFromShopify !== "" ? await fetchApi(ipFromShopify) : await fetchApi(userIP);
