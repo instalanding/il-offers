@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
     console.log(formattedTags, "formattedTags")
 
     try {
-        const apiData = ipFromShopify && ipFromShopify !== "" ? await fetchApi(ipFromShopify) : await fetchApi(userIP);
+        const apiData = await fetchApi(userIP);
         const query = `
         INSERT INTO Clicks (
             product_url, userIP, useragent, offerId, advertiser_id,
@@ -46,7 +46,7 @@ export const POST = async (req: Request) => {
     `;
 
         const values = [
-            productUrl, userIP, JSON.stringify(useragent), offerId, advertiser_id,
+            productUrl, apiData.ip_address, JSON.stringify(useragent), offerId, advertiser_id,
             apiData.ip_address, apiData.city, apiData.city_geoname_id,
             apiData.region, apiData.region_geoname_id, apiData.postal_code,
             apiData.country, apiData.country_code, apiData.country_geoname_id,
