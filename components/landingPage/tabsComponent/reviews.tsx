@@ -22,7 +22,7 @@ const Reviews = ({ loading, reviews, schema, offer_id }: any) => {
       <h2 className="text-[14px] font-semibold mt-2">Top reviews</h2>
       <div className="flex overflow-y-auto gap-4 pt-2">
         {reviews.map((review: any) => (
-          <ReviewCard review={review} />
+          <ReviewCard key={review._id} review={review} />
         ))}
       </div>
     </>
