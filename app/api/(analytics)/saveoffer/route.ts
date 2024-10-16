@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
     if (!offerId) {
         return NextResponse.json({ error: 'offer_id query parameter is required' }, { status: 400 });
     }
-    
+
 
     try { 
         const apiData = ipFromShopify && ipFromShopify !== "" ? await fetchApi(ipFromShopify) : await fetchApi(userIP);
@@ -34,6 +34,7 @@ export const POST = async (req: Request) => {
         if (checkResult.rowCount && checkResult.rowCount > 0) {
             return NextResponse.json({ error: 'Duplicate phone number for the given offer_id' }, { status: 409 });
         }
+        
 
         // Insert new record
         const query = `
