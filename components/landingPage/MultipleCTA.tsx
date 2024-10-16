@@ -26,7 +26,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/reviews?offer_id=${offer_id}`);
+      const response = await axios.get(`/api/reviews?shopify_product_handle=${schema.product_handle}`);
       console.log(response.data);
       setReviews(response.data);
     } catch (error: any) {

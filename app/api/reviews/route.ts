@@ -3,15 +3,17 @@ import { MongoClient } from 'mongodb';
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
-  const offer_id = searchParams.get("offer_id");
-
+  
   try {
     const client = new MongoClient(process.env.MONGODB_URL as string);
     await client.connect();
     const database = client.db(process.env.DATABASE as string);
     const collection = database.collection('reviews');
 
-    const reviews = await collection.find({ offer_id }).toArray();
+    // Create a query object from all search parameters
+    const query = Object.fromEntries(searchParams.entries());
+
+    const reviews = await collection.find(query).toArray();
     await client.close();
 
     return NextResponse.json(reviews);

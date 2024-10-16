@@ -29,14 +29,17 @@ const Reviews = ({ loading, reviews, schema, offer_id }: any) => {
             <p className="text-[14px] font-semibold">{review.reviewer_name}</p>
           </div>
           <Rating rating={review.review_rating} />
-          <p className="text-[13px] text-gray-500 py-1">
-            {new Date(review.review_date).toLocaleDateString()}
-          </p>
+          {review.review_date && (
+            <p className="text-[13px] text-gray-500 py-1">
+              {new Date(review.review_date).toLocaleDateString()}
+            </p>
+          )}
           <p className="text-[13px]">{review.review_body_text}</p>
           {review.review_media &&
             review.review_media.photos &&
             review.review_media.photos.length > 0 && (
               <div className="mt-2">
+              
                 <Image
                   src={review.review_media.photos[0]}
                   alt="Review image"

@@ -26,7 +26,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
           {review.review_body_text}
         </p>
       </div>
-      {/* {review.review_media?.photos && review.review_media.photos.length > 0 && (
+      {review.review_media?.photos && review.review_media.photos.length > 0 && (
         <div className="mt-2">
           <Image
             src={review.review_media.photos[0]}
@@ -36,7 +36,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
             className="rounded-md object-cover"
           />
         </div>
-      )} */}
+      )}
     </div>
   );
 };
