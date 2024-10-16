@@ -25,9 +25,9 @@ const Details = ({ logo, schema, offer_id, userIp}: any) => {
                     className="w-[150px]"
                 />
             </div> */}
-            {/* <h2 className="mt-5 font-semibold text-slate-500">Details</h2> */}
+            <h2 className="mt-5 font-semibold">Details</h2>
             <div
-                className="py-4 text-editor-css"
+                className="py-2 text-editor-css"
                 dangerouslySetInnerHTML={{
                     __html: schema.creative.terms_and_conditions,
                 }}
