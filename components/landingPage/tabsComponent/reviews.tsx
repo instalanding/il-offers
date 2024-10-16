@@ -17,7 +17,7 @@ const Reviews = ({ loading, reviews, schema, offer_id }: any) => {
 
   return (
     <>
-      <AverageRatings reviews={reviews} />
+      {/* <AverageRatings reviews={reviews} /> */}
       <h2 className="mt-5 font-semibold">Reviews</h2>
       <div className="flex overflow-y-auto gap-4 pt-2">
         {reviews.map((review: any) => (
