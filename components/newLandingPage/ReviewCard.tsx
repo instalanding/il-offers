@@ -18,7 +18,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
     <div className="border min-w-[250px] p-3 rounded-xl space-y-2">
       <ProfileCard
         name={review.reviewer_name}
-        date={new Date(review.review_date).toLocaleDateString()}
+        date={review.review_date ? new Date(review.review_date).toLocaleDateString() : ""}
       />
       <Rating rating={review.review_rating} />
       <div>
