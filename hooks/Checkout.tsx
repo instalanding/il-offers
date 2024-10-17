@@ -48,8 +48,11 @@ export default function useCheckout() {
           utm_campaign: "campaign-instalanding",
         },
       });
+      console.log(res)
     }
   };
+
+
 
   return { handleCheckout };
 }
