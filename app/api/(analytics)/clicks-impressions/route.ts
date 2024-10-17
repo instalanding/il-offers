@@ -8,9 +8,10 @@ export const POST = async (req: Request) => {
     const offerId = searchParams.get("offer_id");
     const ipFromShopify = searchParams.get("user_ip");
     const visitorId = searchParams.get("visitor_id");
+    const advertiser_id = searchParams.get("advertiser_id");
+    const productUrl = searchParams.get("product_url");
     const tagsParam = searchParams.get("tags");
     const useragent = userAgent(req);
-    const { productUrl, advertiser_id } = await req.json();
     const userIP = (req.headers.get('x-forwarded-for') ?? '127.0.0.1').split(',')[0];
     console.log(userIP, "userIP")
 
