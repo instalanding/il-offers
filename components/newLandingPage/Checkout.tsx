@@ -7,12 +7,14 @@ import InstalandingCheckout from "../landingPage/InstalandingCheckout/Instalandi
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Checkout = ({ schema, logo, user_ip }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
   const offerIds = ["8fc08", "be418", "d0f47"];
   const domain = window.location.hostname;
+  const router = useRouter();
 
   console.log("window.location.origin", window.location.origin);
   function calculatePercentageOff(
@@ -128,43 +130,50 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
           </div>
           <div className="flex-grow pl-2 flex flex-col">
             {schema.variant_id ? (
-              <Link
-                href={`https://${schema.store_url}/cart/${schema.variant_id}:1`}
-                target="_blank"
-              >
-                <div className="flex flex-col gap-[5px] justify-end items-center">
-                  <Button
-                    className="w-full text-[16px] h-full"
-                    style={{
-                      backgroundColor: schema.config.backgroundColor,
-                      color: schema.config.textColor,
-                    }}
-                    onClick={() => {
-                      recordClicks(
-                        schema.offer_id,
-                        schema.advertiser,
-                        user_ip,
-                        "checkout init"
+              // <Link
+              //   href={`https://${schema.store_url}/cart/${schema.variant_id}:1`}
+              //   target="_blank"
+              // >
+              <div className="flex flex-col gap-[5px] justify-end items-center">
+                <Button
+                  className="w-full text-[16px] h-full"
+                  style={{
+                    backgroundColor: schema.config.backgroundColor,
+                    color: schema.config.textColor,
+                  }}
+                  onClick={() => {
+                    if (schema.store_url === "saptamveda.com") {
+                      handleCheckout(schema.variant_id, schema.offer_id);
+                    } else {
+                      router.push(
+                        `https://${schema.store_url}/cart/${schema.variant_id}:1`
                       );
-                      if (schema.pixel) {
-                        const noscript = document.createElement("noscript");
-                        const img = document.createElement("img");
-                        img.height = 1;
-                        img.width = 1;
-                        img.style.display = "none";
-                        img.src = `https://www.facebook.com/tr?id=${schema.pixel.id}&ev=Checkout&noscript=1`;
-                        img.alt = "Facebook Pixel";
-                        noscript.appendChild(img);
-                        document.body.appendChild(noscript);
-                        console.log("Checkout");
-                      }
-                    }}
-                  >
-                    {schema.config.button1Text}
-                  </Button>
-                </div>
-              </Link>
+                    }
+                    recordClicks(
+                      schema.offer_id,
+                      schema.advertiser,
+                      user_ip,
+                      "checkout init"
+                    );
+                    if (schema.pixel) {
+                      const noscript = document.createElement("noscript");
+                      const img = document.createElement("img");
+                      img.height = 1;
+                      img.width = 1;
+                      img.style.display = "none";
+                      img.src = `https://www.facebook.com/tr?id=${schema.pixel.id}&ev=Checkout&noscript=1`;
+                      img.alt = "Facebook Pixel";
+                      noscript.appendChild(img);
+                      document.body.appendChild(noscript);
+                      console.log("Checkout");
+                    }
+                  }}
+                >
+                  {schema.config.button1Text}
+                </Button>
+              </div>
             ) : (
+              // </Link>
               <></>
             )}
             {/* {domain === "shop.saptamveda.com" ? (
