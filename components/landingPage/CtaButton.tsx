@@ -85,7 +85,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
               <input type="hidden" value="saptamveda.com" id="sellerDomain" />
               <button
                 onClick={() =>
-                  handleCheckout(schema.creative.coupon_code, offer_id)
+                  // handleCheckout(schema.variant_id, offer_id, schema.creative.coupon_code)
                 }
                 style={{
                   background:
