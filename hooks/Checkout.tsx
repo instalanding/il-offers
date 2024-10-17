@@ -5,13 +5,13 @@ import { useState } from "react";
 
 declare const shiprocketCheckoutEvents: any;
 
-
 export default function useCheckout() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
+    script.src =
+      "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
     script.defer = true;
     script.onload = () => setLoaded(true);
     document.body.appendChild(script);
@@ -27,25 +27,29 @@ export default function useCheckout() {
     };
   }, []);
 
-  const handleCheckout = async (variant_id: string, offer_id: string) => {
+  const handleCheckout = async (
+    variant_id: string,
+    offer_id: string,
+    couponCode: string
+  ) => {
     if (loaded) {
       const res = await shiprocketCheckoutEvents.buyDirect({
         type: "cart",
         products: [
           {
             variantId: variant_id ? variant_id : "36289636303004",
-            quantity: 1
-          }
+            quantity: 1,
+          },
         ],
-        couponCode: "SV10",
+        couponCode: couponCode,
         utmParams: {
           utm_source: "instalanding",
           utm_medium: offer_id,
-          utm_campaign: "campaign-instalanding"
-        }
+          utm_campaign: "campaign-instalanding",
+        },
       });
     }
   };
 
-  return { handleCheckout }
+  return { handleCheckout };
 }
