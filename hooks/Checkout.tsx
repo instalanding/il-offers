@@ -37,7 +37,7 @@ export default function useCheckout() {
             quantity: 1
           }
         ],
-        couponCode: "IL10",
+        couponCode: "SV10",
         utmParams: {
           utm_source: "instalanding",
           utm_medium: offer_id,
