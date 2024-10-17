@@ -7,6 +7,7 @@ export const POST = async (req: Request) => {
     const { searchParams } = new URL(req.url);
     const offerId = searchParams.get("offer_id");
     const ipFromShopify = searchParams.get("user_ip");
+    const visitorId = searchParams.get("visitor_id");
     const tagsParam = searchParams.get("tags");
     const useragent = userAgent(req);
     const { productUrl, advertiser_id } = await req.json();
@@ -29,7 +30,7 @@ export const POST = async (req: Request) => {
         const apiData = await fetchApi(userIP);
         const query = `
         INSERT INTO Clicks (
-            product_url, userIP, useragent, offerId, advertiser_id,
+            visitor_id, product_url, userIP, useragent, offerId, advertiser_id,
             user_data_ip_address, user_data_city, user_data_city_geoname_id,
             user_data_region, user_data_region_geoname_id, user_data_postal_code,
             user_data_country, user_data_country_code, user_data_country_geoname_id,
@@ -41,12 +42,12 @@ export const POST = async (req: Request) => {
             $6, $7, $8, $9, $10,
             $11, $12, $13, $14, $15,
             $16, $17, $18, $19, $20,
-            $21, $22, $23, $24, $25, $26, $27, NOW()
+            $21, $22, $23, $24, $25, $26, $27, $28,  NOW()
         ) RETURNING *;
     `;
 
         const values = [
-            productUrl, apiData.ip_address, JSON.stringify(useragent), offerId, advertiser_id,
+            visitorId, productUrl, apiData.ip_address, JSON.stringify(useragent), offerId, advertiser_id,
             apiData.ip_address, apiData.city, apiData.city_geoname_id,
             apiData.region, apiData.region_geoname_id, apiData.postal_code,
             apiData.country, apiData.country_code, apiData.country_geoname_id,
