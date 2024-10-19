@@ -142,9 +142,9 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
                     color: schema.config.textColor,
                   }}
                   onClick={() => {
-                    if (schema.store_url === "saptamveda.com") {
+                    if (schema.checkout.checkout_name === "fastr") {
                       handleCheckout(schema.variant_id, schema.offer_id, schema.creative.coupon_code);
-                    } else {
+                    } else if (schema.checkout.checkout_name === "shopify") {
                       router.push(
                         `https://${schema.store_url}/cart/${schema.variant_id}:1`
                       );

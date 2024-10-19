@@ -42,13 +42,9 @@ export default function useCheckout() {
           },
         ],
         couponCode: couponCode,
-        utmParams: {
-          utm_source: "instalanding",
-          utm_medium: offer_id,
-          utm_campaign: "campaign-instalanding",
-        },
+        utmParams: `utm_source=instalanding&utm_medium=${offer_id}&utm_campaign=campaign-instalanding`,
       });
-      console.log(res)
+      console.log("______checkout_enabled",res)
     }
   };
 
