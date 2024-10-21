@@ -36,7 +36,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
                     img.height = 1;
                     img.width = 1;
                     img.style.display = "none";
-                    img.src = `https://www.facebook.com/tr?id=${pixel}&ev=${btn.pixel_event}&noscript=1`;
+                    img.src = `https://www.facebook.com/tr?id=${pixel}&ev=${btn.type}ClickedCta&noscript=1`;
                     img.alt = "Facebook Pixel";
 
                     noscript.appendChild(img);
@@ -137,7 +137,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
                 img.height = 1;
                 img.width = 1;
                 img.style.display = "none";
-                img.src = `https://www.facebook.com/tr?id=${pixel}&ev=${btn.type}ClickedCta&noscript=1`;
+                img.src = `https://www.facebook.com/tr?id=${pixel}&ev=${btn.pixel_event}ClickedCta&noscript=1`;
                 img.alt = "Facebook Pixel";
 
                 noscript.appendChild(img);
