@@ -1,11 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { platforms } from "@/constants/platforms";
 import Link from "next/link";
 import Image from "next/image";
 import { RiArrowRightSLine } from "react-icons/ri";
 import useCheckout from "@/hooks/Checkout";
-import { sendGTMEvent } from '@next/third-parties/google'
+import { sendGTMEvent } from "@next/third-parties/google";
 
 declare global {
   interface Window {
@@ -17,6 +17,14 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
   const platform = platforms.find((p) => p.type === btn.type);
   const { handleCheckout } = useCheckout();
   console.log(schema.creative.coupon_code, "schema.creative.coupon_code");
+
+  useEffect(() => {
+    sendGTMEvent({
+      event: "conversion", // The event name set in GTM for your conversion tracker
+      send_to: "AW-705273883/wouvCP-o5OMBEJvAptAC", // Format for Google Ads conversions
+    });
+  }, []);
+
   return (
     <>
       {offer_id === "76faf" ? (
