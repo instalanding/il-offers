@@ -12,6 +12,7 @@
     "@cashfreepayments/cashfree-js": "^1.0.5",
     "@fingerprintjs/fingerprintjs": "^4.4.3",
     "@hookform/resolvers": "^3.9.0",
+    "@next/third-parties": "^15.0.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
