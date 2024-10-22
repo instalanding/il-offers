@@ -22,6 +22,7 @@ import { headers } from "next/headers";
 import Script from "next/script";
 import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
 
+
 const getCampaign = async (offer_id: string) => {
   try {
     const response = await fetch(
