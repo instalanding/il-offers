@@ -1,38 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { load } from '@cashfreepayments/cashfree-js';
 import axios from "axios";
 import { EventEmitter } from 'events';
-EventEmitter.defaultMaxListeners = 20;  // Increase the limit to 20 or more if needed
+
+EventEmitter.defaultMaxListeners = 20;  // Increase the limit if needed
 
 interface RequestBody {
-    customer_id: string,
-    customer_phone: string,
-    customer_name: string,
-    customer_email: string,
-    amount: number
+    customer_id: string;
+    customer_phone: string;
+    customer_name: string;
+    customer_email: string;
+    amount: number;
 }
 
 const useCashfreePayment = () => {
     const [orderId, setOrderId] = useState<string>("");
-    let cashfree: any;
+    const [cashfree, setCashfree] = useState<any>(null); // State to store cashfree SDK instance
 
-    console.log(orderId, "orderId")
+    console.log(orderId, "orderId");
 
-    let insitialzeSDK = async function () {
-
-        cashfree = await load({
-            mode: "sandbox",
-        })
-    }
-
-    insitialzeSDK()
+    // Function to load the Cashfree SDK
+    const loadCashfreeSDK = async () => {
+        const sdk = await load({ mode: "sandbox" });
+        setCashfree(sdk); // Store the loaded SDK instance in state
+    };
 
     const getSessionId = async (body: RequestBody) => {
         try {
             const res = await axios.post("api/cashfree/payment", body);
-            console.log("API Response:", res.data.data.payment_session_id);  // Add this log
+            console.log("API Response:", res.data.data.payment_session_id);
             if (res.data.data && res.data.data.payment_session_id) {
                 console.log(res.data.data);
                 setOrderId(res.data.data.order_id);
@@ -45,19 +43,16 @@ const useCashfreePayment = () => {
         }
     };
 
-
     const verifyPayment = async (orderId: string) => {
         try {
-            let res = await axios.post("api/cashfree/verify", {
-                orderId: orderId
-            })
+            const res = await axios.post("api/cashfree/verify", { orderId });
             if (res && res.data) {
-                alert("payment verified")
+                alert("Payment verified");
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
     const handlePayment = async (e: any, paymentDetails: RequestBody, offer_id: string) => {
         e.preventDefault();
@@ -67,21 +62,28 @@ const useCashfreePayment = () => {
                 console.error("Failed to retrieve sessionId");
                 return;
             }
-            console.log(sessionId, "sessionId")
-            let checkoutOptions = {
+            console.log(sessionId, "sessionId");
+            const checkoutOptions = {
                 paymentSessionId: sessionId,
                 redirectTarget: `${process.env.NEXT_PUBLIC_CLIENT_URL}${offer_id}`,
-            }
+            };
             cashfree.checkout(checkoutOptions).then((res: any) => {
-                console.log("payment initialized")
-                verifyPayment(orderId)
-            })
+                console.log("Payment initialized");
+                verifyPayment(orderId);
+            });
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
-    return { handlePayment }
+    // Load Cashfree SDK only when the user interacts with the payment process
+    useEffect(() => {
+        if (cashfree === null) {
+            loadCashfreeSDK(); // Load SDK when the hook is first used
+        }
+    }, [cashfree]);
+
+    return { handlePayment };
 };
 
 export default useCashfreePayment;

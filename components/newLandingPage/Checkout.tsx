@@ -141,9 +141,9 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
                     backgroundColor: schema.config.backgroundColor,
                     color: schema.config.textColor,
                   }}
-                  onClick={() => {
+                  onClick={(e) => {
                     if (schema.checkout.checkout_name === "fastr") {
-                      handleCheckout(schema.variant_id, schema.offer_id, schema.creative.coupon_code);
+                      handleCheckout(e, schema.variant_id, schema.offer_id, schema.creative.coupon_code);
                     } else if (schema.checkout.checkout_name === "shopify") {
                       router.push(
                         `https://${schema.store_url}/cart/${schema.variant_id}:1`

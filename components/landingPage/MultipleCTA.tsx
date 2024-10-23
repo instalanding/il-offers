@@ -76,6 +76,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
                         src={image}
                         width={380}
                         height={310}
+                        loading="lazy"
                         className="sm:rounded-xl rounded-none sm:w-[380px] w-full"
                       />
                     </CarouselItem>

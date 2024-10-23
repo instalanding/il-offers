@@ -93,8 +93,9 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
             <>
               <input type="hidden" value="saptamveda.com" id="sellerDomain" />
               <button
-                onClick={() =>
+                onClick={(e) =>
                   handleCheckout(
+                    e,
                     schema.variant_id || "",
                     offer_id,
                     schema.creative.coupon_code || ""
@@ -138,7 +139,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
         >
           <button
             id={btn.pixel_event}
-            onClick={() => {
+            onClick={(e) => {
               sendGTMEvent({
                 event: "conversion", // The event name set in GTM for your conversion tracker
                 send_to: "AW-705273883/wouvCP-o5OMBEJvAptAC", // Format for Google Ads conversions
