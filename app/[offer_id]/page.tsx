@@ -151,18 +151,18 @@ const Coupon = async ({
     );
   }
 
-  return (
-    <>
-      <RecordImpressions
-        offer_id={offer_id}
-        advertiser={data.advertiser}
-        user_ip={userIp}
-        store_url={data.store_url}
-        tags={data?.tags}
-      />
-      <FlipCard data={data} offer_id={offer_id} userIp={userIp} />
-    </>
-  );
+//   return (
+//     <>
+//       <RecordImpressions
+//         offer_id={offer_id}
+//         advertiser={data.advertiser}
+//         user_ip={userIp}
+//         store_url={data.store_url}
+//         tags={data?.tags}
+//       />
+//       <FlipCard data={data} offer_id={offer_id} userIp={userIp} />
+//     </>
+//   );
 };
 
 export default Coupon;
