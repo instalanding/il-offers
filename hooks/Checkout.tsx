@@ -10,8 +10,7 @@ export default function useCheckout() {
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src =
-      "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
+    script.src = "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
     script.defer = true;
     script.onload = () => setLoaded(true);
     document.body.appendChild(script);
