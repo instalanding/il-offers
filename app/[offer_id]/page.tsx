@@ -43,9 +43,9 @@ const Coupon = async ({
 
   console.log(data.pixel);
 
-  if (!data.domains.includes(domain) || process.env.NODE_ENV === "production") {
-    return <NotFound />;
-  }
+  // if (!data.domains.includes(domain) || process.env.NODE_ENV === "production") {
+  //   return <NotFound />;
+  // }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
