@@ -8,6 +8,7 @@ import { FaQuoteLeft } from "react-icons/fa";
 
 const Reviews = ({ product_handle }: any) => {
   const [reviews, setReviews] = useState<any>(null);
+  const [reviewCount, setReviewCount] = useState<any>(null);
 
   const fetchReviews = async () => {
     try {
@@ -16,11 +17,15 @@ const Reviews = ({ product_handle }: any) => {
       );
       console.log(response.data);
       // Sort reviews by date in descending order and limit to 5
-      const sortedReviews = response.data.sort(
-        (a: any, b: any) =>
-          new Date(b.review_date).getTime() - new Date(a.review_date).getTime()
-      );
+      const sortedReviews = response.data
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.review_date).getTime() -
+            new Date(a.review_date).getTime()
+        )
+        .slice(0, 5);
       setReviews(sortedReviews);
+      setReviewCount(response.data.length);
     } catch (error: any) {
       console.error("Error fetching reviews:", error);
       console.log(error.response.status, "status");
@@ -69,7 +74,7 @@ const Reviews = ({ product_handle }: any) => {
         <div className="flex items-center gap-3 justify-center text-center">
           <Rating rating={4} />
           <p className="text-[14px] text-center font-normal text-black">
-            ({reviews.length} ratings)
+            ({reviewCount} ratings)
           </p>
         </div>
       </div>
