@@ -5,10 +5,8 @@ import { MdKeyboardArrowRight } from 'react-icons/md'
 import { LiaCreditCardSolid } from "react-icons/lia";
 import { BsBank } from "react-icons/bs";
 import { IoWalletOutline } from "react-icons/io5";
-import useCashfreePayment from '@/hooks/Cashfree';
 
 const PaymentMethods = ({finalPrice, codCharge, offer_id, address, userId, phoneNumber}:any) => {
-    const { handlePayment } = useCashfreePayment();
     const paymentDetails = {
         customer_id: userId.toString(),
         customer_phone: phoneNumber,
@@ -19,7 +17,7 @@ const PaymentMethods = ({finalPrice, codCharge, offer_id, address, userId, phone
     return (
         <div className="mt-3">
             <h2 className="text-[13px] font-medium">Payment methods</h2>
-            <div className="bg-white w-full rounded-xl p-3 mt-3 flex items-center justify-between cursor-pointer border" onClick={(e)=>handlePayment(e, paymentDetails, offer_id)}>
+            {/* <div className="bg-white w-full rounded-xl p-3 mt-3 flex items-center justify-between cursor-pointer border" onClick={(e)=>handlePayment(e, paymentDetails, offer_id)}>
                 <div className="flex gap-2">
                     <Image
                         src="https://res.cloudinary.com/duslrhgcq/image/upload/v1726823276/bvfu5fjrxwf7f5lgpbul.png"
@@ -37,7 +35,7 @@ const PaymentMethods = ({finalPrice, codCharge, offer_id, address, userId, phone
                     <h3 className="text-[14px] font-semibold text-gray-600">₹{finalPrice}</h3>
                     <MdKeyboardArrowRight />
                 </div>
-            </div>
+            </div> */}
             <div className="bg-white w-full rounded-xl p-3 mt-3 flex items-center justify-between cursor-pointer border">
                 <div className="flex gap-2 items-center">
                 <IoWalletOutline  size={23}/>
@@ -52,7 +50,7 @@ const PaymentMethods = ({finalPrice, codCharge, offer_id, address, userId, phone
                     <MdKeyboardArrowRight />
                 </div>
             </div>
-            <div className="bg-white w-full rounded-xl p-3 mt-3 flex items-center justify-between cursor-pointer border" onClick={(e)=>handlePayment(e, paymentDetails, offer_id)}>
+            {/* <div className="bg-white w-full rounded-xl p-3 mt-3 flex items-center justify-between cursor-pointer border" onClick={(e)=>handlePayment(e, paymentDetails, offer_id)}>
                 <div className="flex gap-2 items-center">
                 <LiaCreditCardSolid  size={23}/>
                     <div>
@@ -64,8 +62,8 @@ const PaymentMethods = ({finalPrice, codCharge, offer_id, address, userId, phone
                     <h3 className="text-[14px] font-semibold text-gray-600">₹{finalPrice}</h3>
                     <MdKeyboardArrowRight />
                 </div>
-            </div>
-            <div className="bg-white w-full rounded-xl p-3 mt-3 flex items-center justify-between cursor-pointer border" onClick={(e)=>handlePayment(e, paymentDetails, offer_id)}>
+            </div> */}
+            {/* <div className="bg-white w-full rounded-xl p-3 mt-3 flex items-center justify-between cursor-pointer border" onClick={(e)=>handlePayment(e, paymentDetails, offer_id)}>
                 <div className="flex gap-2 items-center">
                 <BsBank  size={20}/>
                     <div>
@@ -77,7 +75,7 @@ const PaymentMethods = ({finalPrice, codCharge, offer_id, address, userId, phone
                     <h3 className="text-[14px] font-semibold text-gray-600">₹{finalPrice}</h3>
                     <MdKeyboardArrowRight />
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }
