@@ -1,27 +1,12 @@
 "use server";
-import { TermsAndConditions } from "@/components/coupon/TermsAndConditions";
-import createGradient from "@/lib/createGradient";
-import Image from "next/image";
 import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
-import { SaveOfferDialog } from "@/components/coupon/SaveOffer";
-import { formatDate } from "@/lib/dateFormat";
-import { ShareDialog } from "@/components/coupon/ShareDialog";
-import Reedem from "@/components/coupon/Reedem";
-import QrComponent from "@/components/coupon/QrComponent";
-import Link from "next/link";
 import FlipCard from "@/components/landingPage/FlipCard";
 import MultipleCTA from "@/components/landingPage/MultipleCTA";
 import NotFound from "@/components/landingPage/NotFound";
-import { getVisitorId } from "@/lib/fingerprint";
 import RecordImpressions from "@/components/recordImpressions/page";
 import { permanentRedirect } from "next/navigation";
-import { fetchApi } from "@/lib/backendFunctions";
-import axios from "axios";
-import { headers } from "next/headers";
-import Script from "next/script";
 import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
-
 
 const getCampaign = async (offer_id: string) => {
   try {
@@ -33,41 +18,6 @@ const getCampaign = async (offer_id: string) => {
       throw new Error("Failed to fetch campaign");
     }
     return response.json();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const recordImpressions = async (
-  offer_id: string,
-  advertiser_id: string,
-  userIp: string,
-  product_url: string,
-  tags: any
-) => {
-  try {
-    const response = await fetch(
-      `${process.env.API_URL}clicks-impressions/?offer_id=${offer_id}&advertiser_id=${advertiser_id}&user_ip=${userIp}&product_url=${product_url}&tags=${tags}`,
-      { cache: "no-store" }
-    );
-    if (!response.ok) {
-      throw new Error("Failed to record impressions");
-    }
-    return response.json();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const fbPixelEvents = async (pixelId: string) => {
-  try {
-    const response = await fetch(
-      `https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`,
-      { cache: "no-store" }
-    );
-    if (!response.ok) {
-      throw new Error("Failed to fire facebook pixel");
-    }
   } catch (error) {
     console.log(error);
   }
@@ -233,7 +183,6 @@ export async function generateMetadata(
     data?.templateType === "new-landing"
       ? data?.creative?.carousel_images?.[0]
       : data?.creative?.image;
-  const previousImages = (await parent).openGraph?.images || [];
 
   return {
     title: title,
