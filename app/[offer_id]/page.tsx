@@ -1,11 +1,9 @@
 "use server";
 import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
-import FlipCard from "@/components/landingPage/FlipCard";
 import MultipleCTA from "@/components/landingPage/MultipleCTA";
 import NotFound from "@/components/landingPage/NotFound";
 import RecordImpressions from "@/components/recordImpressions/page";
-import { permanentRedirect } from "next/navigation";
 import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
 
 const getCampaign = async (offer_id: string) => {
@@ -31,7 +29,6 @@ const Coupon = async ({
   searchParams: { mode: string; user_ip?: any };
 }) => {
   const offer_id = params.offer_id;
-  const mode = searchParams.mode;
   const userIp = searchParams.user_ip ?? "";
 
   if (!offer_id) {
@@ -40,13 +37,6 @@ const Coupon = async ({
 
   const data = await getCampaign(offer_id);
   if (!data) return <NotFound />;
-
-  if (offer_id === "e8f76") {
-    const redirectUrl = encodeURIComponent(data.buttons[0].url);
-    permanentRedirect(
-      `https://links.instalanding.in/redirect/?offer_id=${offer_id}&advertiser_id=${data.advertiser}&tags=${data?.tags}&redirect_url=${redirectUrl}&ctatype=${data.buttons[0].type}`
-    );
-  }
 
   console.log(data.pixel);
 
@@ -204,7 +194,6 @@ export async function generateMetadata(
       "og:url": `https://instalanding.shop/${offer_id}`,
       "og:image": imageUrl,
       "og:type": "website",
-      //  ...(shouldIncludeFbPixel && { "fb-pixel-script": fbPixelScript }),
     },
   };
 }
