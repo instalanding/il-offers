@@ -30,7 +30,7 @@ const fetchReviews = async () => {
       }
     }
 
-    setReviews(response.data);
+    setReviews(uniqueReviews);
     setReviewCount(response.data.length); // This still sets the total review count
   } catch (error: any) {
     console.error("Error fetching reviews:", error);
