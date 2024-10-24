@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/carousel";
 import CTAGeoTracking from "./CTAGeoTracking";
 import Details from "./tabsComponent/details";
-import Reviews from "./tabsComponent/reviews";
 import axios from "axios";
 import InstalandingCheckout from "./InstalandingCheckout/InstalandingCheckout";
 import { modifyCloudinaryUrl } from "@/lib/modifyCloudinaryUrl";
+import Reviews from "../newLandingPage/Reviews";
 
 function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
   const [reviews, setReviews] = useState([]);
@@ -110,12 +110,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
           />
         </div>
         <div className="mt-3 px-5">
-          <Reviews
-            loading={loading}
-            reviews={reviews}
-            schema={schema}
-            offer_id={offer_id}
-          />
+          <Reviews product_handle={schema.product_handle} />
         </div>
         <div className="px-5">
           <Details

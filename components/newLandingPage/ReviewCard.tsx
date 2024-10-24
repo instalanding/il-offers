@@ -22,7 +22,7 @@ const ReviewCard = ({ review }: { review: Review }) => {
       />
       <Rating rating={review.review_rating} />
       <div>
-        <p className="text-[13px] line-clamp-5 text-[#0000008a]">
+        <p className="text-[13px] line-clamp-5 text-[#020817]">
           {review.review_body_text}
         </p>
       </div>

@@ -3,34 +3,44 @@ import React, { useEffect, useState } from "react";
 import ReviewCard from "./ReviewCard";
 import axios from "axios";
 import Rating from "../landingPage/tabsComponent/rating";
-import Image from "next/image";
-import { FaQuoteLeft } from "react-icons/fa";
 
 const Reviews = ({ product_handle }: any) => {
   const [reviews, setReviews] = useState<any>(null);
   const [reviewCount, setReviewCount] = useState<any>(null);
+  const uniqueReviewerNames = new Set();
+  const uniqueReviews = [];
 
-  const fetchReviews = async () => {
-    try {
-      const response = await axios.get(
-        `api/reviews/?shopify_product_handle=${product_handle}`
-      );
-      console.log(response.data);
-      // Sort reviews by date in descending order and limit to 5
-      const sortedReviews = response.data
-        .sort(
-          (a: any, b: any) =>
-            new Date(b.review_date).getTime() -
-            new Date(a.review_date).getTime()
-        )
-        .slice(0, 5);
-      setReviews(sortedReviews);
-      setReviewCount(response.data.length);
-    } catch (error: any) {
-      console.error("Error fetching reviews:", error);
-      console.log(error.response.status, "status");
+const fetchReviews = async () => {
+  try {
+    const response = await axios.get(
+      `api/reviews/?shopify_product_handle=${product_handle}`
+    );
+    console.log(response.data);
+
+    const uniqueReviewerNames = new Set();
+    const uniqueReviews = [];
+
+    // Sort reviews by date in descending order
+    const sortedReviews = response.data.sort(
+      (a: any, b: any) =>
+        new Date(b.review_date).getTime() - new Date(a.review_date).getTime()
+    );
+
+    // Filter for unique reviewer names and limit to 5
+    for (const review of sortedReviews) {
+      if (!uniqueReviewerNames.has(review.reviewer_name) && uniqueReviews.length < 5) {
+        uniqueReviewerNames.add(review.reviewer_name);
+        uniqueReviews.push(review);
+      }
     }
-  };
+
+    setReviews(uniqueReviews);
+    setReviewCount(response.data.length); // This still sets the total review count
+  } catch (error: any) {
+    console.error("Error fetching reviews:", error);
+    console.log(error.response.status, "status");
+  }
+};
 
   useEffect(() => {
     fetchReviews();
