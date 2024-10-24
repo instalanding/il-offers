@@ -53,6 +53,7 @@ const Coupon = async ({
   if (data.templateType && data.templateType === "new-landing") {
     return (
       <>
+        <Domain domain={domain} />
         {data.pixel && (
           <>
             <img
