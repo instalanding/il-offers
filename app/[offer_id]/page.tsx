@@ -5,6 +5,7 @@ import MultipleCTA from "@/components/landingPage/MultipleCTA";
 import NotFound from "@/components/landingPage/NotFound";
 import RecordImpressions from "@/components/recordImpressions/page";
 import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
+import { headers } from "next/headers";
 
 const getCampaign = async (offer_id: string) => {
   try {
@@ -30,6 +31,8 @@ const Coupon = async ({
 }) => {
   const offer_id = params.offer_id;
   const userIp = searchParams.user_ip ?? "";
+  const headersList = headers();
+  const domain = headersList.get("host");
 
   if (!offer_id) {
     return <h1 className="font-semibold text-red-600">Offer id missing!</h1>;
@@ -39,6 +42,10 @@ const Coupon = async ({
   if (!data) return <NotFound />;
 
   console.log(data.pixel);
+
+  if (data.domain.url !== domain && domain !== "localhost:3200") {
+    return <NotFound />;
+  }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
@@ -141,18 +148,18 @@ const Coupon = async ({
     );
   }
 
-//   return (
-//     <>
-//       <RecordImpressions
-//         offer_id={offer_id}
-//         advertiser={data.advertiser}
-//         user_ip={userIp}
-//         store_url={data.store_url}
-//         tags={data?.tags}
-//       />
-//       <FlipCard data={data} offer_id={offer_id} userIp={userIp} />
-//     </>
-//   );
+  //   return (
+  //     <>
+  //       <RecordImpressions
+  //         offer_id={offer_id}
+  //         advertiser={data.advertiser}
+  //         user_ip={userIp}
+  //         store_url={data.store_url}
+  //         tags={data?.tags}
+  //       />
+  //       <FlipCard data={data} offer_id={offer_id} userIp={userIp} />
+  //     </>
+  //   );
 };
 
 export default Coupon;
