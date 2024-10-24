@@ -114,6 +114,22 @@ const Coupon = async ({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-705273883');
+
+            function gtag_report_conversion_zomato(url) {
+              var callback = function () {
+                if (typeof(url) != 'undefined') {
+                  window.location = url;
+                }
+              };
+              gtag('event', 'conversion', {
+                  'send_to': 'AW-705273883/hR2RCLeQjOEZEJvAptAC',
+                  'value': 1.0,
+                  'currency': 'INR',
+                  'event_callback': callback
+              });
+              return false;
+            }
+
             `,
               }}
             />
