@@ -44,7 +44,16 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 
   console.log(domain);
 
-  if (data.domain.url !== domain && domain !== "localhost:3200") {
+  const domainUrls =
+    data.domains && Array.isArray(data.domains)
+      ? data.domains.map((d: { url: string }) => d.url)
+      : [];
+
+  const isAllowedDomain =
+    domainUrls.includes(domain) || domain === "localhost:3200";
+
+  if (!isAllowedDomain) {
+    console.log("Domain not allowed:", domain);
     return <NotFound />;
   }
 
