@@ -7,15 +7,11 @@ import Rating from "../landingPage/tabsComponent/rating";
 const Reviews = ({ product_handle }: any) => {
   const [reviews, setReviews] = useState<any>(null);
   const [reviewCount, setReviewCount] = useState<any>(null);
-  const uniqueReviewerNames = new Set();
-  const uniqueReviews = [];
 
 const fetchReviews = async () => {
   try {
-    const response = await axios.get(
-      `api/reviews/?shopify_product_handle=${product_handle}`
-    );
-    console.log(response.data);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}reviews/?shopify_product_handle=${product_handle}`);
+    console.log(response.data, "response.data");
 
     const uniqueReviewerNames = new Set();
     const uniqueReviews = [];
@@ -34,7 +30,7 @@ const fetchReviews = async () => {
       }
     }
 
-    setReviews(uniqueReviews);
+    setReviews(response.data);
     setReviewCount(response.data.length); // This still sets the total review count
   } catch (error: any) {
     console.error("Error fetching reviews:", error);

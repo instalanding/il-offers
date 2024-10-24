@@ -127,7 +127,7 @@ const NewLandingPage = ({
           </h1>
         </div>
 
-        
+        {console.log(schema.product_handle, "schema.product_handle")}
           <div>
             <div className="bg-white py-4 rounded-lg shadow-sm">
               <Reviews product_handle={schema.product_handle} />
