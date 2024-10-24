@@ -44,9 +44,9 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 
   console.log(domain);
 
-  if (data.domain.url !== domain && domain !== "localhost:3200") {
-    return <NotFound />;
-  }
+  // if (data.domain.url !== domain && domain !== "localhost:3200") {
+  //   return <NotFound />;
+  // }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (

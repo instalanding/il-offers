@@ -46,9 +46,10 @@ const Coupon = async ({
 
   console.log(domain);
 
-  // if (data.domain.url !== domain && domain !== "localhost:3200") {
-  //   return <NotFound />;
-  // }
+  const isAllowedDomain = data.domains.some((d: { url: string }) => d.url === domain) || domain === "localhost:3200";
+  if (!isAllowedDomain) {
+    return <NotFound />;
+  }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
