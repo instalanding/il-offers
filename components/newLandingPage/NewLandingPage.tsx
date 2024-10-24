@@ -110,7 +110,7 @@ const NewLandingPage = ({
                           width={380}
                           height={380}
                           className="w-full"
-                          priority
+                          priority={key === 0}
                         />
                       </CarouselItem>
                     )

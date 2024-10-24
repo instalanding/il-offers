@@ -81,7 +81,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
                         src={modifyCloudinaryUrl(image, width, height)}
                         width={width}
                         height={height}
-                        priority
+                        priority={key === 0}
                         className="sm:rounded-xl rounded-none sm:w-[380px] w-full"
                       />
                     </CarouselItem>
