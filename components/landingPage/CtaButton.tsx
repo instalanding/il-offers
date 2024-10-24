@@ -32,8 +32,20 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
               window.gtag_report_conversion &&
               offer_id === "6a81a"
             ) {
-              window.gtag_report_conversion();
+              window.gtag_report_conversion_zomato();
             }
+            // if (typeof window !== "undefined" && window.gtag) {
+            //   window.gtag("event", "conversion", {
+            //     send_to: "AW-705273883/hR2RCLeQjOEZEJvAptAC",
+            //     value: 1.0,
+            //     currency: "INR",
+            //     event_callback: function () {
+            //       if (btn.url) {
+            //         window.location = btn.url;
+            //       }
+            //     },
+            //   });
+            // }
             if (pixel) {
               const noscript = document.createElement("noscript");
               const img = document.createElement("img");
