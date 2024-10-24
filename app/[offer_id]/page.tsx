@@ -43,6 +43,8 @@ const Coupon = async ({
 
   console.log(data.pixel);
 
+  console.log(domain);
+
   // if (data.domain.url !== domain && domain !== "localhost:3200") {
   //   return <NotFound />;
   // }
