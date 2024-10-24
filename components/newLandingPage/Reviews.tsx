@@ -10,7 +10,7 @@ const Reviews = ({ product_handle }: any) => {
 
 const fetchReviews = async () => {
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}reviews/?shopify_product_handle=${product_handle}`);
+    const response = await axios.get(`${window.location.origin}/api/reviews/?shopify_product_handle=${product_handle}`);
     console.log(response.data, "response.data");
 
     const uniqueReviewerNames = new Set();
