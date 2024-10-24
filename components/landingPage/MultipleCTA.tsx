@@ -17,11 +17,16 @@ import Details from "./tabsComponent/details";
 import Reviews from "./tabsComponent/reviews";
 import axios from "axios";
 import InstalandingCheckout from "./InstalandingCheckout/InstalandingCheckout";
+import { modifyCloudinaryUrl } from "@/lib/modifyCloudinaryUrl";
 
 function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const width = 380;
+  const height = 380;
+
 
   const fetchReviews = async () => {
     setLoading(true);
@@ -73,10 +78,10 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
                     <CarouselItem key={key}>
                       <Image
                         alt={"Image"}
-                        src={image}
-                        width={380}
-                        height={310}
-                        loading="lazy"
+                        src={modifyCloudinaryUrl(image, width, height)}
+                        width={width}
+                        height={height}
+                        priority
                         className="sm:rounded-xl rounded-none sm:w-[380px] w-full"
                       />
                     </CarouselItem>

@@ -11,20 +11,9 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Reviews from "./Reviews";
-import Rating from "../landingPage/tabsComponent/rating";
-import { CiDeliveryTruck } from "react-icons/ci";
 import Checkout from "./Checkout";
-import { FaAngleDown } from "react-icons/fa";
-import { FaAngleUp } from "react-icons/fa";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Separator } from "@/components/ui/separator";
-import InstalandingCheckout from "../landingPage/InstalandingCheckout/InstalandingCheckout";
 import Link from "next/link";
+import { modifyCloudinaryUrl } from "@/lib/modifyCloudinaryUrl";
 
 interface MyComponentProps {
   schema: {
@@ -117,10 +106,11 @@ const NewLandingPage = ({
                       <CarouselItem key={key}>
                         <Image
                           alt={"Image"}
-                          src={image}
+                          src={modifyCloudinaryUrl(image, 380, 380)}
                           width={380}
-                          height={310}
+                          height={380}
                           className="w-full"
+                          priority
                         />
                       </CarouselItem>
                     )
