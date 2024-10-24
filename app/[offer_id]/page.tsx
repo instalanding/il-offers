@@ -43,7 +43,7 @@ const Coupon = async ({
 
   console.log(data.pixel);
 
-  // if (!data.domains.includes(domain) || process.env.NODE_ENV === "production") {
+  // if (data.domain.url !== domain && domain !== "localhost:3200") {
   //   return <NotFound />;
   // }
 
@@ -101,6 +101,24 @@ const Coupon = async ({
   if (data.templateType && data.templateType === "multiple-cta") {
     return (
       <>
+        {offer_id === "6a81a" && (
+          <>
+            <script
+              async
+              src="https://www.googletagmanager.com/gtag/js?id=AW-705273883"
+            ></script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-705273883');
+            `,
+              }}
+            />
+          </>
+        )}
         {data.pixel && (
           <>
             <img

@@ -167,7 +167,7 @@
 }
 .text-editor-css h1 {
   color: #020817;
-  font-family: "Open Sans";
+  /* font-family: "Open Sans"; */
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -176,7 +176,7 @@
 }
 .text-editor-css h2 {
   color: #020817;
-  font-family: "Open Sans";
+  /* font-family: "Open Sans"; */
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -186,7 +186,7 @@
 
 .text-editor-css h3 {
   color: #020817;
-  font-family: "Open Sans";
+  /* font-family: "Open Sans"; */
   font-size: 18px;
   font-style: normal;
   font-weight: 700;
@@ -220,7 +220,7 @@
   list-style-type: disc;
   list-style-position: outside;
   color: #020817;
-  font-family: "Open Sans";
+  /* font-family: "Open Sans"; */
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
