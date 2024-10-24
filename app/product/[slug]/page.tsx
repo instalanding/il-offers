@@ -4,7 +4,6 @@ import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
 import RecordImpressions from "@/components/recordImpressions/page";
 import { Metadata, ResolvingMetadata } from "next";
 import { headers } from "next/headers";
-import Domain from "./Domain";
 
 const getCampaign = async (slug: string) => {
   try {
@@ -32,8 +31,6 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
   const headersList = headers();
   const domain = headersList.get("host");
 
-  // return <div>{slug}</div>
-
   if (!slug) {
     return (
       <h1 className="font-semibold text-red-600">Product handle is missing!</h1>
@@ -47,14 +44,13 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 
   console.log(domain);
 
-  // if (data.domain.url !== domain && domain !== "localhost:3200") {
-  //   return <NotFound />;
-  // }
+  if (data.domain.url !== domain && domain !== "localhost:3200") {
+    return <NotFound />;
+  }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
       <>
-        <Domain domain={domain} />
         {data.pixel && (
           <>
             <img
@@ -134,7 +130,6 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
             )}
           </>
         )}
-
         <RecordImpressions
           offer_id={slug}
           advertiser={data.advertiser}

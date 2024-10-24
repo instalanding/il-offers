@@ -6,6 +6,7 @@ import NotFound from "@/components/landingPage/NotFound";
 import RecordImpressions from "@/components/recordImpressions/page";
 import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
 import { headers } from "next/headers";
+import Domain from "./Domain";
 
 const getCampaign = async (offer_id: string) => {
   try {
@@ -103,6 +104,7 @@ const Coupon = async ({
   if (data.templateType && data.templateType === "multiple-cta") {
     return (
       <>
+        <Domain domain={domain} />
         {offer_id === "6a81a" && (
           <>
             <script
@@ -183,19 +185,6 @@ const Coupon = async ({
       </>
     );
   }
-
-  //   return (
-  //     <>
-  //       <RecordImpressions
-  //         offer_id={offer_id}
-  //         advertiser={data.advertiser}
-  //         user_ip={userIp}
-  //         store_url={data.store_url}
-  //         tags={data?.tags}
-  //       />
-  //       <FlipCard data={data} offer_id={offer_id} userIp={userIp} />
-  //     </>
-  //   );
 };
 
 export default Coupon;
