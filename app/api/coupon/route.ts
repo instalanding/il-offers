@@ -39,7 +39,7 @@ export const GET = async (req: Request) => {
         // Include the store logo in the response
         campaign.store_logo = advertiser.store_logo;
         campaign.store_url = advertiser.shop_url;
-        campaign.domains = advertiser.domains;
+        campaign.domain = advertiser.domain;
         if(advertiser.checkout){
             campaign.checkout = advertiser.checkout;
         }
