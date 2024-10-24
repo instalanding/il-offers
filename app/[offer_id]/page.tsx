@@ -43,9 +43,9 @@ const Coupon = async ({
 
   console.log(data.pixel);
 
-  if (data.domain.url !== domain && domain !== "localhost:3200") {
-    return <NotFound />;
-  }
+  // if (data.domain.url !== domain && domain !== "localhost:3200") {
+  //   return <NotFound />;
+  // }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
@@ -101,6 +101,40 @@ const Coupon = async ({
   if (data.templateType && data.templateType === "multiple-cta") {
     return (
       <>
+        {offer_id === "6a81a" && (
+          <>
+            <script
+              async
+              src="https://www.googletagmanager.com/gtag/js?id=AW-705273883"
+            ></script>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-705273883');
+
+            function gtag_report_conversion_zomato(url) {
+              var callback = function () {
+                if (typeof(url) != 'undefined') {
+                  window.location = url;
+                }
+              };
+              gtag('event', 'conversion', {
+                  'send_to': 'AW-705273883/hR2RCLeQjOEZEJvAptAC',
+                  'value': 1.0,
+                  'currency': 'INR',
+                  'event_callback': callback
+              });
+              return false;
+            }
+
+            `,
+              }}
+            />
+          </>
+        )}
         {data.pixel && (
           <>
             <img
