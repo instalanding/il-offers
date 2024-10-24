@@ -130,10 +130,6 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
           </div>
           <div className="flex-grow pl-2 flex flex-col">
             {schema.variant_id ? (
-              // <Link
-              //   href={`https://${schema.store_url}/cart/${schema.variant_id}:1`}
-              //   target="_blank"
-              // >
               <div className="flex flex-col gap-[5px] justify-end items-center">
                 <Button
                   className="w-full text-[16px] h-full"
@@ -143,7 +139,12 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
                   }}
                   onClick={(e) => {
                     if (schema.checkout.checkout_name === "fastr") {
-                      handleCheckout(e, schema.variant_id, schema.offer_id, schema.creative.coupon_code);
+                      handleCheckout(
+                        e,
+                        schema.variant_id,
+                        schema.offer_id,
+                        schema.creative.coupon_code
+                      );
                     } else if (schema.checkout.checkout_name === "shopify") {
                       router.push(
                         `https://${schema.store_url}/cart/${schema.variant_id}:1`
@@ -173,50 +174,8 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
                 </Button>
               </div>
             ) : (
-              // </Link>
               <></>
             )}
-            {/* {domain === "shop.saptamveda.com" ? (
-              <div className="flex flex-col gap-[5px] justify-end items-center">
-                <Button
-                  style={{ backgroundColor: backgroundColor, color: textColor }}
-                  onClick={() => {
-                    recordClicks(
-                      offer_id,
-                      advertiser,
-                      user_ip,
-                      "checkout init"
-                    );
-                    handleCheckout(schema.variant_id, offer_id);
-                    if (pixel) {
-                      const noscript = document.createElement("noscript");
-                      const img = document.createElement("img");
-                      img.height = 1;
-                      img.width = 1;
-                      img.style.display = "none";
-                      img.src = `https://www.facebook.com/tr?id=${pixel}&ev=Checkout&noscript=1`;
-                      img.alt = "Facebook Pixel";
-                      noscript.appendChild(img);
-                      document.body.appendChild(noscript);
-                      console.log("Checkout");
-                    }
-                  }}
-                  className="w-full text-[16px] h-full"
-                >
-                  {button_text}
-                </Button>
-              </div>
-            ) : (
-              <Button
-                className="w-full text-[16px] h-full"
-                onClick={() => {
-                  setOpen(true);
-                }}
-                style={{ backgroundColor: backgroundColor, color: textColor }}
-              >
-                {button_text}
-              </Button>
-            )} */}
             <InstalandingCheckout
               logo={logo}
               schema={schema}

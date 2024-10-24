@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 declare const shiprocketCheckoutEvents: any;
 
@@ -8,6 +8,7 @@ export default function useCheckout() {
   const [loaded, setLoaded] = useState(false);
 
   const loadScripts = () => {
+    console.log("Fastrr Script loaded");
     if (loaded) return; // Prevent loading if already loaded
 
     const script = document.createElement("script");
@@ -22,14 +23,28 @@ export default function useCheckout() {
     document.head.appendChild(link);
   };
 
+  useEffect(() => {
+    const handleMouseMove = () => {
+      loadScripts();
+      // Remove the event listener after loading scripts
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
   const handleCheckout = async (
-    e: React.MouseEvent<HTMLButtonElement>, // Ensure proper event typing
+    e: React.MouseEvent<HTMLButtonElement>,
     variant_id: string,
     offer_id: string,
     couponCode: string
   ) => {
-    e.preventDefault(); // Prevent default form submission if needed
-    loadScripts(); // Load scripts on checkout button click
+    e.preventDefault();
 
     if (loaded) {
       const res = await shiprocketCheckoutEvents.buyDirect({
