@@ -99,7 +99,7 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
 
   return (
     <>
-      <input type="hidden" value="saptamveda.com" id="sellerDomain" />
+      <input type="hidden" value={schema.store_url} id="sellerDomain" />
       <div className="shadow-new">
         <div className="bg-white">
           {schema.creative.footer_text && (
