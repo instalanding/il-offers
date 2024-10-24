@@ -12,8 +12,6 @@ import { useRouter } from "next/navigation";
 const Checkout = ({ schema, logo, user_ip }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
-  const offerIds = ["8fc08", "be418", "d0f47"];
-  const domain = window.location.hostname;
   const router = useRouter();
 
   console.log("window.location.origin", window.location.origin);
