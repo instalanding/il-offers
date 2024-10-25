@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import InstalandingCheckout from "../landingPage/InstalandingCheckout/InstalandingCheckout";
 import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Checkout = ({ schema, logo, user_ip }: any) => {
@@ -14,7 +13,6 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  console.log("window.location.origin", window.location.origin);
   function calculatePercentageOff(
     originalPrice: number,
     offerPrice: number
