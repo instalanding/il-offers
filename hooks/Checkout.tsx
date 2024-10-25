@@ -24,8 +24,17 @@ export default function useCheckout() {
   };
 
   useEffect(() => {
-    // const handleInteraction = () => {
+    const timer = setTimeout(() => {
       loadScripts();
+    }, 3000);
+  
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  // useEffect(() => {
+    // const handleInteraction = () => {
+      // loadScripts();
       // Remove the event listeners after loading scripts
     //   document.removeEventListener('mousemove', handleInteraction);
     //   document.removeEventListener('touchstart', handleInteraction);
@@ -39,7 +48,7 @@ export default function useCheckout() {
     //   document.removeEventListener('mousemove', handleInteraction);
     //   document.removeEventListener('touchstart', handleInteraction);
     // };
-  }, []);
+  // }, []);
 
   const handleCheckout = async (
     e: React.MouseEvent<HTMLButtonElement>,
