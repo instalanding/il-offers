@@ -18,7 +18,8 @@ export const GET = async (req: Request) => {
         const campaignsCollection = database.collection('campaigns');
         const advertisersCollection = database.collection('advertisers');
 
-        // Find the campaign
+        await campaignsCollection.createIndex({ offer_id: 1 });
+
         const campaign = await campaignsCollection.findOne({ offer_id: offerId });
 
         if (!campaign) {
@@ -26,7 +27,6 @@ export const GET = async (req: Request) => {
             return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
         }
 
-        // Find the advertiser's store logo
         const advertiserId = new ObjectId(campaign.advertiser);
         const advertiser = await advertisersCollection.findOne({ _id: advertiserId });
 
@@ -35,16 +35,15 @@ export const GET = async (req: Request) => {
         if (!advertiser) {
             return NextResponse.json({ error: 'Advertiser not found' }, { status: 404 });
         }
-
-        // Include the store logo in the response
         campaign.store_logo = advertiser.store_logo;
         campaign.store_url = advertiser.shop_url;
         campaign.domains = advertiser.domains;
-        if(advertiser.checkout){
+
+        if (advertiser.checkout) {
             campaign.checkout = advertiser.checkout;
         }
-        if(advertiser.pixel){
-            campaign.pixel = advertiser.pixel
+        if (advertiser.pixel) {
+            campaign.pixel = advertiser.pixel;
         }
 
         return NextResponse.json(campaign);
