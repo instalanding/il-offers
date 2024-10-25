@@ -34,18 +34,6 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
             ) {
               window.gtag_report_conversion_zomato();
             }
-            // if (typeof window !== "undefined" && window.gtag) {
-            //   window.gtag("event", "conversion", {
-            //     send_to: "AW-705273883/hR2RCLeQjOEZEJvAptAC",
-            //     value: 1.0,
-            //     currency: "INR",
-            //     event_callback: function () {
-            //       if (btn.url) {
-            //         window.location = btn.url;
-            //       }
-            //     },
-            //   });
-            // }
             if (pixel) {
               const noscript = document.createElement("noscript");
               const img = document.createElement("img");
@@ -53,12 +41,24 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
               img.height = 1;
               img.width = 1;
               img.style.display = "none";
-              img.src = `https://www.facebook.com/tr?id=${pixel}&ev=${btn.pixel_event}ClickedCta&noscript=1`;
+              img.src = `https://www.facebook.com/tr?id=${pixel}&ev=${btn.type}ClickedCta&noscript=1`;
               img.alt = "Facebook Pixel";
 
               noscript.appendChild(img);
               document.body.appendChild(noscript);
-              console.log(btn.pixel_event);
+            }
+            if (btn.pixel) {
+              const noscript = document.createElement("noscript");
+              const img = document.createElement("img");
+
+              img.height = 1;
+              img.width = 1;
+              img.style.display = "none";
+              img.src = `https://www.facebook.com/tr?id=${btn.pixel}&ev=ClickedCta&noscript=1`;
+              img.alt = "Facebook Pixel";
+
+              noscript.appendChild(img);
+              document.body.appendChild(noscript);
             }
           }}
           style={{
