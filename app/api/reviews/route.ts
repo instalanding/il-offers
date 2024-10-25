@@ -28,7 +28,8 @@ export const GET = async (req: Request) => {
         reviewer_name: 1,
         review_rating: 1,
         review_body_text: 1,
-        review_media: 1
+        review_media: 1,
+        review_date: 1
     }},
       { $limit: 5 }
     ]).toArray();
