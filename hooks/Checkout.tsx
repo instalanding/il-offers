@@ -23,32 +23,32 @@ export default function useCheckout() {
     document.head.appendChild(link);
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      loadScripts();
-    }, 3000);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     loadScripts();
+  //   }, 3000);
   
     // Cleanup function to clear the timeout if the component unmounts
-    return () => clearTimeout(timer);
-  }, []);
-
-  // useEffect(() => {
-    // const handleInteraction = () => {
-      // loadScripts();
-      // Remove the event listeners after loading scripts
-    //   document.removeEventListener('mousemove', handleInteraction);
-    //   document.removeEventListener('touchstart', handleInteraction);
-    // };
-  
-    // document.addEventListener('mousemove', handleInteraction);
-    // document.addEventListener('touchstart', handleInteraction);
-  
-    // // Cleanup function to remove the event listeners
-    // return () => {
-    //   document.removeEventListener('mousemove', handleInteraction);
-    //   document.removeEventListener('touchstart', handleInteraction);
-    // };
+  //   return () => clearTimeout(timer);
   // }, []);
+
+  useEffect(() => {
+    const handleInteraction = () => {
+      loadScripts();
+      // Remove the event listeners after loading scripts
+      document.removeEventListener('mousemove', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+  
+    document.addEventListener('mousemove', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
+  
+    // Cleanup function to remove the event listeners
+    return () => {
+      document.removeEventListener('mousemove', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+  }, []);
 
   const handleCheckout = async (
     e: React.MouseEvent<HTMLButtonElement>,
