@@ -25,12 +25,13 @@ export const GET = async (req: Request) => {
       { $group: { _id: "$reviewer_name", doc: { $first: "$$ROOT" } } },
       { $replaceRoot: { newRoot: "$doc" } },
       { $project: {
-        reviewer_name: 1,
-        review_rating: 1,
-        review_body_text: 1,
-        review_media: 1,
-        review_date: 1
-    }},
+          reviewer_name: 1,
+          review_rating: 1,
+          review_body_text: 1,
+          review_media: 1,
+          review_date: 1
+      }},
+      { $sort: { review_date: -1 } },
       { $limit: 5 }
     ]).toArray();
 
