@@ -23,18 +23,30 @@ export default function useCheckout() {
     document.head.appendChild(link);
   };
 
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     loadScripts();
+  //   }, 3000);
+  
+    // Cleanup function to clear the timeout if the component unmounts
+  //   return () => clearTimeout(timer);
+  // }, []);
+
   useEffect(() => {
-    const handleMouseMove = () => {
+    const handleInteraction = () => {
       loadScripts();
-      // Remove the event listener after loading scripts
-      document.removeEventListener('mousemove', handleMouseMove);
+      // Remove the event listeners after loading scripts
+      document.removeEventListener('mousemove', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
     };
-
-    document.addEventListener('mousemove', handleMouseMove);
-
-    // Cleanup function to remove the event listener
+  
+    document.addEventListener('mousemove', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
+  
+    // Cleanup function to remove the event listeners
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
     };
   }, []);
 
