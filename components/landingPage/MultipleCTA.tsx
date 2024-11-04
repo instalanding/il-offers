@@ -48,22 +48,24 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
 
   return (
     <div
-      className="w-full flex justify-center overflow-y-auto  sm:p-[5%] items-center"
+      className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
       style={{ backgroundImage: createGradient(schema.backgroundColor) }}
     >
-      <div className="bg-white flex flex-col gap-4 sm:max-w-[380px] w-full sm:shadow-md shadow-none sm:rounded-xl rounded-none transition-transform duration-300 mb-3">
-        <div className="flex flex-col items-center justify-center py-2">
-          <Link
-            href={`https://${schema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
-          >
-            <Image
-              alt={`logo`}
-              src={logo}
-              width={1000}
-              height={1000}
-              className="h-[60px] py-2 height-auto object-contain"
-            />
-          </Link>
+      <div className="w-[380px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
+        <div className="sticky top-0 z-50">
+          <div className="flex flex-col items-center justify-center py-2 bg-white">
+            <Link
+              href={`https://${schema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
+            >
+              <Image
+                alt={`logo`}
+                src={logo}
+                width={1000}
+                height={1000}
+                className="h-[60px] py-2 height-auto object-contain"
+              />
+            </Link>
+          </div>
         </div>
         <div>
           <Carousel>
