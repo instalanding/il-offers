@@ -84,7 +84,7 @@ const NewLandingPage = ({
           )}
           <div className="flex flex-col items-center justify-center py-2 bg-white">
             <Link
-              href={`https://saptamveda.com/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
+              href={`https://${schema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
             >
               <Image
                 alt={`logo`}

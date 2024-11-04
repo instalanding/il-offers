@@ -27,7 +27,6 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
   const width = 380;
   const height = 380;
 
-
   const fetchReviews = async () => {
     setLoading(true);
     try {
@@ -53,19 +52,16 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
       style={{ backgroundImage: createGradient(schema.backgroundColor) }}
     >
       <div className="bg-white flex flex-col gap-4 sm:max-w-[380px] w-full sm:shadow-md shadow-none sm:rounded-xl rounded-none transition-transform duration-300 mb-3">
-        <div className="flex justify-center items-center">
+        <div className="flex flex-col items-center justify-center py-2">
           <Link
-            href={
-              "https://bombaysweetshop.com/?srsltid=AfmBOop3K9Q3OydDQVCfNS5AxmHliZGwlUw1hBJcP56IkOcOGpf-qcpt?utm_source=instalanding&utm_medium=instalanding"
-            }
-            target="_blank"
+            href={`https://${schema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
           >
             <Image
               alt={`logo`}
               src={logo}
-              width={100}
-              height={100}
-              className="h-[70px] height-auto object-contain py-3"
+              width={1000}
+              height={1000}
+              className="h-[60px] py-2 height-auto object-contain"
             />
           </Link>
         </div>
