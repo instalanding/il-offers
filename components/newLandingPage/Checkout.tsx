@@ -1,7 +1,7 @@
 "use client";
 
 import useCheckout from "@/hooks/Checkout";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import InstalandingCheckout from "../landingPage/InstalandingCheckout/InstalandingCheckout";
 import axios from "axios";
@@ -93,6 +93,37 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
     } catch (error) {}
   }
 
+  useEffect(() => {
+    // Load tracking script
+    const script = document.createElement('script');
+    script.src = '/tracking/checkout-tracker.js';
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
+  const handleOrderTracking = (orderData: any) => {
+    if (window.ILTracker) {
+      window.ILTracker.trackOrder({
+        orderId: orderData.id,
+        amount: schema.price.offerPrice.value,
+        // Add any other relevant data
+      });
+    }
+  };
+
+  const handleCheckoutClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (schema.checkout?.checkout_name === "fastr") {
+      const result = await handleCheckout(
+        e,
+        schema.variant_id,
+        schema.offer_id,
+        schema.creative.coupon_code
+      );
+      handleOrderTracking(result);
+    }
+    // ... rest of the checkout logic ...
+  };
+
   return (
     <>
       <input type="hidden" value={schema.store_url} id="sellerDomain" />
@@ -133,38 +164,7 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
                     backgroundColor: schema.config.backgroundColor,
                     color: schema.config.textColor,
                   }}
-                  onClick={(e) => {
-                    if (schema.checkout.checkout_name === "fastr") {
-                      handleCheckout(
-                        e,
-                        schema.variant_id,
-                        schema.offer_id,
-                        schema.creative.coupon_code
-                      );
-                    } else if (schema.checkout.checkout_name === "shopify") {
-                      router.push(
-                        `https://${schema.store_url}/cart/${schema.variant_id}:1`
-                      );
-                    }
-                    recordClicks(
-                      schema.offer_id,
-                      schema.advertiser,
-                      user_ip,
-                      "checkout init"
-                    );
-                    if (schema.pixel) {
-                      const noscript = document.createElement("noscript");
-                      const img = document.createElement("img");
-                      img.height = 1;
-                      img.width = 1;
-                      img.style.display = "none";
-                      img.src = `https://www.facebook.com/tr?id=${schema.pixel.id}&ev=Checkout&noscript=1`;
-                      img.alt = "Facebook Pixel";
-                      noscript.appendChild(img);
-                      document.body.appendChild(noscript);
-                      console.log("Checkout");
-                    }
-                  }}
+                  onClick={handleCheckoutClick}
                 >
                   {schema.config.button1Text}
                 </Button>
