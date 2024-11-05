@@ -54,7 +54,8 @@ export default function useCheckout() {
     e: React.MouseEvent<HTMLButtonElement>,
     variant_id: string,
     offer_id: string,
-    couponCode: string
+    couponCode: string,
+    utm_params:any
   ) => {
     e.preventDefault();
 
@@ -68,7 +69,7 @@ export default function useCheckout() {
           },
         ],
         couponCode: couponCode,
-        utmParams: `utm_source=instalanding&utm_medium=${offer_id}&utm_campaign=campaign-instalanding`,
+        utmParams: `utm_source=${utm_params?.utm_source}&utm_medium=${utm_params?.utm_medium}&utm_campaign=${utm_params?.utm_campaign}`,
       });
       console.log("______checkout_enabled", res);
     }

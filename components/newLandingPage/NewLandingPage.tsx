@@ -29,6 +29,7 @@ const NewLandingPage = ({
   advertiser,
   user_ip,
   tags,
+  utm_params
 }: any) => {
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -166,6 +167,7 @@ const NewLandingPage = ({
             user_ip={user_ip}
             text={schema.creative.footer_text}
             button_text={schema.config.button1Text}
+            utm_params={utm_params}
           />
         </div>
 

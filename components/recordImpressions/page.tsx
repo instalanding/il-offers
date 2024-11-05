@@ -8,11 +8,14 @@ type ImpressionsProp = {
     advertiser: string,
     user_ip: string,
     store_url: string,
-    tags: any
+    tags: any,
+    utm_params?: any
 };
 
-const RecordImpressions = ({ offer_id, advertiser, user_ip, store_url, tags }: ImpressionsProp) => {
+const RecordImpressions = ({ offer_id, advertiser, user_ip, store_url, tags, utm_params }: ImpressionsProp) => {
     const [visitorId, setVisitorId] = useState<string>();
+
+    console.log(offer_id, "recordImpressionsComp")
 
     const getVisitorId = async () => {
         if (typeof window === "undefined") return; // Ensure this code only runs on the client side
@@ -29,7 +32,7 @@ const RecordImpressions = ({ offer_id, advertiser, user_ip, store_url, tags }: I
 
     const impressions = async () => {
         try {
-            const response = await axios.get(`/api/clicks-impressions?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&tags=${tags}&visitor_id=${visitorId}`);
+            const response = await axios.get(`/api/clicks-impressions/?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&tags=${tags}&visitor_id=${visitorId}&utm_source=${utm_params.utm_source}&utm_medium=${utm_params.utm_medium}&utm_campaign=${utm_params.utm_campaign}`);
             console.log(response.status, "status");
         } catch (error) {
             console.error("Error recording impressions:", error);
