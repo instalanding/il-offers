@@ -188,6 +188,7 @@ const Coupon = async ({
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          utm_params={utm_params}
         />
         <MultipleCTA
           pixel={data.pixel ? data.pixel.id : ""}

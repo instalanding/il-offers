@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { RiArrowRightSLine } from "react-icons/ri";
 import useCheckout from "@/hooks/Checkout";
+import { useSearchParams } from 'next/navigation'
 
 declare global {
   interface Window {
@@ -17,11 +18,19 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
   const { handleCheckout } = useCheckout();
   console.log(schema.creative.coupon_code, "schema.creative.coupon_code");
 
+  const searchParams = useSearchParams()
+ 
+  const utm_medium = searchParams.get('utm_medium');
+  const utm_source = searchParams.get('utm_source');
+  const utm_campaign = searchParams.get('utm_campaign');
+
+  console.table([utm_medium, utm_source, utm_campaign]);
+
   return (
     <>
       <Link
         key={btn._id}
-        href={`https://links.instalanding.in/redirect/?offer_id=${offer_id}&advertiser_id=${schema.advertiser}&tags=${schema?.tags}&redirect_url=${btn.url}&ctatype=${btn.type}`}
+        href={`https://links.instalanding.in/redirect/?offer_id=${offer_id}&advertiser_id=${schema.advertiser}&tags=${schema?.tags}&redirect_url=${btn.url}&ctatype=${btn.type}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}`}
         target="_blank"
       >
         <button
