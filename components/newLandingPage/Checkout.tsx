@@ -8,10 +8,12 @@ import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useRouter } from "next/navigation";
 
-const Checkout = ({ schema, logo, user_ip }: any) => {
+const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
   const router = useRouter();
+
+  console.log("utm_params checkout", utm_params)
 
   function calculatePercentageOff(
     originalPrice: number,
@@ -139,7 +141,8 @@ const Checkout = ({ schema, logo, user_ip }: any) => {
                         e,
                         schema.variant_id,
                         schema.offer_id,
-                        schema.creative.coupon_code
+                        schema.creative.coupon_code,
+                        utm_params
                       );
                     } else if (schema.checkout.checkout_name === "shopify") {
                       router.push(

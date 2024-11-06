@@ -1,11 +1,18 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
 declare const shiprocketCheckoutEvents: any;
 
 export default function useCheckout() {
   const [loaded, setLoaded] = useState(false);
+
+  const searchParams = useSearchParams()
+ 
+  const utm_medium = searchParams.get('utm_medium');
+  const utm_source = searchParams.get('utm_source');
+  const utm_campaign = searchParams.get('utm_campaign');
 
   const loadScripts = () => {
     console.log("Fastrr Script loaded");
@@ -54,7 +61,8 @@ export default function useCheckout() {
     e: React.MouseEvent<HTMLButtonElement>,
     variant_id: string,
     offer_id: string,
-    couponCode: string
+    couponCode: string,
+    utm_params:any
   ) => {
     e.preventDefault();
 
@@ -68,7 +76,7 @@ export default function useCheckout() {
           },
         ],
         couponCode: couponCode,
-        utmParams: `utm_source=instalanding&utm_medium=${offer_id}&utm_campaign=campaign-instalanding`,
+        utmParams: `utm_source=${utm_source || "instalanding"}&utm_medium=${utm_medium || "campaign_instalanding"}&utm_campaign=${utm_campaign || offer_id}`,
       });
       console.log("______checkout_enabled", res);
     }

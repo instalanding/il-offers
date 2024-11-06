@@ -32,6 +32,7 @@ const Coupon = async ({
 }) => {
   const offer_id = params.offer_id;
   const userIp = searchParams.user_ip ?? "";
+  const utm_params = searchParams;
   const headersList = headers();
   const domain = headersList.get("host");
 
@@ -45,6 +46,7 @@ const Coupon = async ({
   console.log(data.pixel);
 
   console.log(domain);
+  console.log(offer_id, "utm_paramsutm_params")
 
   const domainUrls =
     data.domains && Array.isArray(data.domains)
@@ -97,6 +99,7 @@ const Coupon = async ({
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          utm_params={utm_params}
         />
         <NewLandingPage
           schema={data}
@@ -106,6 +109,7 @@ const Coupon = async ({
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          utm_params={utm_params}
         />
       </>
     );
@@ -184,6 +188,7 @@ const Coupon = async ({
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          utm_params={utm_params}
         />
         <MultipleCTA
           pixel={data.pixel ? data.pixel.id : ""}
