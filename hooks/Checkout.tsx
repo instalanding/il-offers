@@ -10,9 +10,9 @@ export default function useCheckout() {
 
   const searchParams = useSearchParams()
  
-  const utm_medium = searchParams.get('utm_medium') || null;
-  const utm_source = searchParams.get('utm_source') ||  null;
-  const utm_campaign = searchParams.get('utm_campaign') || null;
+  const utm_medium = searchParams.get('utm_medium');
+  const utm_source = searchParams.get('utm_source');
+  const utm_campaign = searchParams.get('utm_campaign');
 
   const loadScripts = () => {
     console.log("Fastrr Script loaded");
