@@ -20,9 +20,9 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
 
   const searchParams = useSearchParams()
  
-  const utm_medium = searchParams.get('utm_medium');
-  const utm_source = searchParams.get('utm_source');
-  const utm_campaign = searchParams.get('utm_campaign');
+  const utm_medium = searchParams.get('utm_medium') || null;
+  const utm_source = searchParams.get('utm_source') ||  null;
+  const utm_campaign = searchParams.get('utm_campaign') || null;
 
   console.table([utm_medium, utm_source, utm_campaign]);
 
