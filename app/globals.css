@@ -208,9 +208,9 @@
   list-style-position: inside;
 }
 
-.text-editor-css ol > li::before {
+/* .text-editor-css ol > li::before {
   content: "• ";
-}
+} */
 
 /* .text-editor-css ul {
   margin-left: 15px;
