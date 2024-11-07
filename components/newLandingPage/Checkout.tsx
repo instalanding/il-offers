@@ -146,7 +146,7 @@ const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
                       );
                     } else if (schema.checkout.checkout_name === "shopify") {
                       router.push(
-                        `https://${schema.store_url}/cart/${schema.variant_id}:1`
+                        `https://${schema.store_url}/cart/${schema.variant_id}:1?discount=${schema.creative.coupon_code}`
                       );
                     }
                     recordClicks(
