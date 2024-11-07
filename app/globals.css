@@ -201,7 +201,7 @@
 }
 
 .text-editor-css ol > li {
-  list-style-type: decimal;
+  /* list-style-type: decimal; */
   font-size: 14px;
   font-weight: 300;
   line-height: 23px;
@@ -212,12 +212,12 @@
   content: "• ";
 }
 
-.text-editor-css ul {
+/* .text-editor-css ul {
   margin-left: 15px;
-}
+} */
 
 .text-editor-css ul > li {
-  list-style-type: disc;
+  /* list-style-type: disc; */
   list-style-position: outside;
   color: #020817;
   /* font-family: "Open Sans"; */
