@@ -107,9 +107,9 @@ const NewLandingPage = ({
                       <CarouselItem key={key}>
                         <Image
                           alt={"Image"}
-                          src={modifyCloudinaryUrl(image, 380, 380)}
-                          width={380}
-                          height={380}
+                          src={modifyCloudinaryUrl(image, 680, 680)}
+                          width={480}
+                          height={480}
                           className="w-full"
                           priority={key === 0}
                         />
