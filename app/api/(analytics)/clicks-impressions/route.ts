@@ -13,19 +13,12 @@ export const POST = async (req: Request) => {
     const tagsParam = searchParams.get("tags");
     const useragent = userAgent(req);
     const userIP = (req.headers.get('x-forwarded-for') ?? '127.0.0.1').split(',')[0];
-    console.log(userIP, "userIP")
 
     if (!offerId) {
         return NextResponse.json({ error: 'offer_id query parameter is required' }, { status: 400 });
     }
-
-    console.log(tagsParam,
-        "tagsParam"
-    )
     const tagsArray = tagsParam ? tagsParam.split(',').map(tag => tag.trim()) : [];
     const formattedTags = [...tagsArray, null, null, null, null, null].slice(0, 5);
-
-    console.log(formattedTags, "formattedTags")
 
     try {
         const apiData = await fetchApi(userIP);

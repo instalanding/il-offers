@@ -13,8 +13,6 @@ const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  console.log("utm_params checkout", utm_params)
-
   function calculatePercentageOff(
     originalPrice: number,
     offerPrice: number
@@ -165,7 +163,6 @@ const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
                       img.alt = "Facebook Pixel";
                       noscript.appendChild(img);
                       document.body.appendChild(noscript);
-                      console.log("Checkout");
                     }
                   }}
                 >

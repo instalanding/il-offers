@@ -52,11 +52,9 @@ const Address = ({ userId, setNewAddress, render, setRender }: any) => {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
         setSaving(true)
         try {
             const response = await axios.post(`api/address`, { ...values, user_id: userId });
-            console.log(response.data);
             setNewAddress(false);
             setRender(!render)
         } catch (error: any) {
