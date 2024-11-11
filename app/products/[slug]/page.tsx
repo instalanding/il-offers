@@ -40,10 +40,6 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
   const data = await getCampaign(slug);
   if (!data) return <NotFound />;
 
-  console.log(data.pixel);
-
-  console.log(domain);
-
   const domainUrls =
     data.domains && Array.isArray(data.domains)
       ? data.domains.map((d: { url: string }) => d.url)
