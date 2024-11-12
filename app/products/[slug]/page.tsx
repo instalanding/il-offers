@@ -163,7 +163,6 @@ export async function generateMetadata(
   const slug = params.slug;
 
   const data = await getCampaign(slug);
-  console.log(data, "data ");
 
   const title = data?.creative?.title || "Instalanding offers";
   const description = data?.store_description || "Instalanding Offering";

@@ -38,8 +38,6 @@ export const GET = async (req: Request) => {
       );
     }
 
-    console.log("______________________cmapigns", allCampaign.length);
-
     if (!campaign) {
       await client.close();
       return NextResponse.json(

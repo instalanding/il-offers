@@ -43,11 +43,6 @@ const Coupon = async ({
   const data = await getCampaign(offer_id);
   if (!data) return <NotFound />;
 
-  console.log(data.pixel);
-
-  console.log(domain);
-  console.log(offer_id, "utm_paramsutm_params")
-
   const domainUrls =
     data.domains && Array.isArray(data.domains)
       ? data.domains.map((d: { url: string }) => d.url)
@@ -211,7 +206,6 @@ export async function generateMetadata(
   const offer_id = params.offer_id;
 
   const data = await getCampaign(offer_id);
-  console.log(data, "data ");
 
   const title = data?.creative?.title || "Instalanding offers";
   const description = data?.store_description || "Instalanding Offering";

@@ -15,7 +15,7 @@ export default function useCheckout() {
   const utm_campaign = searchParams.get('utm_campaign');
 
   const loadScripts = () => {
-    console.log("Fastrr Script loaded");
+    // console.log("Fastrr Script loaded");
     if (loaded) return; // Prevent loading if already loaded
 
     const script = document.createElement("script");
