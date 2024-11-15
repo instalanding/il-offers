@@ -50,6 +50,14 @@ const NewLandingPage = ({
     }
   };
 
+  function calculatePercentageOff(
+    originalPrice: number,
+    offerPrice: number
+  ): number {
+    let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
+    return Math.round(percentageOff);
+  }
+
   // Fetch new data when the variant_id changes
   useEffect(() => {
     const fetchData = async () => {
@@ -132,7 +140,7 @@ const NewLandingPage = ({
           <div className="bg-white py-4 rounded-lg shadow-sm">
             {currentSchema.reviews && currentSchema.reviews.length > 0 && (
               <Reviews product_handle={currentSchema.product_handle} />
-            ) }
+            )}
           </div>
         </div>
 
@@ -150,37 +158,52 @@ const NewLandingPage = ({
 
         {currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
           <div className="my-3 bg-white px-4 rounded-lg">
-            <h1 className="text-[17px] mb-2 font-semibold">Available Options</h1>
-            <div className="grid grid-cols-2 gap-4">
+            <h1 className=" flex flex-col text-[17px] mb-2 font-semibold">Available Options
+              {currentVariantId && (
+                <div className="text-xs my-2 font-semibold">
+                  {currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
+                    ? currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
+                    : currentSchema.campaign_name
+                  }
+                </div>
+              )}
+            </h1>
+
+            <div className="grid grid-cols-3 gap-2">
               {currentSchema.all_campaigns.map((product: any) => (
-                <div 
-                  key={product._id} 
-                  className={`cursor-pointer border rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] hover:border-gray-300 transition-all duration-300 ${product.variant_id === currentVariantId ? 'border-gray-300 shadow-[0_4px_10px_rgba(0,0,0,0.4)]' : ''}`}
+                <div
+                  key={product._id}
+                  className={`cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${product.variant_id === currentVariantId ? 'border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]' : ''}`}
                   onClick={() => {
                     setCurrentVariantId(product.variant_id); // Update selected variant
                   }}
                 >
-                  <Link 
+                  <Link
                     href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
                   >
                     <Image
-                      alt={product.campaign_name}
+                      alt={product.variant_type ? product.variant_type : "Variant"}
                       src={product.creative.image}
-                      width={200}
+                      width={60}
                       height={50}
-                      className="w-full h-auto object-cover"
+                      className="justify-self-center"
                     />
-                    <h2 className="text-[14px] font-semibold">{product.campaign_name}</h2>
+                    <h2 className="text-[14px] font-semibold">{product.variant_type ? product.variant_type : product.campaign_name}</h2>
                     <div className="flex items-center">
-                      {product.price.offerPrice.value < product.price.originalPrice.value ? (
-                        <>
-                          <p className="text-[12px] text-gray-600 line-through">
-                            {product.price.originalPrice.prefix}{product.price.originalPrice.value}
+                      {(parseFloat(product?.price?.offerPrice?.value) < parseFloat(product?.price?.originalPrice?.value)) ? (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex justify-center items-center gap-1">
+                            <p className="text-[12px] text-gray-600 line-through">
+                              {product.price.originalPrice.prefix}{product.price.originalPrice.value}
+                            </p>
+                            <p className="text-[13px] font-semibold text-green-600">
+                              {product.price.offerPrice.prefix}{product.price.offerPrice.value}
+                            </p>
+                          </div>
+                          <p className="text-[12px] text-red-600">
+                            {calculatePercentageOff(parseFloat(product.price.originalPrice.value), parseFloat(product.price.offerPrice.value))}% off
                           </p>
-                          <p className="text-[14px] font-semibold text-green-600 ml-2">
-                            {product.price.offerPrice.prefix}{product.price.offerPrice.value}
-                          </p>
-                        </>
+                        </div>
                       ) : (
                         <p className="text-[12px] font-semibold">
                           {product.price.originalPrice.prefix}{product.price.originalPrice.value}
