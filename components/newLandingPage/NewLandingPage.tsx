@@ -58,6 +58,14 @@ const NewLandingPage = ({
     return Math.round(percentageOff);
   }
 
+  // Function to truncate text and add ellipsis if it exceeds a certain length
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "...";
+    }
+    return text;
+  };
+
   // Fetch new data when the variant_id changes
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +78,13 @@ const NewLandingPage = ({
 
     fetchData();
   }, [currentVariantId, schema.product_handle]); // Dependency on currentVariantId
+
+  // Sort campaigns by offer price
+  const sortedCampaigns = currentSchema.all_campaigns?.sort((a: any, b: any) => {
+    const offerPriceA = parseFloat(a.price.offerPrice.value);
+    const offerPriceB = parseFloat(b.price.offerPrice.value);
+    return offerPriceA - offerPriceB; // Ascending order
+  }) || [];
 
   return (
     <div
@@ -156,9 +171,9 @@ const NewLandingPage = ({
           </div>
         )}
 
-        {currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
+        {currentSchema.all_campaigns && sortedCampaigns.length > 1 && (
           <div className="my-3 bg-white px-4 rounded-lg">
-            <h1 className=" flex flex-col text-[17px] mb-2 font-semibold">Available Options
+            <h1 className="flex flex-col text-[17px] mb-2 font-semibold">Available Options
               {currentVariantId && (
                 <div className="text-xs my-2 font-semibold">
                   {currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
@@ -170,7 +185,7 @@ const NewLandingPage = ({
             </h1>
 
             <div className="grid grid-cols-3 gap-2">
-              {currentSchema.all_campaigns.map((product: any) => (
+              {sortedCampaigns.map((product: any) => (
                 <div
                   key={product._id}
                   className={`cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${product.variant_id === currentVariantId ? 'border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]' : ''}`}
@@ -188,24 +203,26 @@ const NewLandingPage = ({
                       height={50}
                       className="justify-self-center"
                     />
-                    <h2 className="text-[14px] font-semibold">{product.variant_type ? product.variant_type : product.campaign_name}</h2>
+                    <h2 className="text-[14px] font-semibold">
+                      {truncateText(product.variant_type ? product.variant_type : product.campaign_name, 25)}
+                    </h2>
                     <div className="flex items-center">
                       {(parseFloat(product?.price?.offerPrice?.value) < parseFloat(product?.price?.originalPrice?.value)) ? (
                         <div className="flex flex-col gap-1">
                           <div className="flex justify-center items-center gap-1">
-                            <p className="text-[12px] text-gray-600 line-through">
+                            <p className="text-[13px] text-gray-600 line-through">
                               {product.price.originalPrice.prefix}{product.price.originalPrice.value}
                             </p>
-                            <p className="text-[13px] font-semibold text-green-600">
+                            <p className="text-[15px] font-semibold text-green-600">
                               {product.price.offerPrice.prefix}{product.price.offerPrice.value}
                             </p>
                           </div>
-                          <p className="text-[12px] text-red-600">
+                          <p className="text-[13px] text-red-600">
                             {calculatePercentageOff(parseFloat(product.price.originalPrice.value), parseFloat(product.price.offerPrice.value))}% off
                           </p>
                         </div>
                       ) : (
-                        <p className="text-[12px] font-semibold">
+                        <p className="text-[15px] font-semibold text-green-600">
                           {product.price.originalPrice.prefix}{product.price.originalPrice.value}
                         </p>
                       )}
