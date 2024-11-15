@@ -40,10 +40,6 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
   const data = await getCampaign(slug);
   if (!data) return <NotFound />;
 
-  console.log(data.pixel);
-
-  console.log(domain);
-
   const domainUrls =
     data.domains && Array.isArray(data.domains)
       ? data.domains.map((d: { url: string }) => d.url)
@@ -167,7 +163,6 @@ export async function generateMetadata(
   const slug = params.slug;
 
   const data = await getCampaign(slug);
-  console.log(data, "data ");
 
   const title = data?.creative?.title || "Instalanding offers";
   const description = data?.store_description || "Instalanding Offering";

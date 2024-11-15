@@ -11,8 +11,6 @@ const Reviews = ({ product_handle }: any) => {
 const fetchReviews = async () => {
   try {
     const {data} = await axios.get(`${window.location.origin}/api/reviews/?shopify_product_handle=${product_handle}`);
-    console.log(data, "response.data");
-
     setReviews(data.topReviews);
     setReviewCount(data.totalReviews);
   } catch (error: any) {

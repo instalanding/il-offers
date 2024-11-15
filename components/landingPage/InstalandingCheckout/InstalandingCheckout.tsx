@@ -87,7 +87,6 @@ const InstalandingCheckout = ({ logo, schema, setOpen, open, offer_id }: any) =>
         setIsVerifying(true);
         try {
           const { data } = await axios.get(`api/users?phone_number=${input}`);
-          console.log(data, "user");
           setUserId(data.data.id);
           setOtpIsVerified(data.data.is_verified);
         } catch (err: any) {
@@ -96,7 +95,6 @@ const InstalandingCheckout = ({ logo, schema, setOpen, open, offer_id }: any) =>
             setShowOtpInput(true);
             const res = await handleSendOtp(input);
             setRequestId(res.requestId);
-            console.log(res.requestId, "response");
           }
         } finally {
           setIsVerifying(false);
@@ -109,7 +107,6 @@ const InstalandingCheckout = ({ logo, schema, setOpen, open, offer_id }: any) =>
     if (value.length === 4) {
       setOtpVerifying(true);
       const res = await handleVerifyOtp(value, requestId);
-      console.log(res);
       if (res?.response?.status === 400) {
         toast({
           variant: "destructive",
@@ -122,7 +119,6 @@ const InstalandingCheckout = ({ logo, schema, setOpen, open, offer_id }: any) =>
           phone_number: phoneNumber,
           is_verified: res.isOTPVerified || false,
         });
-        console.log(data);
         setUserId(data.data.user.id);
         setAddresses(data.data.addresses);
         toast({
@@ -141,7 +137,6 @@ const InstalandingCheckout = ({ logo, schema, setOpen, open, offer_id }: any) =>
     try {
       if (!userId) return;
       const { data } = await axios.get(`api/address?user_id=${userId}`);
-      // console.log(data.data[0], "address");
       setAddresses(data.data);
       setAddressId(data.data[0].id);
       setSelectedAddress(data.data[0]);
@@ -156,7 +151,6 @@ const InstalandingCheckout = ({ logo, schema, setOpen, open, offer_id }: any) =>
     if (userId) {
       fetchAddresses();
     }
-    console.log(addresses, userId, "addresses userId");
   }, [userId, render]);
 
   const fetchSelectedAddress = async () => {
@@ -165,7 +159,6 @@ const InstalandingCheckout = ({ logo, schema, setOpen, open, offer_id }: any) =>
       const { data } = await axios.get(
         `api/address?user_id=${userId}&id=${addressId}`
       );
-      console.log(data.data[0], "address");
       setAddressId(data.data[0].id);
       setSelectedAddress(data.data[0]);
     } catch (err) {

@@ -2,7 +2,7 @@
 
 import createGradient from "@/lib/createGradient";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -14,12 +14,6 @@ import Reviews from "./Reviews";
 import Checkout from "./Checkout";
 import Link from "next/link";
 import { modifyCloudinaryUrl } from "@/lib/modifyCloudinaryUrl";
-
-interface MyComponentProps {
-  schema: {
-    store_description: string;
-  };
-}
 
 const NewLandingPage = ({
   schema,
@@ -34,7 +28,10 @@ const NewLandingPage = ({
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [accordionState, setAccordionState] = useState<string>("item-1");
+  const [currentVariantId, setCurrentVariantId] = useState<string | null>(schema.variant_id);
+  const [currentSchema, setCurrentSchema] = useState(schema); // State to hold the current schema
 
+  const offer_ids = ["a423d8"]
   // Function to handle the accordion toggle
   const handleAccordionToggle = (value: string) => {
     setAccordionState((prevState) => (prevState === value ? "item-2" : value));
@@ -54,38 +51,43 @@ const NewLandingPage = ({
     }
   };
 
-  function calculatePercentageOff(
-    originalPrice: number,
-    offerPrice: number
-  ): number {
-    let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
-    return Math.round(percentageOff);
-  }
+  // Fetch new data when the variant_id changes
+  useEffect(() => {
+    const fetchData = async () => {
+      if (currentVariantId) {
+        const response = await fetch(`/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`);
+        const data = await response.json();
+        setCurrentSchema(data); // Update the current schema with the fetched data
+      }
+    };
+
+    fetchData();
+  }, [currentVariantId, schema.product_handle]); // Dependency on currentVariantId
 
   return (
     <div
       ref={topRef}
       className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
-      style={{ backgroundImage: createGradient(schema.config.backgroundColor) }}
+      style={{ backgroundImage: createGradient(currentSchema?.config?.backgroundColor) }} // Use currentSchema for background
     >
-      <div className="w-[380px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
+      <div className={`w-[380px] ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}>
         <div className="sticky top-0 z-50">
-          {schema.creative.text && (
+          {currentSchema?.creative?.text && (
             <div>
               <p
                 style={{
-                  backgroundColor: schema.config.backgroundColor,
-                  color: schema.config.textColor,
+                  backgroundColor: currentSchema.config.backgroundColor,
+                  color: currentSchema?.config?.textColor,
                 }}
                 className="text-[12px] text-white text-center p-2 px-6"
               >
-                {schema.creative.text}
+                {currentSchema.creative.text}
               </p>
             </div>
           )}
-          <div className="flex flex-col items-center justify-center py-2 bg-white">
+          <div className={`flex flex-col items-center justify-center py-2 ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'}`}>
             <Link
-              href={`https://${schema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
+              href={`https://${currentSchema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
             >
               <Image
                 alt={`logo`}
@@ -97,12 +99,12 @@ const NewLandingPage = ({
             </Link>
           </div>
         </div>
-        {schema.creative.carousel_images.length !== 0 && (
+        {currentSchema.creative.carousel_images.length !== 0 && (
           <div className="">
             <Carousel>
               <CarouselContent>
-                {schema.creative.carousel_images &&
-                  schema.creative.carousel_images.map(
+                {currentSchema.creative.carousel_images &&
+                  currentSchema.creative.carousel_images.map(
                     (image: string, key: number) => (
                       <CarouselItem key={key}>
                         <Image
@@ -123,54 +125,98 @@ const NewLandingPage = ({
           </div>
         )}
         <div className="mx-3 mt-3">
-          <h1 className=" text-[20px] font-semibold text-center">
-            {schema.creative.title}
+          <h1 className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? 'text-white': 'text-black'}`}>
+            {currentSchema.creative.title}
           </h1>
         </div>
-
-        {console.log(schema.product_handle, "schema.product_handle")}
-          <div>
-            <div className="bg-white py-4 rounded-lg shadow-sm">
-              <Reviews product_handle={schema.product_handle} />
-            </div>
+        <div>
+          <div className={`${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} py-4 rounded-lg shadow-sm`}>
+            {currentSchema.reviews && currentSchema.reviews.length > 0 && (
+              <Reviews product_handle={currentSchema.product_handle} />
+            ) }
           </div>
-        
+        </div>
 
-        {schema.creative.terms_and_conditions && (
-          <div className=" my-3 bg-white px-4 rounded-lg">
-            <h1 className="text-[17px] mb-2 font-semibold">
-              Details
-            </h1>
+        {currentSchema.creative.terms_and_conditions && (
+          <div className={` my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} px-4 rounded-lg`}>
+            {/* <h1 className="text-[17px] mb-2 font-semibold">Details</h1> */}
             <div
               className="text-editor-css"
               dangerouslySetInnerHTML={{
-                __html: schema.creative.terms_and_conditions,
+                __html: currentSchema.creative.terms_and_conditions,
               }}
             ></div>
           </div>
         )}
+{!offer_ids.includes(offer_id) ? <>
+  {currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
+          <div className="my-3 bg-white px-4 rounded-lg">
+            <h1 className="text-[17px] mb-2 font-semibold">Available Options</h1>
+            <div className="grid grid-cols-2 gap-4">
+              {currentSchema.all_campaigns.map((product: any) => (
+                <div 
+                  key={product._id} 
+                  className={`cursor-pointer border rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] hover:border-gray-300 transition-all duration-300 ${product.variant_id === currentVariantId ? 'border-gray-300 shadow-[0_4px_10px_rgba(0,0,0,0.4)]' : ''}`}
+                  onClick={() => {
+                    setCurrentVariantId(product.variant_id); // Update selected variant
+                  }}
+                >
+                  <Link 
+                    href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
+                  >
+                    <Image
+                      alt={product.campaign_name}
+                      src={product.creative.image}
+                      width={200}
+                      height={50}
+                      className="w-full h-auto object-cover"
+                    />
+                    <h2 className="text-[14px] font-semibold">{product.campaign_name}</h2>
+                    <div className="flex items-center">
+                      {product.price.offerPrice.value < product.price.originalPrice.value ? (
+                        <>
+                          <p className="text-[12px] text-gray-600 line-through">
+                            {product.price.originalPrice.prefix}{product.price.originalPrice.value}
+                          </p>
+                          <p className="text-[14px] font-semibold text-green-600 ml-2">
+                            {product.price.offerPrice.prefix}{product.price.offerPrice.value}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-[12px] font-semibold">
+                          {product.price.originalPrice.prefix}{product.price.originalPrice.value}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+</> : null}
+
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
           <Checkout
-            pixel={schema.pixel ? schema.pixel.id : ""}
-            originalPrice={schema.price.originalPrice.value}
-            price={schema.price.offerPrice.value}
-            backgroundColor={schema.config.backgroundColor}
-            textColor={schema.config.textColor}
+            pixel={currentSchema.pixel ? currentSchema.pixel.id : ""}
+            originalPrice={currentSchema.price.originalPrice.value}
+            price={currentSchema.price.offerPrice.value}
+            backgroundColor={currentSchema.config.backgroundColor}
+            textColor={currentSchema.config.textColor}
             logo={logo}
-            schema={schema}
+            schema={currentSchema}
             offer_id={offer_id}
             scrollToBottom={scrollToBottom}
             handleAccordionToggle={handleAccordionToggle}
             advertiser={advertiser}
             store_url={store_url}
             user_ip={user_ip}
-            text={schema.creative.footer_text}
-            button_text={schema.config.button1Text}
+            text={currentSchema.creative.footer_text}
+            button_text={currentSchema.config.button1Text}
             utm_params={utm_params}
           />
         </div>
-
         <div ref={bottomRef}></div>
       </div>
     </div>

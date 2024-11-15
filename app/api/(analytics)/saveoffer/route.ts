@@ -8,7 +8,6 @@ export const POST = async (req: Request) => {
     const offerId = searchParams.get("offer_id");
     const ipFromShopify = searchParams.get("user_ip") ?? '';
     const userIP = (req.headers.get('x-forwarded-for') ?? '127.0.0.1').split(',')[0];
-    console.log(userIP, "userIP");
     const useragent = userAgent(req);
     const tagsParam = searchParams.get("tags");
     const tagsArray = tagsParam ? tagsParam.split(',').map(tag => tag.trim()) : [];
