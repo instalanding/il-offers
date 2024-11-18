@@ -31,6 +31,7 @@ const NewLandingPage = ({
   const [currentVariantId, setCurrentVariantId] = useState<string | null>(schema.variant_id);
   const [currentSchema, setCurrentSchema] = useState(schema); // State to hold the current schema
 
+  const offer_ids = ["a423d8"]
   // Function to handle the accordion toggle
   const handleAccordionToggle = (value: string) => {
     setAccordionState((prevState) => (prevState === value ? "item-2" : value));
@@ -90,16 +91,16 @@ const NewLandingPage = ({
     <div
       ref={topRef}
       className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
-      style={{ backgroundImage: createGradient(currentSchema.config.backgroundColor) }} // Use currentSchema for background
+      style={{ backgroundImage: createGradient(currentSchema?.config?.backgroundColor) }} // Use currentSchema for background
     >
-      <div className="w-[380px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
+      <div className={`w-[380px] ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}>
         <div className="sticky top-0 z-50">
-          {currentSchema.creative.text && (
+          {currentSchema?.creative?.text && (
             <div>
               <p
                 style={{
                   backgroundColor: currentSchema.config.backgroundColor,
-                  color: currentSchema.config.textColor,
+                  color: currentSchema?.config?.textColor,
                 }}
                 className="text-[12px] text-white text-center p-2 px-6"
               >
@@ -107,7 +108,7 @@ const NewLandingPage = ({
               </p>
             </div>
           )}
-          <div className="flex flex-col items-center justify-center py-2 bg-white">
+          <div className={`flex flex-col items-center justify-center py-2 ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'}`}>
             <Link
               href={`https://${currentSchema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
             >
@@ -147,12 +148,12 @@ const NewLandingPage = ({
           </div>
         )}
         <div className="mx-3 mt-3">
-          <h1 className=" text-[20px] font-semibold text-center">
+          <h1 className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? 'text-white': 'text-black'}`}>
             {currentSchema.creative.title}
           </h1>
         </div>
         <div>
-          <div className="bg-white py-4 rounded-lg shadow-sm">
+          <div className={`${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} py-4 rounded-lg shadow-sm`}>
             {currentSchema.reviews && currentSchema.reviews.length > 0 && (
               <Reviews product_handle={currentSchema.product_handle} />
             )}
@@ -160,8 +161,8 @@ const NewLandingPage = ({
         </div>
 
         {currentSchema.creative.terms_and_conditions && (
-          <div className=" my-3 bg-white px-4 rounded-lg">
-            <h1 className="text-[17px] mb-2 font-semibold">Details</h1>
+          <div className={` my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} px-4 rounded-lg`}>
+            {/* <h1 className="text-[17px] mb-2 font-semibold">Details</h1> */}
             <div
               className="text-editor-css"
               dangerouslySetInnerHTML={{
@@ -171,7 +172,8 @@ const NewLandingPage = ({
           </div>
         )}
 
-        {currentSchema.all_campaigns && sortedCampaigns.length > 1 && (
+{!offer_ids.includes(offer_id) ? <>
+  {currentSchema.all_campaigns && sortedCampaigns.length > 1 && (
           <div className="my-3 bg-white px-4 rounded-lg">
             <h1 className="flex flex-col text-[17px] mb-2 font-semibold">Available Options
               {currentVariantId && (
@@ -233,6 +235,8 @@ const NewLandingPage = ({
             </div>
           </div>
         )}
+</> : null}
+
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
           <Checkout
