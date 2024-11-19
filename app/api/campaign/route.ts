@@ -20,23 +20,22 @@ export const GET = async (req: Request) => {
     const campaignsCollection = database.collection("campaigns");
     const advertisersCollection = database.collection("advertisers");
 
-    // Find the campaign
-    const allCampaign = await campaignsCollection
+    // Find all campaigns
+    const allCampaigns = await campaignsCollection
       .find({ product_handle: slug })
       .toArray();
 
+    // Sort campaigns based on offer price
+    const sortedCampaigns = allCampaigns.sort((a, b) => {
+      const offerPriceA = parseFloat(a.price.offerPrice.value);
+      const offerPriceB = parseFloat(b.price.offerPrice.value);
+      return offerPriceA - offerPriceB; 
+    });
+
     // Ensure campaign is always a single document
     const campaign = variant_id
-      ? allCampaign.find((m) => m.variant_id === variant_id)
-      : allCampaign[0];
-
-    if (!campaign) {
-      await client.close();
-      return NextResponse.json(
-        { error: "Campaign not found" },
-        { status: 404 }
-      );
-    }
+      ? sortedCampaigns.find((m) => m.variant_id === variant_id)
+      : sortedCampaigns[0];
 
     if (!campaign) {
       await client.close();
@@ -66,7 +65,7 @@ export const GET = async (req: Request) => {
     campaign.store_url = advertiser.shop_url;
     campaign.domains = advertiser.domains;
 
-    campaign.all_campaigns = allCampaign.map((c) => {
+    campaign.all_campaigns = sortedCampaigns.map((c) => {
       const { _id, campaign_name, store_logo, store_url, ...rest } = c;
       return { _id, campaign_name, store_logo, store_url, ...rest };
     });
