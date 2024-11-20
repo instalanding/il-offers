@@ -80,14 +80,90 @@ const NewLandingPage = ({
     fetchData();
   }, [currentVariantId, schema.product_handle]); // Dependency on currentVariantId
 
+  const renderVariantsSection = () => {
+    return (
+      currentSchema.all_campaigns &&
+      currentSchema.all_campaigns.length > 1 && (
+        <div className="my-3 bg-white px-4 rounded-lg">
+          <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
+            Available Options
+            {currentVariantId && (
+              <div className="text-xs my-2 font-semibold">
+                {currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
+                  ? currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
+                  : currentSchema.campaign_name}
+              </div>
+            )}
+          </h1>
 
+          <div className="overflow-x-auto">
+            <div className="flex space-x-2">
+              {currentSchema.all_campaigns.map((product: any) => (
+                <div
+                  key={product._id}
+                  className={`flex-shrink-0 w-[calc(100%/2.5-1rem)] cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${product.variant_id === currentVariantId ? 'border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]' : ''}`}
+                  onClick={() => {
+                    setCurrentVariantId(product.variant_id); // Update selected variant
+                  }}
+                >
+                  <Link
+                    href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
+                  >
+                    <Image
+                      alt={product.variant_type ? product.variant_type : "Variant"}
+                      src={product.creative.image}
+                      width={60}
+                      height={50}
+                      className="justify-self-center"
+                    />
+                    <h2 className="text-[14px] font-semibold">
+                      {truncateText(product.variant_type ? product.variant_type : product.campaign_name, 25)}
+                    </h2>
+                    <div className="flex items-center">
+                      {parseFloat(product?.price?.offerPrice?.value) <
+                        parseFloat(product?.price?.originalPrice?.value) ? (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex justify-center items-center gap-1">
+                            <p className="text-[13px] text-gray-600 line-through">
+                              {product.price.originalPrice.prefix}
+                              {product.price.originalPrice.value}
+                            </p>
+                            <p className="text-[15px] font-semibold text-green-600">
+                              {product.price.offerPrice.prefix}
+                              {product.price.offerPrice.value}
+                            </p>
+                          </div>
+                          <p className="text-[13px] text-red-600">
+                            {calculatePercentageOff(
+                              parseFloat(product.price.originalPrice.value),
+                              parseFloat(product.price.offerPrice.value)
+                            )}
+                            % off
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-[15px] font-semibold text-green-600">
+                          {product.price.originalPrice.prefix}
+                          {product.price.originalPrice.value}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )
+    );
+  };
   return (
     <div
       ref={topRef}
       className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
       style={{ backgroundImage: createGradient(currentSchema?.config?.backgroundColor) }} // Use currentSchema for background
     >
-      <div className={`w-[380px] ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}>
+      <div className={`w-[380px] ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}>
         <div className="sticky top-0 z-50">
           {currentSchema?.creative?.text && (
             <div>
@@ -102,7 +178,7 @@ const NewLandingPage = ({
               </p>
             </div>
           )}
-          <div className={`flex flex-col items-center justify-center py-2 ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'}`}>
+          <div className={`flex flex-col items-center justify-center py-2 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'}`}>
             <Link
               href={`https://${currentSchema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
             >
@@ -142,12 +218,15 @@ const NewLandingPage = ({
           </div>
         )}
         <div className="mx-3 mt-3">
-          <h1 className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? 'text-white': 'text-black'}`}>
+          <h1 className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
             {currentSchema.creative.title}
           </h1>
         </div>
+
+        {currentSchema.variant_position && <div className="mt-3">{renderVariantsSection()}</div>}
+
         <div>
-          <div className={`${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} py-4 rounded-lg shadow-sm`}>
+          <div className={`${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} py-4 rounded-lg shadow-sm`}>
             {currentSchema.reviews && currentSchema.reviews.length > 0 && (
               <Reviews product_handle={currentSchema.product_handle} />
             )}
@@ -155,7 +234,7 @@ const NewLandingPage = ({
         </div>
 
         {currentSchema.creative.terms_and_conditions && (
-          <div className={` my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]': 'bg-white'} px-4 rounded-lg`}>
+          <div className={` my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
             {/* <h1 className="text-[17px] mb-2 font-semibold">Details</h1> */}
             <div
               className="text-editor-css"
@@ -166,72 +245,8 @@ const NewLandingPage = ({
           </div>
         )}
 
-{!offer_ids.includes(offer_id) ? <>
-  {currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
-          <div className="my-3 bg-white px-4 rounded-lg">
-            <h1 className="flex flex-col text-[17px] mb-2 font-semibold">Available Options
-              {currentVariantId && (
-                <div className="text-xs my-2 font-semibold">
-                  {currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
-                    ? currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
-                    : currentSchema.campaign_name
-                  }
-                </div>
-              )}
-            </h1>
+        {!currentSchema.variant_position && renderVariantsSection()}
 
-            <div className="overflow-x-auto">
-              <div className="flex space-x-2">
-                {currentSchema.all_campaigns.map((product: any) => (
-                  <div
-                    key={product._id}
-                    className={`flex-shrink-0 w-[calc(100%/2.5-1rem)] cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${product.variant_id === currentVariantId ? 'border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]' : ''}`}
-                    onClick={() => {
-                      setCurrentVariantId(product.variant_id); // Update selected variant
-                    }}
-                  >
-                    <Link
-                      href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
-                    >
-                      <Image
-                        alt={product.variant_type ? product.variant_type : "Variant"}
-                        src={product.creative.image}
-                        width={60}
-                        height={50}
-                        className="justify-self-center"
-                      />
-                      <h2 className="text-[14px] font-semibold">
-                        {truncateText(product.variant_type ? product.variant_type : product.campaign_name, 25)}
-                      </h2>
-                      <div className="flex items-center">
-                        {(parseFloat(product?.price?.offerPrice?.value) < parseFloat(product?.price?.originalPrice?.value)) ? (
-                          <div className="flex flex-col gap-1">
-                            <div className="flex justify-center items-center gap-1">
-                              <p className="text-[13px] text-gray-600 line-through">
-                                {product.price.originalPrice.prefix}{product.price.originalPrice.value}
-                              </p>
-                              <p className="text-[15px] font-semibold text-green-600">
-                                {product.price.offerPrice.prefix}{product.price.offerPrice.value}
-                              </p>
-                            </div>
-                            <p className="text-[13px] text-red-600">
-                              {calculatePercentageOff(parseFloat(product.price.originalPrice.value), parseFloat(product.price.offerPrice.value))}% off
-                            </p>
-                          </div>
-                        ) : (
-                          <p className="text-[15px] font-semibold text-green-600">
-                            {product.price.originalPrice.prefix}{product.price.originalPrice.value}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-</> : null}
 
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
