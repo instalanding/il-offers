@@ -33,8 +33,9 @@ const NewLandingPage = ({
   const [accordionState, setAccordionState] = useState<string>("item-1");
   const [currentVariantId, setCurrentVariantId] = useState<string | null>(schema.variant_id);
   const [currentSchema, setCurrentSchema] = useState(schema); // State to hold the current schema
-  const [currentVariance, setCurrentVariance] = useState<string | null>(null);
+  // const [currentVariance, setCurrentVariance] = useState<string | null>(null);
   const [isVarianceLocked, setIsVarianceLocked] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
   const offer_ids = ["a423d8"]
   // Function to handle the accordion toggle
@@ -88,7 +89,7 @@ const NewLandingPage = ({
   const fetchVariance = async (isCheckoutClicked: boolean = false) => {
     try {
       const visitorId = await getVisitorId();
-      
+
       const response = await fetch(`/api/campaign/variance`, {
         method: "POST",
         headers: {
@@ -101,10 +102,12 @@ const NewLandingPage = ({
           isCheckoutClicked,
         }),
       });
-      
+
       const data = await response.json();
-      setCurrentVariance(data.variance);
+      // setCurrentVariance(data.variance);
       setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
+
+      setIframeUrl(data.variance);
       return data.variance;
     } catch (error) {
       console.error("Failed to fetch variance:", error);
@@ -294,20 +297,43 @@ const NewLandingPage = ({
           </>
         ) : (
           <div className="my-3 px-4">
-            {currentVariance && (
-              <div className={`${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
-                {currentVariance}
+            {/* {currentVariance && ( */}
+            <div className={`${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
+              {/* {currentVariance}
                 {isVarianceLocked && (
                   <div className="text-sm text-gray-500 mt-2">
                     This variance is locked for your session
                   </div>
+                )} */}
+              {iframeUrl ? (
+                <div className="my-3">
+                  <iframe
+                    src={iframeUrl}
+                    width="100%"
+                    height="600px"
+                    style={{ border: 'none' }}
+                    title="Variance Content"
+                  />
+                </div>
+              ): (<>
+                {currentSchema.creative.terms_and_conditions && (
+                  <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
+                    <div
+                      className="text-editor-css"
+                      dangerouslySetInnerHTML={{
+                        __html: currentSchema.creative.terms_and_conditions,
+                      }}
+                    ></div>
+                  </div>
                 )}
-              </div>
-            )}
+              </>)}
+            </div>
+            {/* )} */}
           </div>
         )}
 
         {!currentSchema.variant_position && renderVariantsSection()}
+
 
 
         <div className="flex-grow"></div>

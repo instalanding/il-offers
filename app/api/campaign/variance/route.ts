@@ -23,18 +23,26 @@ export const POST = async (req: Request) => {
         _id: new ObjectId(campaign_id)
       });
 
-      if (!campaign || !campaign.generated_html || campaign.generated_html.length === 0) {
+      // Check if the campaign exists and has generated_html
+      if (!campaign) {
         await client.close();
         return NextResponse.json(
-          { error: "Campaign not found or no variants available" },
+          { error: "Campaign not found" },
           { status: 404 }
         );
       }
 
+      // If generated_html is not available, return the default variance
+      if (!campaign.generated_html || campaign.generated_html.length === 0) {
+        await client.close();
+        return NextResponse.json({ 
+          variance: null,
+          showTerms: true 
+        });
+      }
+
       // Using generated_html array as our variances
-      // const variances = ["var-1", "var-2", "var-3", "var-4", "var-5"];
       const variances = campaign.generated_html;
-      console.log(variances)
 
       // If showDefault is true, return default variance
       if (showDefault) {
