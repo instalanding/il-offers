@@ -3,6 +3,8 @@
 import createGradient from "@/lib/createGradient";
 import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
 import {
   Carousel,
   CarouselContent,
@@ -23,13 +25,16 @@ const NewLandingPage = ({
   advertiser,
   user_ip,
   tags,
-  utm_params
+  utm_params,
+  showDefault // shows default variance 
 }: any) => {
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [accordionState, setAccordionState] = useState<string>("item-1");
   const [currentVariantId, setCurrentVariantId] = useState<string | null>(schema.variant_id);
   const [currentSchema, setCurrentSchema] = useState(schema); // State to hold the current schema
+  const [currentVariance, setCurrentVariance] = useState<string | null>(null);
+  const [isVarianceLocked, setIsVarianceLocked] = useState(false);
 
   const offer_ids = ["a423d8"]
   // Function to handle the accordion toggle
@@ -67,18 +72,58 @@ const NewLandingPage = ({
     return text;
   };
 
-  // Fetch new data when the variant_id changes
+  const getVisitorId = async () => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      return result.visitorId;
+    } catch (error) {
+      console.error("Error getting visitor identifier:", error);
+      return null;
+    }
+  };
+
+  const fetchVariance = async (isCheckoutClicked: boolean = false) => {
+    try {
+      const visitorId = await getVisitorId();
+      
+      const response = await fetch(`/api/campaign/variance`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          visitor_id: visitorId,
+          campaign_id: currentSchema._id,
+          showDefault,
+          isCheckoutClicked,
+        }),
+      });
+      
+      const data = await response.json();
+      setCurrentVariance(data.variance);
+      setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
+      return data.variance;
+    } catch (error) {
+      console.error("Failed to fetch variance:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (currentVariantId) {
         const response = await fetch(`/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`);
         const data = await response.json();
-        setCurrentSchema(data); // Update the current schema with the fetched data
+        setCurrentSchema(data);
       }
     };
 
     fetchData();
-  }, [currentVariantId, schema.product_handle]); // Dependency on currentVariantId
+    fetchVariance(); // Initial variance fetch
+  }, [currentVariantId, schema.product_handle, showDefault]);
 
   const renderVariantsSection = () => {
     return (
@@ -157,6 +202,7 @@ const NewLandingPage = ({
       )
     );
   };
+
   return (
     <div
       ref={topRef}
@@ -233,15 +279,31 @@ const NewLandingPage = ({
           </div>
         </div>
 
-        {currentSchema.creative.terms_and_conditions && (
-          <div className={` my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
-            {/* <h1 className="text-[17px] mb-2 font-semibold">Details</h1> */}
-            <div
-              className="text-editor-css"
-              dangerouslySetInnerHTML={{
-                __html: currentSchema.creative.terms_and_conditions,
-              }}
-            ></div>
+        {showDefault ? (
+          <>
+            {currentSchema.creative.terms_and_conditions && (
+              <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
+                <div
+                  className="text-editor-css"
+                  dangerouslySetInnerHTML={{
+                    __html: currentSchema.creative.terms_and_conditions,
+                  }}
+                ></div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="my-3 px-4">
+            {currentVariance && (
+              <div className={`${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
+                {currentVariance}
+                {isVarianceLocked && (
+                  <div className="text-sm text-gray-500 mt-2">
+                    This variance is locked for your session
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -267,6 +329,8 @@ const NewLandingPage = ({
             text={currentSchema.creative.footer_text}
             button_text={currentSchema.config.button1Text}
             utm_params={utm_params}
+            onCheckoutClick={fetchVariance}
+            isVarianceLocked={isVarianceLocked}
           />
         </div>
         <div ref={bottomRef}></div>

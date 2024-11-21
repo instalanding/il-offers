@@ -70,15 +70,11 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
                 height="1"
                 width="1"
                 style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${
-                  data.pixel.id
-                }&ev=ViewContent&noscript=1&cd[content_name]=${
-                  data.creative.title || "Offer"
-                }&cd[content_category]=Offer&cd[content_ids]=${
-                  data.variant_id || "none"
-                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
-                  data.price.offerPrice.value || 0
-                }&cd[currency]=INR`}
+                src={`https://www.facebook.com/tr?id=${data.pixel.id
+                  }&ev=ViewContent&noscript=1&cd[content_name]=${data.creative.title || "Offer"
+                  }&cd[content_category]=Offer&cd[content_ids]=${data.variant_id || "none"
+                  }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${data.price.offerPrice.value || 0
+                  }&cd[currency]=INR`}
                 alt="Facebook Pixel ViewContent"
               />
             )}
@@ -99,6 +95,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          showDefault={false}
         />
       </>
     );
@@ -121,15 +118,11 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
                 height="1"
                 width="1"
                 style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${
-                  data.pixel.id
-                }&ev=ViewContent&noscript=1&cd[content_name]=${
-                  data.creative.title || "Offer"
-                }&cd[content_category]=Offer&cd[content_ids]=${
-                  data.variant_id || "none"
-                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
-                  data.price.offerPrice.value || 0
-                }&cd[currency]=INR`}
+                src={`https://www.facebook.com/tr?id=${data.pixel.id
+                  }&ev=ViewContent&noscript=1&cd[content_name]=${data.creative.title || "Offer"
+                  }&cd[content_category]=Offer&cd[content_ids]=${data.variant_id || "none"
+                  }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${data.price.offerPrice.value || 0
+                  }&cd[currency]=INR`}
                 alt="Facebook Pixel ViewContent"
               />
             )}
@@ -168,7 +161,7 @@ export async function generateMetadata(
   const description = data?.store_description || "Instalanding Offering";
   const imageUrl =
     data?.templateType === "multiple-cta" ||
-    data?.templateType === "new-landing"
+      data?.templateType === "new-landing"
       ? data?.creative?.carousel_images?.[0]
       : data?.creative?.image;
 
