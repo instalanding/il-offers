@@ -30,9 +30,10 @@ const CarouselWrapper: React.FC<CarouselProps> = ({
             return (
               <CarouselItem key={m} className="flex justify-center">
                 <iframe
-                  className="w-[370px] h-[600px] rounded-2xl"
-                  key={m}
+                  className="w-[370px] h-screen rounded-2xl"
                   src={`${m}?instalanding_app_id=${instalandingAppId}&user_ip=${userIp}&shopify=true`}
+                  style={{ overflow: "hidden" }}
+                  scrolling="no"
                 ></iframe>
               </CarouselItem>
             );
