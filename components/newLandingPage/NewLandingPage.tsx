@@ -349,6 +349,7 @@ const NewLandingPage = ({
               {iframeUrl ? (
                 <div className="my-3">
                   <IframeResizer
+                  license="GPLv3"
                     src={iframeUrl}
                     // src="https://aigeneratedhtml.s3.amazonaws.com/campaigns/1732268127955-First_%3A_Benefit-Focused.html"
                     width="100%"
