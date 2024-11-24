@@ -16,6 +16,7 @@ import Reviews from "./Reviews";
 import Checkout from "./Checkout";
 import Link from "next/link";
 import { modifyCloudinaryUrl } from "@/lib/modifyCloudinaryUrl";
+import IframeResizer from '@iframe-resizer/react'
 
 const NewLandingPage = ({
   schema,
@@ -131,6 +132,12 @@ const NewLandingPage = ({
     fetchData();
     fetchVariance(); // Initial variance fetch
   }, [currentVariantId, schema.product_handle, showDefault]);
+
+  const iframeRef = useRef(null)
+
+  // useEffect(() => {
+  //   console.log(iframeRef?.getElement())
+  // })
 
   const renderVariantsSection = () => {
     return (
@@ -341,12 +348,15 @@ const NewLandingPage = ({
                 )} */}
               {iframeUrl ? (
                 <div className="my-3">
-                  <iframe
+                  <IframeResizer
+                  license="GPLv3"
                     src={iframeUrl}
+                    // src="https://aigeneratedhtml.s3.amazonaws.com/campaigns/1732268127955-First_%3A_Benefit-Focused.html"
                     width="100%"
-                    height="600px"
-                    style={{ border: 'none' }}
+                    // height="600px"
                     title="Variance Content"
+                    // forwardRef={iframeRef} 
+                    style={{ width: '100%',  height: '130vh' }}
                   />
                 </div>
               ) : (<>
