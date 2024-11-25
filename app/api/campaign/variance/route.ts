@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { MongoClient, ObjectId } from "mongodb";
 
+const THIRTY_MINUTES = 1 * 60 * 1000; // 30 minutes in milliseconds
+
 export const POST = async (req: Request) => {
     const { visitor_id, campaign_id, showDefault, isCheckoutClicked } = await req.json(); 
     
@@ -52,52 +54,66 @@ export const POST = async (req: Request) => {
           showTerms: true 
         });
       }
-  
-      // Check if user has a locked variance
-      const lockedVariance = await userVarianceCollection.findOne({
-        visitor_id,
-        checkout_clicked: true
-      });
-
-      if (lockedVariance) {
-        await client.close();
-        return NextResponse.json({
-          variance: lockedVariance.last_variance,
-          showTerms: false
-        });
-      }
 
       // Get the user's variance history for this campaign
       const userVariance = await userVarianceCollection.findOne({ 
         visitor_id, 
         campaign_id: new ObjectId(campaign_id)
       });
-      
+
+      // If user has clicked checkout before, always show that variance
+      if (userVariance?.checkout_clicked) {
+        await client.close();
+        return NextResponse.json({
+          variance: userVariance.last_variance,
+          showTerms: false
+        });
+      }
+
       let nextVariance;
       let shouldUpdate = false;
+      const currentTime = new Date().getTime();
 
-      // If checkout is clicked, lock this variance for the user
-      if (isCheckoutClicked === true) {
-        nextVariance = userVariance?.last_variance || variances[0];
-        shouldUpdate = true;
-      }
       // For new visitors
-      else if (!userVariance) {
-        // Get count of all records to determine starting point
-        const totalRecords = await userVarianceCollection.countDocuments();
-        nextVariance = variances[totalRecords % variances.length];
+      if (!userVariance) {
+        // Get the last assigned variance for this campaign
+        const lastAssignedVariance = await userVarianceCollection
+          .find({ campaign_id: new ObjectId(campaign_id) })
+          .sort({ _id: -1 })
+          .limit(1)
+          .toArray();
+
+        if (lastAssignedVariance.length === 0) {
+          // First ever visitor for this campaign
+          nextVariance = variances[0];
+        } else {
+          // Get the index of the last assigned variance
+          const lastIndex = variances.indexOf(lastAssignedVariance[0].last_variance);
+          // Assign the next variance in sequence
+          nextVariance = variances[(lastIndex + 1) % variances.length];
+        }
         shouldUpdate = true;
-      }
+      } 
       // For returning visitors
       else {
-        const currentIndex = variances.indexOf(userVariance.last_variance);
-        const nextIndex = (currentIndex + 1) % variances.length;
-        nextVariance = variances[nextIndex];
-        shouldUpdate = true;
+        const lastUpdatedTime = new Date(userVariance.last_updated).getTime();
+        const timeDifference = currentTime - lastUpdatedTime;
+
+        // If 30 minutes haven't passed, show the same variance
+        if (timeDifference < THIRTY_MINUTES) {
+          nextVariance = userVariance.last_variance;
+          shouldUpdate = false;
+        } 
+        // If 30 minutes have passed, show the next variance
+        else {
+          const currentIndex = variances.indexOf(userVariance.last_variance);
+          nextVariance = variances[(currentIndex + 1) % variances.length];
+          shouldUpdate = true;
+        }
       }
-  
+
       // Update the database if needed
-      if (shouldUpdate) {
+      if (shouldUpdate || isCheckoutClicked) {
         await userVarianceCollection.updateOne(
           { 
             visitor_id, 
@@ -113,9 +129,9 @@ export const POST = async (req: Request) => {
           { upsert: true }  
         );
       }
-  
+
       await client.close();
-  
+
       return NextResponse.json({ 
         variance: nextVariance,
         showTerms: false
