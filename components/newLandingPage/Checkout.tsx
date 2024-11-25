@@ -8,7 +8,14 @@ import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useRouter } from "next/navigation";
 
-const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
+const Checkout = ({ 
+  schema, 
+  logo, 
+  user_ip, 
+  utm_params,
+  onCheckoutClick,
+  isVarianceLocked
+}: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -66,7 +73,7 @@ const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
   }
 
   const getVisitorId = async () => {
-    if (typeof window === "undefined") return; // Ensure this code only runs on the client side
+    if (typeof window === "undefined") return;
 
     try {
       const fp = await FingerprintJS.load();
@@ -75,6 +82,53 @@ const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
     } catch (error) {
       console.error("Error getting visitor identifier:", error);
       return null;
+    }
+  };
+
+  const handleCheckoutButtonClick = async (e: React.MouseEvent) => {
+    try {
+      // First update the variance with checkout clicked
+      if (!isVarianceLocked) {
+        await onCheckoutClick(true); // Pass true to indicate checkout was clicked
+      }
+
+      // Then proceed with normal checkout flow
+      if (schema.checkout.checkout_name === "fastr") {
+        handleCheckout(
+          e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
+          schema.variant_id,
+          schema.offer_id,
+          schema.creative.coupon_code,
+          utm_params
+        );
+      } else if (schema.checkout.checkout_name === "shopify") {
+        router.push(
+          `https://${schema.store_url}/cart/${schema.variant_id}:1?discount=${schema.creative.coupon_code}`
+        );
+      }
+
+      // Record clicks
+      recordClicks(
+        schema.offer_id,
+        schema.advertiser,
+        user_ip,
+        "checkout init"
+      );
+
+      // Handle pixel
+      if (schema.pixel) {
+        const noscript = document.createElement("noscript");
+        const img = document.createElement("img");
+        img.height = 1;
+        img.width = 1;
+        img.style.display = "none";
+        img.src = `https://www.facebook.com/tr?id=${schema.pixel.id}&ev=Checkout&noscript=1`;
+        img.alt = "Facebook Pixel";
+        noscript.appendChild(img);
+        document.body.appendChild(noscript);
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
     }
   };
 
@@ -110,7 +164,7 @@ const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
           )}
         </div>
         <div className="flex gap-2 bg-white p-4 items-center ">
-          <div className=" flex flex-col">
+          <div className="flex flex-col">
             <p
               style={{ color: schema.config.backgroundColor }}
               className="font-bold text-[20px] text-center"
@@ -133,38 +187,7 @@ const Checkout = ({ schema, logo, user_ip, utm_params }: any) => {
                     backgroundColor: schema.config.backgroundColor,
                     color: schema.config.textColor,
                   }}
-                  onClick={(e) => {
-                    if (schema.checkout.checkout_name === "fastr") {
-                      handleCheckout(
-                        e,
-                        schema.variant_id,
-                        schema.offer_id,
-                        schema.creative.coupon_code,
-                        utm_params
-                      );
-                    } else if (schema.checkout.checkout_name === "shopify") {
-                      router.push(
-                        `https://${schema.store_url}/cart/${schema.variant_id}:1?discount=${schema.creative.coupon_code}`
-                      );
-                    }
-                    recordClicks(
-                      schema.offer_id,
-                      schema.advertiser,
-                      user_ip,
-                      "checkout init"
-                    );
-                    if (schema.pixel) {
-                      const noscript = document.createElement("noscript");
-                      const img = document.createElement("img");
-                      img.height = 1;
-                      img.width = 1;
-                      img.style.display = "none";
-                      img.src = `https://www.facebook.com/tr?id=${schema.pixel.id}&ev=Checkout&noscript=1`;
-                      img.alt = "Facebook Pixel";
-                      noscript.appendChild(img);
-                      document.body.appendChild(noscript);
-                    }
-                  }}
+                  onClick={handleCheckoutButtonClick}
                 >
                   {schema.config.button1Text}
                 </Button>

@@ -3,6 +3,8 @@
 import createGradient from "@/lib/createGradient";
 import Image from "next/image";
 import React, { useRef, useState, useEffect } from "react";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
 import {
   Carousel,
   CarouselContent,
@@ -14,6 +16,7 @@ import Reviews from "./Reviews";
 import Checkout from "./Checkout";
 import Link from "next/link";
 import { modifyCloudinaryUrl } from "@/lib/modifyCloudinaryUrl";
+import IframeResizer from '@iframe-resizer/react'
 
 const NewLandingPage = ({
   schema,
@@ -23,15 +26,21 @@ const NewLandingPage = ({
   advertiser,
   user_ip,
   tags,
-  utm_params
+  utm_params,
+  showDefault // shows default variance 
 }: any) => {
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [accordionState, setAccordionState] = useState<string>("item-1");
-  const [currentVariantId, setCurrentVariantId] = useState<string | null>(schema.variant_id);
+  const [currentVariantId, setCurrentVariantId] = useState<string | null>(
+    schema.variant_id
+  );
   const [currentSchema, setCurrentSchema] = useState(schema); // State to hold the current schema
+  // const [currentVariance, setCurrentVariance] = useState<string | null>(null);
+  const [isVarianceLocked, setIsVarianceLocked] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
-  const offer_ids = ["a423d8"]
+  const offer_ids = ["a423d8"];
   // Function to handle the accordion toggle
   const handleAccordionToggle = (value: string) => {
     setAccordionState((prevState) => (prevState === value ? "item-2" : value));
@@ -67,21 +76,72 @@ const NewLandingPage = ({
     return text;
   };
 
-  // Fetch new data when the variant_id changes
+  const getVisitorId = async () => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      return result.visitorId;
+    } catch (error) {
+      console.error("Error getting visitor identifier:", error);
+      return null;
+    }
+  };
+
+  const fetchVariance = async (isCheckoutClicked: boolean = false) => {
+    try {
+      const visitorId = await getVisitorId();
+
+      const response = await fetch(`/api/campaign/variance`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          visitor_id: visitorId,
+          campaign_id: currentSchema._id,
+          showDefault,
+          isCheckoutClicked,
+        }),
+      });
+
+      const data = await response.json();
+      // setCurrentVariance(data.variance);
+      setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
+
+      setIframeUrl(data.variance);
+      return data.variance;
+    } catch (error) {
+      console.error("Failed to fetch variance:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (currentVariantId) {
-        const response = await fetch(`/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`);
+        const response = await fetch(
+          `/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`
+        );
         const data = await response.json();
-        setCurrentSchema(data); // Update the current schema with the fetched data
+        setCurrentSchema(data);
       }
     };
 
     fetchData();
-  }, [currentVariantId, schema.product_handle]); // Dependency on currentVariantId
+    fetchVariance(); // Initial variance fetch
+  }, [currentVariantId, schema.product_handle, showDefault]);
+
+  const iframeRef = useRef(null)
+
+  // useEffect(() => {
+  //   console.log(iframeRef?.getElement())
+  // })
 
   const renderVariantsSection = () => {
     return (
+      // currentSchema.show_variants &&
       currentSchema.all_campaigns &&
       currentSchema.all_campaigns.length > 1 && (
         <div className="my-3 bg-white px-4 rounded-lg">
@@ -89,8 +149,12 @@ const NewLandingPage = ({
             Available Options
             {currentVariantId && (
               <div className="text-xs my-2 font-semibold">
-                {currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
-                  ? currentSchema.all_campaigns.find((p: any) => p.variant_id === currentVariantId)?.variant_type
+                {currentSchema.all_campaigns.find(
+                  (p: any) => p.variant_id === currentVariantId
+                )?.variant_type
+                  ? currentSchema.all_campaigns.find(
+                    (p: any) => p.variant_id === currentVariantId
+                  )?.variant_type
                   : currentSchema.campaign_name}
               </div>
             )}
@@ -101,7 +165,10 @@ const NewLandingPage = ({
               {currentSchema.all_campaigns.map((product: any) => (
                 <div
                   key={product._id}
-                  className={`flex-shrink-0 w-[calc(100%/2.5-1rem)] cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${product.variant_id === currentVariantId ? 'border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]' : ''}`}
+                  className={`flex-shrink-0 w-[calc(100%/2.5-1rem)] cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${product.variant_id === currentVariantId
+                    ? "border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
+                    : ""
+                    }`}
                   onClick={() => {
                     setCurrentVariantId(product.variant_id); // Update selected variant
                   }}
@@ -110,14 +177,21 @@ const NewLandingPage = ({
                     href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
                   >
                     <Image
-                      alt={product.variant_type ? product.variant_type : "Variant"}
+                      alt={
+                        product.variant_type ? product.variant_type : "Variant"
+                      }
                       src={product.creative.image}
                       width={60}
                       height={50}
                       className="justify-self-center"
                     />
                     <h2 className="text-[14px] font-semibold">
-                      {truncateText(product.variant_type ? product.variant_type : product.campaign_name, 25)}
+                      {truncateText(
+                        product.variant_type
+                          ? product.variant_type
+                          : product.campaign_name,
+                        25
+                      )}
                     </h2>
                     <div className="flex items-center">
                       {parseFloat(product?.price?.offerPrice?.value) <
@@ -157,13 +231,19 @@ const NewLandingPage = ({
       )
     );
   };
+
   return (
     <div
       ref={topRef}
       className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
-      style={{ backgroundImage: createGradient(currentSchema?.config?.backgroundColor) }} // Use currentSchema for background
+      style={{
+        backgroundImage: createGradient(currentSchema?.config?.backgroundColor),
+      }} // Use currentSchema for background
     >
-      <div className={`w-[380px] ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}>
+      <div
+        className={`w-[380px] ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+          } flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}
+      >
         <div className="sticky top-0 z-50">
           {currentSchema?.creative?.text && (
             <div>
@@ -178,7 +258,10 @@ const NewLandingPage = ({
               </p>
             </div>
           )}
-          <div className={`flex flex-col items-center justify-center py-2 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'}`}>
+          <div
+            className={`flex flex-col items-center justify-center py-2 ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+              }`}
+          >
             <Link
               href={`https://${currentSchema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
             >
@@ -218,35 +301,83 @@ const NewLandingPage = ({
           </div>
         )}
         <div className="mx-3 mt-3">
-          <h1 className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
+          <h1
+            className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
+              }`}
+          >
             {currentSchema.creative.title}
           </h1>
         </div>
 
-        {currentSchema.variant_position && <div className="mt-3">{renderVariantsSection()}</div>}
+        {currentSchema.variant_position && (
+          <div className="mt-3">{renderVariantsSection()}</div>
+        )}
 
         <div>
-          <div className={`${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} py-4 rounded-lg shadow-sm`}>
+          <div
+            className={`${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+              } py-4 rounded-lg shadow-sm`}
+          >
             {currentSchema.reviews && currentSchema.reviews.length > 0 && (
               <Reviews product_handle={currentSchema.product_handle} />
             )}
           </div>
         </div>
 
-        {currentSchema.creative.terms_and_conditions && (
-          <div className={` my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
-            {/* <h1 className="text-[17px] mb-2 font-semibold">Details</h1> */}
-            <div
-              className="text-editor-css"
-              dangerouslySetInnerHTML={{
-                __html: currentSchema.creative.terms_and_conditions,
-              }}
-            ></div>
+        {showDefault ? (
+          <>
+            {currentSchema.creative.terms_and_conditions && (
+              <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
+                <div
+                  className="text-editor-css"
+                  dangerouslySetInnerHTML={{
+                    __html: currentSchema.creative.terms_and_conditions,
+                  }}
+                ></div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="my-3 px-4">
+            {/* {currentVariance && ( */}
+            <div className={`${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
+              {/* {currentVariance}
+                {isVarianceLocked && (
+                  <div className="text-sm text-gray-500 mt-2">
+                    This variance is locked for your session
+                  </div>
+                )} */}
+              {iframeUrl ? (
+                <div className="my-3">
+                  <IframeResizer
+                    license="GPLv3"
+                    src={iframeUrl}
+                    // src="https://aigeneratedhtml.s3.amazonaws.com/campaigns/1732268127955-First_%3A_Benefit-Focused.html"
+                    width="100%"
+                    // height="600px"
+                    title="Variance Content"
+                    // forwardRef={iframeRef} 
+                    style={{ width: '100%', height: '130vh' }}
+                  />
+                </div>
+              ) : (<>
+                {currentSchema.creative.terms_and_conditions && (
+                  <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
+                    <div
+                      className="text-editor-css"
+                      dangerouslySetInnerHTML={{
+                        __html: currentSchema.creative.terms_and_conditions,
+                      }}
+                    ></div>
+                  </div>
+                )}
+              </>)}
+            </div>
+            {/* )} */}
           </div>
         )}
 
         {!currentSchema.variant_position && renderVariantsSection()}
-
 
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
@@ -267,6 +398,8 @@ const NewLandingPage = ({
             text={currentSchema.creative.footer_text}
             button_text={currentSchema.config.button1Text}
             utm_params={utm_params}
+            onCheckoutClick={fetchVariance}
+            isVarianceLocked={isVarianceLocked}
           />
         </div>
         <div ref={bottomRef}></div>

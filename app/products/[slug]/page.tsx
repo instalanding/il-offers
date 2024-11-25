@@ -5,12 +5,15 @@ import RecordImpressions from "@/components/recordImpressions/page";
 import { Metadata, ResolvingMetadata } from "next";
 import { headers } from "next/headers";
 
-const getCampaign = async (slug: string) => {
+const getCampaign = async (slug: string, variant_id?: string) => {
   try {
-    const response = await fetch(
-      `${process.env.API_URL}campaign/?slug=${slug}`,
-      { cache: "no-store" }
-    );
+    const url = new URL(`${process.env.API_URL}campaign`);
+    url.searchParams.append("slug", slug);
+    if (variant_id) {
+      url.searchParams.append("variant_id", variant_id);
+    }
+
+    const response = await fetch(url.toString(), { cache: "no-store" });
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
@@ -22,11 +25,16 @@ const getCampaign = async (slug: string) => {
 
 interface CampaignProps {
   params: { slug: string };
-  searchParams: { mode: string; user_ip?: any };
+  searchParams: { 
+    mode: string; 
+    user_ip?: any;
+    variant_id?: string;
+  };
 }
 
 const Campaign = async ({ params, searchParams }: CampaignProps) => {
   const slug = params.slug;
+  const variantId = searchParams.variant_id;
   const userIp = searchParams.user_ip ?? "";
   const headersList = headers();
   const domain = headersList.get("host");
@@ -37,7 +45,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
     );
   }
 
-  const data = await getCampaign(slug);
+  const data = await getCampaign(slug, variantId);
   if (!data) return <NotFound />;
 
   const domainUrls =
@@ -70,15 +78,11 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
                 height="1"
                 width="1"
                 style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${
-                  data.pixel.id
-                }&ev=ViewContent&noscript=1&cd[content_name]=${
-                  data.creative.title || "Offer"
-                }&cd[content_category]=Offer&cd[content_ids]=${
-                  data.variant_id || "none"
-                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
-                  data.price.offerPrice.value || 0
-                }&cd[currency]=INR`}
+                src={`https://www.facebook.com/tr?id=${data.pixel.id
+                  }&ev=ViewContent&noscript=1&cd[content_name]=${data.creative.title || "Offer"
+                  }&cd[content_category]=Offer&cd[content_ids]=${data.variant_id || "none"
+                  }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${data.price.offerPrice.value || 0
+                  }&cd[currency]=INR`}
                 alt="Facebook Pixel ViewContent"
               />
             )}
@@ -99,6 +103,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          showDefault={false}
         />
       </>
     );
@@ -121,15 +126,11 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
                 height="1"
                 width="1"
                 style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${
-                  data.pixel.id
-                }&ev=ViewContent&noscript=1&cd[content_name]=${
-                  data.creative.title || "Offer"
-                }&cd[content_category]=Offer&cd[content_ids]=${
-                  data.variant_id || "none"
-                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
-                  data.price.offerPrice.value || 0
-                }&cd[currency]=INR`}
+                src={`https://www.facebook.com/tr?id=${data.pixel.id
+                  }&ev=ViewContent&noscript=1&cd[content_name]=${data.creative.title || "Offer"
+                  }&cd[content_category]=Offer&cd[content_ids]=${data.variant_id || "none"
+                  }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${data.price.offerPrice.value || 0
+                  }&cd[currency]=INR`}
                 alt="Facebook Pixel ViewContent"
               />
             )}
@@ -157,18 +158,22 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 export default Campaign;
 
 export async function generateMetadata(
-  { params, searchParams }: any,
+  { params, searchParams }: { 
+    params: { slug: string }, 
+    searchParams: { variant_id?: string } 
+  },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const slug = params.slug;
+  const variantId = searchParams.variant_id;
 
-  const data = await getCampaign(slug);
+  const data = await getCampaign(slug, variantId);
 
   const title = data?.creative?.title || "Instalanding offers";
   const description = data?.store_description || "Instalanding Offering";
   const imageUrl =
     data?.templateType === "multiple-cta" ||
-    data?.templateType === "new-landing"
+      data?.templateType === "new-landing"
       ? data?.creative?.carousel_images?.[0]
       : data?.creative?.image;
 
