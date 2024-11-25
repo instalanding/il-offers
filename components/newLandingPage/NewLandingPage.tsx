@@ -141,7 +141,7 @@ const NewLandingPage = ({
 
   const renderVariantsSection = () => {
     return (
-      currentSchema.show_variants &&
+      // currentSchema.show_variants &&
       currentSchema.all_campaigns &&
       currentSchema.all_campaigns.length > 1 && (
         <div className="my-3 bg-white px-4 rounded-lg">
