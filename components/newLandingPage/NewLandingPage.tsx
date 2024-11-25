@@ -141,6 +141,7 @@ const NewLandingPage = ({
 
   const renderVariantsSection = () => {
     return (
+      // currentSchema.show_variants &&
       currentSchema.all_campaigns &&
       currentSchema.all_campaigns.length > 1 && (
         <div className="my-3 bg-white px-4 rounded-lg">
@@ -349,14 +350,14 @@ const NewLandingPage = ({
               {iframeUrl ? (
                 <div className="my-3">
                   <IframeResizer
-                  license="GPLv3"
+                    license="GPLv3"
                     src={iframeUrl}
                     // src="https://aigeneratedhtml.s3.amazonaws.com/campaigns/1732268127955-First_%3A_Benefit-Focused.html"
                     width="100%"
                     // height="600px"
                     title="Variance Content"
                     // forwardRef={iframeRef} 
-                    style={{ width: '100%',  height: '130vh' }}
+                    style={{ width: '100%', height: '130vh' }}
                   />
                 </div>
               ) : (<>
