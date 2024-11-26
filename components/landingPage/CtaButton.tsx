@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { RiArrowRightSLine } from "react-icons/ri";
 import useCheckout from "@/hooks/Checkout";
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from "next/navigation";
 
 declare global {
   interface Window {
@@ -18,21 +18,17 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
   const { handleCheckout } = useCheckout();
   console.log(schema.creative.coupon_code, "schema.creative.coupon_code");
 
-  const searchParams = useSearchParams()
- 
-  const utm_medium = searchParams.get('utm_medium') || null;
-  const utm_source = searchParams.get('utm_source') ||  null;
-  const utm_campaign = searchParams.get('utm_campaign') || null;
+  const searchParams = useSearchParams();
+
+  const utm_medium = searchParams.get("utm_medium") || null;
+  const utm_source = searchParams.get("utm_source") || null;
+  const utm_campaign = searchParams.get("utm_campaign") || null;
 
   console.table([utm_medium, utm_source, utm_campaign]);
 
   return (
     <>
-      <Link
-        key={btn._id}
-        href={`https://links.instalanding.in/redirect/?offer_id=${offer_id}&advertiser_id=${schema.advertiser}&tags=${schema?.tags}&redirect_url=${btn.url}&ctatype=${btn.type}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}`}
-        target="_blank"
-      >
+      <Link key={btn._id} href={btn.url} target="_blank">
         <button
           id={btn.pixel_event}
           onClick={(e) => {
