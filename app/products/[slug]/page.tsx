@@ -25,8 +25,8 @@ const getCampaign = async (slug: string, variant_id?: string) => {
 
 interface CampaignProps {
   params: { slug: string };
-  searchParams: { 
-    mode: string; 
+  searchParams: {
+    mode: string;
     user_ip?: any;
     variant_id?: string;
   };
@@ -103,7 +103,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
-          showDefault={false}
+          showDefault={data.showVarientHtml}
         />
       </>
     );
@@ -158,9 +158,9 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 export default Campaign;
 
 export async function generateMetadata(
-  { params, searchParams }: { 
-    params: { slug: string }, 
-    searchParams: { variant_id?: string } 
+  { params, searchParams }: {
+    params: { slug: string },
+    searchParams: { variant_id?: string }
   },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
