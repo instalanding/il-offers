@@ -30,7 +30,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
     <>
       <Link
         key={btn._id}
-        href={`https://links.instalanding.in/redirect/?offer_id=${offer_id}&advertiser_id=${schema.advertiser}&tags=${schema?.tags}&redirect_url=${btn.url}&ctatype=${btn.type}&utm_source=${utm_source}&utm_medium=${utm_medium}&utm_campaign=${utm_campaign}`}
+        href={`https://blinkit.com/prn/x/prid/479522`}
         target="_blank"
       >
         <button
