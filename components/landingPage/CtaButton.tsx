@@ -39,13 +39,15 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
         )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
         window.location.href = intentUrl;
       } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        // iOS logic (directly open Safari)
-        window.location.href = href;
+        // iOS logic: open in Safari or handle deep linking
+        const iosUrl = href.startsWith('http') ? href : `https://${href}`;
+        window.location.href = iosUrl; // Opens directly in Safari or default browser
       } else {
-        // Web logic (open in a new tab)
+        // Web/Desktop logic: open in a new tab
         window.open(href, target, 'noopener,noreferrer');
       }
     };
+  
 
     return (
       <Link href={href} onClick={handleClick} target={target} rel="noopener noreferrer">
