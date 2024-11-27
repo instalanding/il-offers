@@ -309,7 +309,7 @@ const NewLandingPage = ({
           </h1>
         </div>
 
-        {currentSchema.variant_position && (
+        {!currentSchema.variant_position && (
           <div className="mt-3">{renderVariantsSection()}</div>
         )}
 
@@ -377,7 +377,7 @@ const NewLandingPage = ({
           </div>
         )}
 
-        {!currentSchema.variant_position && renderVariantsSection()}
+        {currentSchema.variant_position && renderVariantsSection()}
 
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
