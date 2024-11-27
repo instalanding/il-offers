@@ -48,18 +48,14 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
   const data = await getCampaign(slug, variantId);
   if (!data) return <NotFound />;
 
-  const domainUrls =
-    data.domains && Array.isArray(data.domains)
-      ? data.domains.map((d: { url: string }) => d.url)
-      : [];
+  const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
-  const isAllowedDomain =
-    domainUrls.includes(domain) || domain === "localhost:3200";
+  const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
 
-  // if (!isAllowedDomain) {
-  //   console.log("Domain not allowed:", domain);
-  //   return <NotFound />;
-  // }
+  if (!isAllowedDomain) {
+    console.log("Domain not allowed:", domain);
+    return <NotFound />;
+  }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
