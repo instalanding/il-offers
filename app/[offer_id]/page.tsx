@@ -43,18 +43,16 @@ const Coupon = async ({
   const data = await getCampaign(offer_id);
   if (!data) return <NotFound />;
 
-  const domainUrls =
-    data.domains && Array.isArray(data.domains)
-      ? data.domains.map((d: { url: string }) => d.url)
-      : [];
+  const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
-  const isAllowedDomain =
-    domainUrls.includes(domain) || domain === "localhost:3200";
+  
 
-  // if (!isAllowedDomain) {
-  //   console.log("Domain not allowed:", domain);
-  //   return <NotFound />;
-  // }
+  const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
+
+  if (!isAllowedDomain) {
+    console.log("Domain not allowed:", domain);
+    return <NotFound />;
+  }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
@@ -74,9 +72,7 @@ const Coupon = async ({
                 height="1"
                 width="1"
                 style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${
-                  data.pixel.id
-                }&ev=ViewContent&noscript=1&cd[content_name]=${
+                src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=ViewContent&noscript=1&cd[content_name]=${
                   data.creative.title || "Offer"
                 }&cd[content_category]=Offer&cd[content_ids]=${
                   data.variant_id || "none"
