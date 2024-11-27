@@ -48,9 +48,9 @@ const fetchReviews = async () => {
       >
         <div className="flex items-center gap-3 justify-center text-center">
           <Rating rating={4} />
-          <p className="text-[14px] text-center font-normal text-black">
+          {/* <p className="text-[14px] text-center font-normal text-black">
             ({reviewCount} ratings)
-          </p>
+          </p> */}
         </div>
       </div>
       <h1 className="text-[17px] mx-4 mb-2 font-semibold">Reviews</h1>
