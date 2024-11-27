@@ -15,7 +15,6 @@ declare global {
 
 const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
   const platform = platforms.find((p) => p.type === btn.type);
-  const { handleCheckout } = useCheckout();
   console.log(schema.creative.coupon_code, "schema.creative.coupon_code");
 
   const searchParams = useSearchParams();
@@ -26,9 +25,38 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
 
   console.table([utm_medium, utm_source, utm_campaign]);
 
+  function IntentLink({ href, children, target = '_blank' }: any) {
+    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+  
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  
+      if (/android/i.test(userAgent)) {
+        // Android logic (use intent)
+        const intentUrl = `intent:${href.replace(
+          /^https?:\/\//,
+          ''
+        )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+        window.location.href = intentUrl;
+      } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        // iOS logic (directly open Safari)
+        window.location.href = href;
+      } else {
+        // Web logic (open in a new tab)
+        window.open(href, target, 'noopener,noreferrer');
+      }
+    };
+
+    return (
+      <Link href={href} onClick={handleClick} target={target} rel="noopener noreferrer">
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <>
-      <Link key={btn._id} href={btn.url} target="_blank">
+      <IntentLink key={btn._id} href={btn.url} target="_blank">
         <button
           id={btn.pixel_event}
           onClick={(e) => {
@@ -71,12 +99,12 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
             background: btn.type !== "custom" ? platform?.color : btn.color,
             color:
               btn.type === "amazon" ||
-              btn.type === "blinkit" ||
-              btn.type === "myntra"
+                btn.type === "blinkit" ||
+                btn.type === "myntra"
                 ? "black"
                 : btn.type === "custom"
-                ? btn.textColor
-                : "white",
+                  ? btn.textColor
+                  : "white",
           }}
           className="w-full cursor-pointer rounded-full mt-3 px-3 py-2 flex justify-between items-center hover:transform hover:translate-x-1 transition-transform duration-300"
         >
@@ -100,7 +128,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
             className="transition-transform duration-300 transform hover:translate-x-2"
           />
         </button>
-      </Link>
+        </IntentLink>
     </>
   );
 };
