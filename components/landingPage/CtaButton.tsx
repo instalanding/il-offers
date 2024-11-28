@@ -26,6 +26,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel }: any) => {
   console.table([utm_medium, utm_source, utm_campaign]);
 
   function IntentLink({ href, children, target = '_blank' }: any) {
+    
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
   
