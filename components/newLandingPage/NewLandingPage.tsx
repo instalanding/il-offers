@@ -145,7 +145,7 @@ const NewLandingPage = ({
       currentSchema.all_campaigns &&
       currentSchema.all_campaigns.length > 1 && (
         <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
-          <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
+          <h1 className={`${offer_ids.includes(offer_id) && 'text-white'} flex flex-col text-[17px] mb-2 font-semibold`}>
             Available Options
             {currentVariantId && (
               <div className="text-xs my-2 font-semibold">
@@ -168,7 +168,7 @@ const NewLandingPage = ({
                   className={`flex-shrink-0 w-[calc(100%/2.5-1rem)] cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${product.variant_id === currentVariantId
                     ? "border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
                     : ""
-                    }`}
+                    } ${offer_ids.includes(offer_id) && 'bg-white'}`}
                   onClick={() => {
                     setCurrentVariantId(product.variant_id); // Update selected variant
                   }}
