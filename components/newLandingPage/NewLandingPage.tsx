@@ -144,7 +144,7 @@ const NewLandingPage = ({
       // currentSchema.show_variants &&
       currentSchema.all_campaigns &&
       currentSchema.all_campaigns.length > 1 && (
-        <div className="my-3 bg-white rounded-lg">
+        <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
           <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
             Available Options
             {currentVariantId && (
