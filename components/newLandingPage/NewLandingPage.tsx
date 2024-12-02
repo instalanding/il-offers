@@ -325,7 +325,7 @@ const NewLandingPage = ({
         {showDefault ? (
           <>
             {currentSchema.creative.terms_and_conditions && (
-              <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
+              <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
                 <div
                   className="text-editor-css"
                   dangerouslySetInnerHTML={{
