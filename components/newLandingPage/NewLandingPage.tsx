@@ -318,9 +318,7 @@ const NewLandingPage = ({
             className={`${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
               } py-4 rounded-lg shadow-sm`}
           >
-            {currentSchema.reviews && currentSchema.reviews.length > 0 && (
               <Reviews product_handle={currentSchema.product_handle} />
-            )}
           </div>
         </div>
 

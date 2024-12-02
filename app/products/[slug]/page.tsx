@@ -178,7 +178,7 @@ export async function generateMetadata(
     description: description,
     icons: [{ rel: "icon", url: data?.store_logo }],
     openGraph: {
-      images: [
+      images: [ 
         {
           url: imageUrl,
           width: 200,
