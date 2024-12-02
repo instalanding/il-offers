@@ -141,7 +141,7 @@ const NewLandingPage = ({
 
   const renderVariantsSection = () => {
     return (
-      // currentSchema.show_variants &&
+      // currentSchema.showVariants &&
       currentSchema.all_campaigns &&
       currentSchema.all_campaigns.length > 1 && (
         <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
@@ -309,7 +309,7 @@ const NewLandingPage = ({
           </h1>
         </div>
 
-        {!currentSchema.variant_position && (
+        {currentSchema.showVariants && !currentSchema.variant_position && (
           <div className="mt-3">{renderVariantsSection()}</div>
         )}
 
@@ -318,9 +318,7 @@ const NewLandingPage = ({
             className={`${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
               } py-4 rounded-lg shadow-sm`}
           >
-            {currentSchema.reviews && currentSchema.reviews.length > 0 && (
               <Reviews product_handle={currentSchema.product_handle} />
-            )}
           </div>
         </div>
 
@@ -377,7 +375,7 @@ const NewLandingPage = ({
           </div>
         )}
 
-        {currentSchema.variant_position && renderVariantsSection()}
+        {currentSchema.showVariants && currentSchema.variant_position && renderVariantsSection()}
 
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
