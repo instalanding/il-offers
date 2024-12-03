@@ -302,7 +302,7 @@ const NewLandingPage = ({
         )}
         <div className="mx-3 mt-3">
           <h1
-            className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
+            className={`text-[20px] font-semibold text-left ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
               }`}
           >
             {currentSchema.creative.title}

@@ -8,16 +8,16 @@ const Reviews = ({ product_handle }: any) => {
   const [reviews, setReviews] = useState<any>(null);
   const [reviewCount, setReviewCount] = useState<any>(null);
 
-const fetchReviews = async () => {
-  try {
-    const {data} = await axios.get(`${window.location.origin}/api/reviews/?shopify_product_handle=${product_handle}`);
-    setReviews(data.topReviews);
-    setReviewCount(data.totalReviews);
-  } catch (error: any) {
-    console.error("Error fetching reviews:", error);
-    console.log(error.response.status, "status");
-  }
-};
+  const fetchReviews = async () => {
+    try {
+      const { data } = await axios.get(`${window.location.origin}/api/reviews/?shopify_product_handle=${product_handle}`);
+      setReviews(data.topReviews);
+      setReviewCount(data.totalReviews);
+    } catch (error: any) {
+      console.error("Error fetching reviews:", error);
+      console.log(error.response.status, "status");
+    }
+  };
 
   useEffect(() => {
     fetchReviews();
@@ -42,18 +42,10 @@ const fetchReviews = async () => {
 
   return (
     <>
-      <div
-        style={{ boxShadow: "0px 4px 0px 0px #063E0914" }}
-        className="flex justify-center items-center relative border m-3 p-4 rounded-2xl "
-      >
-        <div className="flex items-center gap-3 justify-center text-center">
-          <Rating rating={4} />
-          {/* <p className="text-[14px] text-center font-normal text-black">
-            ({reviewCount} ratings)
-          </p> */}
-        </div>
+      <div className="mx-4 mb-4 flex gap-2 items-center">
+        <Rating rating={4} />
+        <p className="text-sm">{reviewCount} Reviews</p>
       </div>
-      <h1 className="text-[17px] mx-4 mb-2 font-semibold">Reviews</h1>
       <div className="flex overflow-y-auto px-4 gap-4">
         {reviews.map((m: any) => {
           return <ReviewCard review={m} key={m._id} />;
