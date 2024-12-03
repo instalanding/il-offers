@@ -7,6 +7,7 @@ import RecordImpressions from "@/components/recordImpressions/page";
 import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
 import { headers } from "next/headers";
 import Domain from "./Domain";
+import Image from "next/image";
 
 const getCampaign = async (offer_id: string) => {
   try {
@@ -60,15 +61,15 @@ const Coupon = async ({
         <Domain domain={domain} />
         {data.pixel && (
           <>
-            <img
-              height="1"
-              width="1"
+            <Image
+              height={1}
+              width={1}
               style={{ display: "none" }}
               src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=PageView&noscript=1`}
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <img
+              <Image
                 height="1"
                 width="1"
                 style={{ display: "none" }}
@@ -146,7 +147,7 @@ const Coupon = async ({
         )}
         {data.pixel && (
           <>
-            <img
+            <Image
               height="1"
               width="1"
               style={{ display: "none" }}
@@ -154,7 +155,7 @@ const Coupon = async ({
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <img
+              <Image
                 height="1"
                 width="1"
                 style={{ display: "none" }}

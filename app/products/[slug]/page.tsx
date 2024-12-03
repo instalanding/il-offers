@@ -4,6 +4,7 @@ import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
 import RecordImpressions from "@/components/recordImpressions/page";
 import { Metadata, ResolvingMetadata } from "next";
 import { headers } from "next/headers";
+import Image from "next/image";
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
@@ -62,7 +63,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
       <>
         {data.pixel && (
           <>
-            <img
+            <Image
               height="1"
               width="1"
               style={{ display: "none" }}
@@ -70,7 +71,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <img
+              <Image
                 height="1"
                 width="1"
                 style={{ display: "none" }}
@@ -110,7 +111,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
       <>
         {data.pixel && (
           <>
-            <img
+            <Image
               height="1"
               width="1"
               style={{ display: "none" }}
@@ -118,7 +119,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <img
+              <Image
                 height="1"
                 width="1"
                 style={{ display: "none" }}

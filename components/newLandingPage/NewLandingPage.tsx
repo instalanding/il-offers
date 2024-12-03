@@ -41,34 +41,13 @@ const NewLandingPage = ({
   const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
   const offer_ids = ["a423d8"];
-  // Function to handle the accordion toggle
-  const handleAccordionToggle = (value: string) => {
-    setAccordionState((prevState) => (prevState === value ? "item-2" : value));
-  };
 
-  // Scroll to top handler
-  const scrollToTop = () => {
-    if (topRef.current) {
-      topRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
-  // Scroll to bottom handler
-  const scrollToBottom = () => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  function calculatePercentageOff(
-    originalPrice: number,
-    offerPrice: number
-  ): number {
+  function calculatePercentageOff(originalPrice: number, offerPrice: number) {
     let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
     return Math.round(percentageOff);
   }
 
-  // Function to truncate text and add ellipsis if it exceeds a certain length
   const truncateText = (text: string, maxLength: number) => {
     if (text.length > maxLength) {
       return text.slice(0, maxLength) + "...";
@@ -107,7 +86,6 @@ const NewLandingPage = ({
       });
 
       const data = await response.json();
-      // setCurrentVariance(data.variance);
       setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
 
       setIframeUrl(data.variance);
@@ -135,15 +113,9 @@ const NewLandingPage = ({
 
   const iframeRef = useRef(null)
 
-  // useEffect(() => {
-  //   console.log(iframeRef?.getElement())
-  // })
-
   const renderVariantsSection = () => {
     return (
-      // currentSchema.showVariants &&
-      currentSchema.all_campaigns &&
-      currentSchema.all_campaigns.length > 1 && (
+      currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
         <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
           <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
             Available Options
@@ -388,8 +360,6 @@ const NewLandingPage = ({
             logo={logo}
             schema={currentSchema}
             offer_id={offer_id}
-            scrollToBottom={scrollToBottom}
-            handleAccordionToggle={handleAccordionToggle}
             advertiser={advertiser}
             store_url={store_url}
             user_ip={user_ip}
