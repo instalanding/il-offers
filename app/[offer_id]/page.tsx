@@ -61,7 +61,7 @@ const Coupon = async ({
         <Domain domain={domain} />
         {data.pixel && (
           <>
-            <Image
+            <img
               height={1}
               width={1}
               style={{ display: "none" }}
@@ -69,7 +69,7 @@ const Coupon = async ({
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <Image
+              <img
                 height="1"
                 width="1"
                 style={{ display: "none" }}
@@ -147,7 +147,7 @@ const Coupon = async ({
         )}
         {data.pixel && (
           <>
-            <Image
+            <img
               height="1"
               width="1"
               style={{ display: "none" }}
@@ -155,7 +155,7 @@ const Coupon = async ({
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <Image
+              <img
                 height="1"
                 width="1"
                 style={{ display: "none" }}

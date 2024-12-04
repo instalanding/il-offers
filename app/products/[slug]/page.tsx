@@ -63,7 +63,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
       <>
         {data.pixel && (
           <>
-            <Image
+            <img
               height="1"
               width="1"
               style={{ display: "none" }}
@@ -71,7 +71,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <Image
+              <img
                 height="1"
                 width="1"
                 style={{ display: "none" }}
@@ -111,7 +111,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
       <>
         {data.pixel && (
           <>
-            <Image
+            <img
               height="1"
               width="1"
               style={{ display: "none" }}
@@ -119,7 +119,7 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
               alt="Facebook Pixel"
             />
             {data.variant_id && (
-              <Image
+              <img
                 height="1"
                 width="1"
                 style={{ display: "none" }}
