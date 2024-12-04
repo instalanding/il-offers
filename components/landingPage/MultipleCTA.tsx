@@ -90,15 +90,15 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
             <CarouselNext className="right-[7px] shadow-md" />
           </Carousel>
         </div>
-        <div className="">
-          <h1 className="text-center text-[20px] font-bold">
+        <div className="p-4">
+          <h1 className="text-center text-[20px] font-semibold leading-tight">
             {schema.creative.title}
           </h1>
-          <h2 className="text-center mt-2 font-semibold">
+          <h2 className="text-center mt-2 text-[16px] font-medium leading-snug">
             {schema.creative.text}
           </h2>
         </div>
-        <div className="px-5">
+        <div className="px-4">
           <CTAGeoTracking
             pixel={pixel}
             userIp={userIp}
@@ -119,7 +119,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
           />
         </div>
         <Link href="https://www.instalanding.in/" target="_blank">
-          <p className="text-center w-full mt-7 text-slate-600 text-sm cursor-pointer sm:block">
+          <p className="text-center w-full mt-7 mb-4 text-slate-600 text-sm cursor-pointer sm:block">
             Powered by{" "}
             <span className="bg-gradient-to-r from-red-500 via-pink-500 to-yellow-500 bg-clip-text text-transparent">
               Instalanding.in
