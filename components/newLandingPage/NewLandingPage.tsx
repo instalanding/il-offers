@@ -221,7 +221,7 @@ const NewLandingPage = ({
             <div>
               <p
                 style={{
-                  backgroundColor: currentSchema.config.backgroundColor,
+                  backgroundColor: currentSchema.config.button1Color,
                   color: currentSchema?.config?.textColor,
                 }}
                 className="text-[12px] text-white text-center p-2 px-6"
@@ -355,7 +355,7 @@ const NewLandingPage = ({
             pixel={currentSchema.pixel ? currentSchema.pixel.id : ""}
             originalPrice={currentSchema.price.originalPrice.value}
             price={currentSchema.price.offerPrice.value}
-            backgroundColor={currentSchema.config.backgroundColor}
+            backgroundColor={currentSchema.config.button1Color}
             textColor={currentSchema.config.textColor}
             logo={logo}
             schema={currentSchema}
