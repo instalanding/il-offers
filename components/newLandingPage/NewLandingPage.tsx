@@ -221,7 +221,7 @@ const NewLandingPage = ({
             <div>
               <p
                 style={{
-                  backgroundColor: currentSchema.config.button1Color,
+                  backgroundColor: currentSchema.config.backgroundColor,
                   color: currentSchema?.config?.textColor,
                 }}
                 className="text-[12px] text-white text-center p-2 px-6"
@@ -297,7 +297,7 @@ const NewLandingPage = ({
         {showDefault ? (
           <>
             {currentSchema.creative.terms_and_conditions && (
-              <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
+              <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
                 <div
                   className="text-editor-css"
                   dangerouslySetInnerHTML={{
@@ -355,7 +355,7 @@ const NewLandingPage = ({
             pixel={currentSchema.pixel ? currentSchema.pixel.id : ""}
             originalPrice={currentSchema.price.originalPrice.value}
             price={currentSchema.price.offerPrice.value}
-            backgroundColor={currentSchema.config.button1Color}
+            backgroundColor={currentSchema.config.backgroundColor}
             textColor={currentSchema.config.textColor}
             logo={logo}
             schema={currentSchema}
