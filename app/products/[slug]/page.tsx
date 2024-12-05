@@ -4,6 +4,7 @@ import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
 import RecordImpressions from "@/components/recordImpressions/page";
 import { Metadata, ResolvingMetadata } from "next";
 import { headers } from "next/headers";
+import Image from "next/image";
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {

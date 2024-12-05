@@ -116,7 +116,6 @@
 
 .flip-card-back {
   /* background-color: white; */
-  /* color: white; */
   transform: rotateY(180deg);
 }
 
@@ -208,9 +207,6 @@
   list-style-position: inside;
 }
 
-/* .text-editor-css ol > li::before {
-  content: "• ";
-} */
 
 /* .text-editor-css ul {
   margin-left: 15px;

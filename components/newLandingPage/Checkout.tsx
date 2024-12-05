@@ -155,7 +155,7 @@ const Checkout = ({
           {schema.creative.footer_text && (
             <p
               style={{
-                backgroundColor: schema.config.backgroundColor + "3a",
+                backgroundColor: schema.config.button1Color + "3a",
               }}
               className="top-0 right-0 text-black text-[12px] p-1 text-center"
             >
@@ -166,7 +166,7 @@ const Checkout = ({
         <div className="flex gap-2 bg-white p-4 items-center ">
           <div className="flex flex-col">
             <p
-              style={{ color: schema.config.backgroundColor }}
+              style={{ color: schema.config.button1Color }}
               className="font-bold text-[20px] text-center"
             >
               ₹{schema.price.offerPrice.value}
@@ -184,7 +184,7 @@ const Checkout = ({
                 <Button
                   className="w-full text-[16px] h-full"
                   style={{
-                    backgroundColor: schema.config.backgroundColor,
+                    backgroundColor: schema.config.button1Color,
                     color: schema.config.textColor,
                   }}
                   onClick={handleCheckoutButtonClick}
