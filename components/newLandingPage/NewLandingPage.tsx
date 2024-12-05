@@ -116,7 +116,7 @@ const NewLandingPage = ({
   const renderVariantsSection = () => {
     return (
       currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
-        <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
+        <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
           <h1 className={`${offer_ids.includes(offer_id) && 'text-white'} flex flex-col text-[17px] mb-2 font-semibold`}>
             Available Options
             {currentVariantId && (
@@ -290,7 +290,7 @@ const NewLandingPage = ({
             className={`${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
               } py-4 rounded-lg shadow-sm`}
           >
-              <Reviews product_handle={currentSchema.product_handle} />
+            <Reviews product_handle={currentSchema.product_handle} />
           </div>
         </div>
 
