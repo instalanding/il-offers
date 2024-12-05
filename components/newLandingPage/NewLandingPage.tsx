@@ -221,7 +221,7 @@ const NewLandingPage = ({
             <div>
               <p
                 style={{
-                  backgroundColor: currentSchema.config.button1Color,
+                  backgroundColor: currentSchema.config.backgroundColor,
                   color: currentSchema?.config?.textColor,
                 }}
                 className="text-[12px] text-white text-center p-2 px-6"
