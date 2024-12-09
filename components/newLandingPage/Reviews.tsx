@@ -8,16 +8,16 @@ const Reviews = ({ product_handle }: any) => {
   const [reviews, setReviews] = useState<any>(null);
   const [reviewCount, setReviewCount] = useState<any>(null);
 
-const fetchReviews = async () => {
-  try {
-    const {data} = await axios.get(`${window.location.origin}/api/reviews/?shopify_product_handle=${product_handle}`);
-    setReviews(data.topReviews);
-    setReviewCount(data.totalReviews);
-  } catch (error: any) {
-    console.error("Error fetching reviews:", error);
-    console.log(error.response.status, "status");
-  }
-};
+  const fetchReviews = async () => {
+    try {
+      const { data } = await axios.get(`${window.location.origin}/api/reviews/?shopify_product_handle=${product_handle}`);
+      setReviews(data.topReviews);
+      setReviewCount(data.totalReviews);
+    } catch (error: any) {
+      console.error("Error fetching reviews:", error);
+      console.log(error.response.status, "status");
+    }
+  };
 
   useEffect(() => {
     fetchReviews();
@@ -26,12 +26,12 @@ const fetchReviews = async () => {
   if (!reviews) {
     return (
       <>
-        <h1 className="text-[17px]  mx-4 mb-2 font-semibold">Reviews</h1>
+        {/* <h1 className="text-[17px]  mx-4 mb-2 font-semibold">Reviews</h1>
         <div className="flex overflow-y-auto px-4 gap-4">
           <div className="min-w-[250px] rounded-lg h-[160px] bg-[#0000001a]"></div>
           <div className="min-w-[250px] rounded-lg h-[160px] bg-[#0000001a]"></div>
           <div className="min-w-[250px] rounded-lg h-[160px] bg-[#0000001a]"></div>
-        </div>
+        </div> */}
       </>
     );
   }

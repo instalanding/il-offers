@@ -2,11 +2,9 @@ import { NextResponse } from "next/server";
 import { MongoClient } from 'mongodb';
 
 export const GET = async (req: Request, res: Response) => {
-    // console.log("Hello World");
     const { searchParams } = new URL(req.url);
 
     const param = searchParams.get("app_id");
-    console.log(param, 'hello')
 
     const client = new MongoClient(process.env.MONGODB_URL as string );
     await client.connect();
