@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { GoogleTagManager } from "@next/third-parties/google";
 
-const inter = Inter({ subsets: ["latin"] });
+const openSans = Open_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Instalanding",
@@ -21,7 +21,7 @@ export default function RootLayout({
       {/* <GoogleTagManager gtmId="GTM-P6D6G8DC" /> */}
       
 
-      <body className={inter.className}>
+      <body className={openSans.className}>
         <Toaster />
         {children}
       </body>

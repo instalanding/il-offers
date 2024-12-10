@@ -80,7 +80,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
                         width={width}
                         height={height}
                         priority={key === 0}
-                        className="rounded-xl w-[380px] h-[380px] object-cover"
+                        className=" w-[380px] h-[380px] object-cover"
                       />
                     </CarouselItem>
                   )
@@ -90,11 +90,11 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
             <CarouselNext className="right-[7px] shadow-md" />
           </Carousel>
         </div>
-        <div className="p-4">
-          <h1 className="text-center text-[20px] font-semibold leading-tight">
+        <div className="p-5">
+          <h1 className="text-[20px] font-semibold leading-tight">
             {schema.creative.title}
           </h1>
-          <h2 className="text-center mt-2 text-[14px]  leading-snug">
+          <h2 className="mt-2 text-[14px]  leading-snug">
             {schema.creative.text}
           </h2>
         </div>
