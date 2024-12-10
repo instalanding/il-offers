@@ -1,9 +1,9 @@
 import React from 'react'
-import Image from "next/image";
-import { SaveOfferMultipleCta } from '@/components/coupon/SaveOfferMultipleCta';
-import { ShareDialogMultipleCta } from '@/components/coupon/ShareDialogMultipleCta';
+// import Image from "next/image";
+// import { SaveOfferMultipleCta } from '@/components/coupon/SaveOfferMultipleCta';
+// import { ShareDialogMultipleCta } from '@/components/coupon/ShareDialogMultipleCta';
 
-const Details = ({ logo, schema, offer_id, userIp}: any) => {
+const Details = ({ logo, schema, offer_id, userIp }: any) => {
     return (
         <>
             <div className="w-full flex flex-col items-center justify-between gap-2">
@@ -25,7 +25,7 @@ const Details = ({ logo, schema, offer_id, userIp}: any) => {
                     className="w-[150px]"
                 />
             </div> */}
-            <h2 className="mt-5 font-semibold">Details</h2>
+            {/* <h2 className="mt-5 font-semibold">Details</h2> */}
             <div
                 className="py-2 text-editor-css"
                 dangerouslySetInnerHTML={{

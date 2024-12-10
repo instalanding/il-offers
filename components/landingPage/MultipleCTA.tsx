@@ -22,7 +22,6 @@ import Reviews from "../newLandingPage/Reviews";
 function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
 
   const width = 380;
   const height = 380;
@@ -46,12 +45,13 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
     fetchReviews();
   }, []);
 
+
   return (
     <div
       className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
       style={{ backgroundImage: createGradient(schema.backgroundColor) }}
     >
-      <div className="w-[380px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
+      <div className="relative! w-[380px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
         <div className="sticky top-0 z-50">
           <div className="flex flex-col items-center justify-center py-2 bg-white">
             <Link
@@ -80,7 +80,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
                         width={width}
                         height={height}
                         priority={key === 0}
-                        className="sm:rounded-xl rounded-none sm:w-[380px] w-full"
+                        className=" w-[380px] h-[380px] object-cover"
                       />
                     </CarouselItem>
                   )
@@ -90,15 +90,15 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
             <CarouselNext className="right-[7px] shadow-md" />
           </Carousel>
         </div>
-        <div className="p-4">
-          <h1 className="text-center text-[20px] font-semibold leading-tight">
+        <div className="p-5">
+          <h1 className="text-[20px] font-semibold leading-tight">
             {schema.creative.title}
           </h1>
-          <h2 className="text-center mt-2 text-[16px] font-medium leading-snug">
+          <h2 className="mt-2 text-[14px]  leading-snug">
             {schema.creative.text}
           </h2>
         </div>
-        <div className="px-4">
+        <div className="">
           <CTAGeoTracking
             pixel={pixel}
             userIp={userIp}
@@ -118,8 +118,9 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
             userIp={userIp}
           />
         </div>
+
         <Link href="https://www.instalanding.in/" target="_blank">
-          <p className="text-center w-full mt-7 mb-4 text-slate-600 text-sm cursor-pointer sm:block">
+          <p className="text-center w-full mt-4 mb-[0.3rem] text-slate-600 text-xs cursor-pointer sm:block">
             Powered by{" "}
             <span className="bg-gradient-to-r from-red-500 via-pink-500 to-yellow-500 bg-clip-text text-transparent">
               Instalanding.in
