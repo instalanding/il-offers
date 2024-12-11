@@ -22,8 +22,9 @@ const getCampaign = async (offer_id: string) => {
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
-    const data = await response.json();
-    return data;
+    const data = await response.json(); // Process the JSON body
+    // console.log(data, "response data"); // Log the actual response data
+    return data; // Return the parsed data
   } catch (error) {
     console.log(error);
   }
@@ -50,6 +51,7 @@ const Coupon = async ({
   if (!data) return <NotFound />;
 
   console.log(data, "inside api")
+
 
   const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
@@ -249,4 +251,3 @@ export async function generateMetadata(
     },
   };
 }
-
