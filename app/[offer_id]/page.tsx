@@ -12,13 +12,15 @@ import Image from "next/image";
 const getCampaign = async (offer_id: string) => {
   try {
     const response = await fetch(
-      `${process.env.API_URL}coupon/?offer_id=${offer_id}`,
+      `http://localhost:5200/api/campaign/?offer_id=${offer_id}`,
       { cache: "no-store" }
     );
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
-    return response.json();
+    const data = await response.json(); // Process the JSON body
+    // console.log(data, "response data"); // Log the actual response data
+    return data; // Return the parsed data
   } catch (error) {
     console.log(error);
   }
@@ -43,6 +45,8 @@ const Coupon = async ({
 
   const data = await getCampaign(offer_id);
   if (!data) return <NotFound />;
+
+  console.log(data, "inside api")
 
   const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
@@ -196,42 +200,42 @@ const Coupon = async ({
 
 export default Coupon;
 
-export async function generateMetadata(
-  { params, searchParams }: any,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const offer_id = params.offer_id;
+// export async function generateMetadata(
+//   { params, searchParams }: any,
+//   parent: ResolvingMetadata
+// ): Promise<Metadata> {
+//   const offer_id = params.offer_id;
 
-  const data = await getCampaign(offer_id);
+//   const data = await getCampaign(offer_id);
 
-  const title = data?.creative?.title || "Instalanding offers";
-  const description = data?.store_description || "Instalanding Offering";
-  const imageUrl =
-    data?.templateType === "multiple-cta" ||
-    data?.templateType === "new-landing"
-      ? data?.creative?.carousel_images?.[0]
-      : data?.creative?.image;
+//   const title = data?.creative?.title || "Instalanding offers";
+//   const description = data?.store_description || "Instalanding Offering";
+//   const imageUrl =
+//     data?.templateType === "multiple-cta" ||
+//     data?.templateType === "new-landing"
+//       ? data?.creative?.carousel_images?.[0]
+//       : data?.creative?.image;
 
-  return {
-    title: title,
-    description: description,
-    icons: [{ rel: "icon", url: data?.store_logo }],
-    openGraph: {
-      images: [
-        {
-          url: imageUrl,
-          width: 200,
-          height: 200,
-        },
-      ],
-    },
-    other: {
-      "theme-color": data?.config?.button1Color,
-      "twitter:image": imageUrl,
-      "twitter:card": "summary_large_image",
-      "og:url": `https://instalanding.shop/${offer_id}`,
-      "og:image": imageUrl,
-      "og:type": "website",
-    },
-  };
-}
+//   return {
+//     title: title,
+//     description: description,
+//     icons: [{ rel: "icon", url: data?.store_logo }],
+//     openGraph: {
+//       images: [
+//         {
+//           url: imageUrl,
+//           width: 200,
+//           height: 200,
+//         },
+//       ],
+//     },
+//     other: {
+//       "theme-color": data?.config?.button1Color,
+//       "twitter:image": imageUrl,
+//       "twitter:card": "summary_large_image",
+//       "og:url": `https://instalanding.shop/${offer_id}`,
+//       "og:image": imageUrl,
+//       "og:type": "website",
+//     },
+//   };
+// }

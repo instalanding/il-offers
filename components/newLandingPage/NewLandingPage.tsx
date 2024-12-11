@@ -42,6 +42,8 @@ const NewLandingPage = ({
 
   const offer_ids = ["a423d8"];
 
+  // console.log(currentSchema, "currentSchemacurrentSchemacurrentSchema")
+
 
   function calculatePercentageOff(originalPrice: number, offerPrice: number) {
     let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
@@ -72,7 +74,7 @@ const NewLandingPage = ({
     try {
       const visitorId = await getVisitorId();
 
-      const response = await fetch(`/api/campaign/variance`, {
+      const response = await fetch(`http://localhost:5200/api/variance`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
