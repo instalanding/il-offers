@@ -58,6 +58,10 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
             collapsible
             defaultValue={defaultValue}
             onValueChange={(value) => setOpenAccordion(value)}
+            style={{
+                display: btn.isVisible ? "" : "none",
+            }}
+            className="py-2 px-5"
         >
             <AccordionItem
                 value={btn.title}
@@ -73,7 +77,6 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
             >
                 <AccordionTrigger
                     style={{
-                        display: btn.isVisible ? "" : "none",
                         background: (btn.type !== "custom" ? platform?.color : btn.color),
                         color:
                             btn.type === "amazon" ||
@@ -87,7 +90,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                     className={`w-full rounded-tl-2xl rounded-tr-sm ${openAccordion === btn.title ? 'rounded-bl-none rounded-br-none' : 'rounded-bl-sm rounded-br-2xl'} px-3 py-[2px] flex items-center`}       >
                     <IntentLink key={btn._id} href={btn.url} target="_blank">
                         <div
-                            className="flex gap-2 items-center font-semibold cursor-pointer"
+                            className="flex gap-2 min-h-12 items-center font-semibold cursor-pointer"
                             id={btn.pixel_event}
                             onClick={(e) => {
                                 if (
@@ -126,35 +129,30 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                                 src={btn.type === "custom" ? btn.icon : platform?.logo}
                                 width={50}
                                 height={50}
-                                className={`w-[50px] h-[50px] object-contain ${btn.type === "amazon" ? "py-3" : ""}`}
-                            />
+                                className={`w-[50px] h-[50px] object-contain ${btn.type === "amazon" ? "py-3" : ""
+                                    } ${btn.type === "custom" && !btn.icon
+                                        ? "hidden"
+                                        : "block"
+                                    }`} />
 
                             <div className="flex gap-2 justify-between items-center w-full text-left">
                                 {/* <div className="flex flex-col"> */}
-                                {btn?.title}
+                                <p className="items-start"> {btn?.title}</p>
                                 {/* {openAccordion !== btn.title && <p className="text-xs font-medium">{btn.subtitle || "Pack of 12 at $2.79"}</p>} */}
                                 {/* </div> */}
                                 <div className="flex flex-col items-end justify-center mr-2">
-                                    <p className="line-through font-light text-xs"> {btn?.originalPrice}</p><p className="font-semibold text-md"> {btn?.offerPrice} </p>
+                                    <p className="font-semibold text-lg"> {btn?.offerPrice} </p>
+                                    <p className="line-through font-light text-xs"> {btn?.originalPrice}</p>
                                 </div>
                             </div>
                         </div>
                     </IntentLink>
                 </AccordionTrigger>
-                <AccordionContent >
+                <AccordionContent>
                     <div className="flex mt-4 items-center gap-5 px-4">
-                        {/* <Image
-              alt={schema.campaign_name || 'Campaign product image'}
-              src={schema.creative.image}
-              // alt={`${platform?.title}_logo`}
-              // src={btn.type === "custom" ? btn.icon : platform?.logo}
-              width={50}
-              height={50}
-              className="w-[50px] h-[50px] object-contain"
-            /> */}
                         <FaTruck size={28} color="gray" />
                         <div className="flex flex-col items-start">
-                            <p className="text-xs text-left">{btn.subtitle || "Pack of 12 at $2.79"}</p>
+                            <p className="text-xs text-left pb-1">{btn.subtitle || "Pack of 12 at $2.79"}</p>
                             <p className="text-xs text-left">{platform?.subtitle}</p>
                         </div>
                         <div >
@@ -213,6 +211,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
+
     );
 };
 

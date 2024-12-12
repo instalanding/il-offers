@@ -51,7 +51,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
       className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
       style={{ backgroundImage: createGradient(schema.backgroundColor) }}
     >
-      <div className="relative! w-[380px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
+      <div className="relative w-[380px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
         <div className="sticky top-0 z-50">
           <div className="flex flex-col items-center justify-center py-2 bg-white">
             <Link
@@ -67,11 +67,12 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
             </Link>
           </div>
         </div>
-        <div>
-          <Carousel>
-            <CarouselContent>
-              {schema.creative.carousel_images &&
-                schema.creative.carousel_images.map(
+
+        {schema.creative.carousel_images.length > 0 && (
+          <div className="pb-2">
+            <Carousel>
+              <CarouselContent>
+                {schema.creative.carousel_images.map(
                   (image: string, key: number) => (
                     <CarouselItem key={key}>
                       <Image
@@ -85,12 +86,14 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
                     </CarouselItem>
                   )
                 )}
-            </CarouselContent>
-            <CarouselPrevious className="left-[7px] shadow-md" />
-            <CarouselNext className="right-[7px] shadow-md" />
-          </Carousel>
-        </div>
-        <div className="p-5">
+              </CarouselContent>
+              <CarouselPrevious className="left-[7px] shadow-md" />
+              <CarouselNext className="right-[7px] shadow-md" />
+            </Carousel>
+          </div>
+
+        )}
+        <div className="py-2 px-5">
           <h1 className="text-[20px] font-semibold leading-tight">
             {schema.creative.title}
           </h1>
@@ -98,7 +101,9 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
             {schema.creative.text}
           </h2>
         </div>
-        <div className="">
+
+        {/* "py-2 px-5" is added in respective component parent classes and not here to avoid padding inconsistencies */}
+        <div>
           <CTAGeoTracking
             pixel={pixel}
             userIp={userIp}
@@ -107,10 +112,10 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
             offer_id={offer_id}
           />
         </div>
-        <div className="mt-3 px-5">
+        <div>
           <Reviews product_handle={schema.product_handle} />
         </div>
-        <div className="px-5">
+        <div>
           <Details
             schema={schema}
             logo={logo}
@@ -119,7 +124,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
           />
         </div>
 
-        <Link href="https://www.instalanding.in/" target="_blank">
+        <Link href="https://www.instalanding.in/" target="_blank" className="absolute w-full bottom-0">
           <p className="text-center w-full mt-4 mb-[0.3rem] text-slate-600 text-xs cursor-pointer sm:block">
             Powered by{" "}
             <span className="bg-gradient-to-r from-red-500 via-pink-500 to-yellow-500 bg-clip-text text-transparent">

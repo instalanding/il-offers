@@ -41,7 +41,7 @@ const Reviews = ({ product_handle }: any) => {
   }
 
   return (
-    <>
+    <div className="py-2 px-5">
       <div
         style={{ boxShadow: "0px 4px 0px 0px #063E0914" }}
         className="flex justify-center items-center relative border m-3 p-4 rounded-2xl "
@@ -59,7 +59,7 @@ const Reviews = ({ product_handle }: any) => {
           return <ReviewCard review={m} key={m._id} />;
         })}
       </div>
-    </>
+    </div>
   );
 };
 
