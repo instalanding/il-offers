@@ -109,9 +109,9 @@ const NewLandingPage = ({
   useEffect(() => {
     const fetchData = async () => {
       if (currentVariantId) {
-
+console.log(`${process.env.NEXT_PUBLIC_API_URL}campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`)
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`
+          `${process.env.NEXT_PUBLIC_API_URL}variancecampaigns?slug=${schema.product_handle}&variant_id=${currentVariantId}`
         );
         const data = await response.json();
        
