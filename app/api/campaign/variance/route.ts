@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { MongoClient, ObjectId } from "mongodb";
+import campaign from "@/models/campaign";
 
 const THIRTY_MINUTES = 1 * 60 * 1000; // 30 minutes in milliseconds
 
@@ -11,8 +12,11 @@ export const POST = async (req: Request) => {
         { error: "visitor_id and campaign_id are required" },
         { status: 400 }
       );
+
+
     }
   
+    
     try {
       const client = new MongoClient(process.env.MONGODB_URL as string);
       await client.connect();

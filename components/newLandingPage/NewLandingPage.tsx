@@ -71,9 +71,18 @@ const NewLandingPage = ({
   const fetchVariance = async (isCheckoutClicked: boolean = false) => {
     try {
       const visitorId = await getVisitorId();
+    console.log("fetching second varient campagin",`${process.env.NEXT_PUBLIC_API_URL}campaign/variance`)
+    const requestBody = {
+      visitor_id: visitorId,
+      campaign_id: currentSchema._id,
+      showDefault,
+      isCheckoutClicked,
+    };
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/campaign/variance`, {
-        method: "GET",
+ 
+   
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}campaign/variance`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -84,8 +93,9 @@ const NewLandingPage = ({
           isCheckoutClicked,
         }),
       });
-     console.log("variance",response )
       const data = await response.json();
+     
+
       setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
 
       setIframeUrl(data.variance);
@@ -99,10 +109,12 @@ const NewLandingPage = ({
   useEffect(() => {
     const fetchData = async () => {
       if (currentVariantId) {
+
         const response = await fetch(
-          `/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`
+          `${process.env.NEXT_PUBLIC_API_URL}/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`
         );
         const data = await response.json();
+       
         setCurrentSchema(data);
       }
     };
