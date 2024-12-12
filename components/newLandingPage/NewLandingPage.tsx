@@ -72,8 +72,8 @@ const NewLandingPage = ({
     try {
       const visitorId = await getVisitorId();
 
-      const response = await fetch(`/api/campaign/variance`, {
-        method: "POST",
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/campaign/variance`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
@@ -84,7 +84,7 @@ const NewLandingPage = ({
           isCheckoutClicked,
         }),
       });
-
+     console.log("variance",response )
       const data = await response.json();
       setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
 
@@ -108,7 +108,7 @@ const NewLandingPage = ({
     };
 
     fetchData();
-    fetchVariance(); // Initial variance fetch
+    fetchVariance();
   }, [currentVariantId, schema.product_handle, showDefault]);
 
   const iframeRef = useRef(null)
@@ -357,6 +357,7 @@ const NewLandingPage = ({
             price={currentSchema.price.offerPrice.value}
             backgroundColor={currentSchema.config.backgroundColor}
             textColor={currentSchema.config.textColor}
+            
             logo={logo}
             schema={currentSchema}
             offer_id={offer_id}
@@ -368,6 +369,7 @@ const NewLandingPage = ({
             utm_params={utm_params}
             onCheckoutClick={fetchVariance}
             isVarianceLocked={isVarianceLocked}
+            campaign_id={currentSchema._id}
           />
         </div>
         <div ref={bottomRef}></div>

@@ -89,11 +89,12 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
           </>
         )}
         <RecordImpressions
-          offer_id={slug}
+          offer_id={data.offer_id}
           advertiser={data.advertiser}
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          campaign_id={data._id}
         />
         <NewLandingPage
           schema={data}
@@ -137,11 +138,12 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
           </>
         )}
         <RecordImpressions
-          offer_id={slug}
+          offer_id={data.offer_id}
           advertiser={data.advertiser}
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          campaign_id={data._id}
         />
         <MultipleCTA
           pixel={data.pixel ? data.pixel.id : ""}
@@ -156,60 +158,58 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 };
 
 export default Campaign;
-export async function generateMetadata(
-  { params, searchParams }: { params: { slug: string }; searchParams: { variant_id?: string } },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
-  const slug = params.slug;
-  const variantId = searchParams.variant_id;
 
-  try {
-    const data = await getCampaign(slug, variantId);
+// export async function generateMetadata(
+//   { params, searchParams }: { params: { slug: string }; searchParams: { variant_id?: string } },
+//   parent: ResolvingMetadata
+// ): Promise<Metadata> {
+//   const slug = params.slug;
+//   const variantId = searchParams.variant_id;
+//   try {
+//   const data = await getCampaign(slug, variantId);
+//   if (!data) {
+//     console.log("No data found for metadata generation.");
+//     return {
+//       title: "Default Title",
+//       description: "Default description",
+//     };
+//   }
+//   const title = data?.creative?.title || "Instalanding offers";
+//   const description = data?.store_description || "Instalanding Offering";
+//   const imageUrl =
+//   (data.templateType === "multiple-cta" || data.templateType === "new-landing") &&
+//   data.creative?.carousel_images?.length
+//     ? data.creative.carousel_images[0]
+//     : data.creative?.image || "";
 
-    // Validate `data` and provide defaults
-    if (!data) {
-      console.log("No data found for metadata generation.");
-      return {
-        title: "Default Title",
-        description: "Default description",
-      };
-    }
 
-    const title = data.creative?.title || "Instalanding offers";
-    const description = data.store_description || "Instalanding Offering";
-    const imageUrl =
-      (data.templateType === "multiple-cta" || data.templateType === "new-landing") &&
-      data.creative?.carousel_images?.length
-        ? data.creative.carousel_images[0]
-        : data.creative?.image || "";
-
-    return {
-      title,
-      description,
-      icons: [{ rel: "icon", url: data.store_logo || "/default-icon.png" }],
-      openGraph: {
-        images: [
-          {
-            url: imageUrl || "/default-image.png",
-            width: 200,
-            height: 200,
-          },
-        ],
-      },
-      other: {
-        "theme-color": data.config?.button1Color || "#ffffff",
-        "twitter:image": imageUrl || "/default-image.png",
-        "twitter:card": "summary_large_image",
-        "og:url": `https://instalanding.shop/${slug}`,
-        "og:image": imageUrl || "/default-image.png",
-        "og:type": "website",
-      },
-    };
-  } catch (error) {
-    console.error("Error generating metadata:", error);
-    return {
-      title: "Error Occurred",
-      description: "Unable to generate metadata",
-    };
-  }
-}
+//   return {
+//     title: title,
+//     description: description,
+//     icons: [{ rel: "icon", url: data?.store_logo }],
+//     openGraph: {
+//       images: [ 
+//         {
+//           url: imageUrl,
+//           width: 200,
+//           height: 200,
+//         },
+//       ],
+//     },
+//     other: {
+//       "theme-color": data?.config?.button1Color,
+//       "twitter:image": imageUrl,
+//       "twitter:card": "summary_large_image",
+//       "og:url": `https://instalanding.shop/${slug}`,
+//       "og:image": imageUrl,
+//       "og:type": "website",
+//     },
+//   };
+// } catch (error) {
+//   console.error("Error generating metadata:", error);
+//   return {
+//     title: "Error Occurred",
+//     description: "Unable to generate metadata",
+//   };
+// }
+// }

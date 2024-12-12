@@ -95,6 +95,7 @@ const Coupon = async ({
           store_url={data.store_url}
           tags={data?.tags}
           utm_params={utm_params}
+          campaign_id={data._id}
         />
         <NewLandingPage
           schema={data}
@@ -184,6 +185,7 @@ const Coupon = async ({
           store_url={data.store_url}
           tags={data?.tags}
           utm_params={utm_params}
+          campaign_id={data._id}
         />
         <MultipleCTA
           pixel={data.pixel ? data.pixel.id : ""}
@@ -205,7 +207,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const offer_id = params.offer_id;
 
-  // Fetch campaign data based on offer_id
+
   const data = await getCampaign(offer_id);
 
   // Default fallback values for metadata
