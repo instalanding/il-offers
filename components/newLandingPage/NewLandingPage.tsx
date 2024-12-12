@@ -117,7 +117,7 @@ const NewLandingPage = ({
     return (
       currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
         <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
-          <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
+          <h1 className="flex flex-col text-[17px] mb-2 mx-4 font-semibold">
             Available Options
             {currentVariantId && (
               <div className="text-xs my-2 font-semibold">
@@ -133,7 +133,7 @@ const NewLandingPage = ({
           </h1>
 
           <div className="overflow-x-auto">
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 mx-4">
               {currentSchema.all_campaigns.map((product: any) => (
                 <div
                   key={product._id}
