@@ -20,7 +20,7 @@ export const GET = async (req: Request) => {
     const campaignsCollection = database.collection("campaigns");
     const advertisersCollection = database.collection("advertisers");
 
-    // Find all campaigns
+
     const allCampaigns = await campaignsCollection
       .find({ product_handle: slug })
       .toArray();

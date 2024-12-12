@@ -8,6 +8,7 @@ export const GET = async (req: Request) => {
     const client = new MongoClient(process.env.MONGODB_URL as string);
     await client.connect();
     const database = client.db(process.env.DATABASE as string);
+    
     const collection = database.collection('reviews');
 
     await collection.createIndex({ offer_id: 1 });
