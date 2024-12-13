@@ -22,7 +22,8 @@ const getCampaign = async (offer_id: string) => {
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
-    return response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -48,9 +49,9 @@ const Coupon = async ({
   const data = await getCampaign(offer_id);
   if (!data) return <NotFound />;
 
-  const domainUrls = Array.isArray(data.domains) ? data.domains : [];
+  console.log(data, "inside api")
 
-  
+  const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
   const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
 

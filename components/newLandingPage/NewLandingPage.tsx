@@ -42,6 +42,8 @@ const NewLandingPage = ({
 
   const offer_ids = ["a423d8"];
 
+  // console.log(currentSchema, "currentSchemacurrentSchemacurrentSchema")
+
 
   function calculatePercentageOff(originalPrice: number, offerPrice: number) {
     let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
