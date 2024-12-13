@@ -48,9 +48,9 @@ const Coupon = async ({
   }
 
   const data = await getCampaign(offer_id);
-  if (!data) return <NotFound />;
+  // if (!data) return <NotFound />;
 
-  console.log(data, "inside api")
+  // console.log(data, "inside api")
 
 
   // const domainUrls = Array.isArray(data.domains) ? data.domains : [];
