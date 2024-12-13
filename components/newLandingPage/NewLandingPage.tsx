@@ -160,7 +160,7 @@ const NewLandingPage = ({
             )}
           </h1>
 
-          <div className="overflow-x-auto pb-4">
+          <div className="overflow-x-auto">
             <div className="flex space-x-2">
               {currentSchema.all_campaigns.map((product: any) => (
                 <div
@@ -310,7 +310,7 @@ const NewLandingPage = ({
         )}
         <div className="mx-3 mt-3">
           <h1
-            className={`text-[20px] font-semibold text-center ${
+            className={`text-[20px] font-semibold ${
               offer_ids.includes(offer_id) ? "text-white" : "text-black"
             }`}
           >
@@ -319,14 +319,14 @@ const NewLandingPage = ({
         </div>
 
         {currentSchema.showVariants && !currentSchema.variant_position && (
-          <div className="mt-3 p-4">{renderVariantsSection()}</div>
+          <div className=" px-4">{renderVariantsSection()}</div>
         )}
 
         <div>
           <div
             className={`${
               offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-            } py-4 rounded-lg shadow-sm`}
+            } rounded-lg shadow-sm`}
           >
             <Reviews product_handle={currentSchema.product_handle} />
           </div>
@@ -336,7 +336,7 @@ const NewLandingPage = ({
           <>
             {currentSchema.creative.terms_and_conditions && (
               <div
-                className={`my-3 ${
+                className={` ${
                   offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
                 } px-4 rounded-lg`}
               >
@@ -350,7 +350,7 @@ const NewLandingPage = ({
             )}
           </>
         ) : (
-          <div className="my-3">
+          <div className="">
             {/* {currentVariance && ( */}
             <div
               className={`${
@@ -364,7 +364,7 @@ const NewLandingPage = ({
                   </div>
                 )} */}
               {iframeUrl ? (
-                <div className="my-3">
+                <div className="">
                   <IframeResizer
                     license="GPLv3"
                     src={iframeUrl}
@@ -380,7 +380,7 @@ const NewLandingPage = ({
                 <>
                   {currentSchema.creative.terms_and_conditions && (
                     <div
-                      className={`my-3 ${
+                      className={` ${
                         offer_ids.includes(offer_id)
                           ? "bg-[#122442]"
                           : "bg-white"
