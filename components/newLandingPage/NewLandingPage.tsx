@@ -71,8 +71,17 @@ const NewLandingPage = ({
   const fetchVariance = async (isCheckoutClicked: boolean = false) => {
     try {
       const visitorId = await getVisitorId();
+    console.log("fetching second varient campagin",`${process.env.NEXT_PUBLIC_API_URL}campaign/variance`)
+    const requestBody = {
+      visitor_id: visitorId,
+      campaign_id: currentSchema._id,
+      showDefault,
+      isCheckoutClicked,
+    };
 
-      const response = await fetch(`/api/campaign/variance`, {
+ 
+   
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}campaign/variance`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,8 +93,9 @@ const NewLandingPage = ({
           isCheckoutClicked,
         }),
       });
-
       const data = await response.json();
+     
+
       setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
 
       setIframeUrl(data.variance);
@@ -99,16 +109,18 @@ const NewLandingPage = ({
   useEffect(() => {
     const fetchData = async () => {
       if (currentVariantId) {
+console.log(`${process.env.NEXT_PUBLIC_API_URL}campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`)
         const response = await fetch(
-          `/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`
+          `${process.env.NEXT_PUBLIC_API_URL}variancecampaigns?slug=${schema.product_handle}&variant_id=${currentVariantId}`
         );
         const data = await response.json();
+       
         setCurrentSchema(data);
       }
     };
 
     fetchData();
-    fetchVariance(); // Initial variance fetch
+    fetchVariance();
   }, [currentVariantId, schema.product_handle, showDefault]);
 
   const iframeRef = useRef(null)
@@ -282,7 +294,7 @@ const NewLandingPage = ({
         </div>
 
         {currentSchema.showVariants && !currentSchema.variant_position && (
-          <div className="mt-3">{renderVariantsSection()}</div>
+          <div className="mt-3 p-4">{renderVariantsSection()}</div>
         )}
 
         <div>
@@ -357,6 +369,7 @@ const NewLandingPage = ({
             price={currentSchema.price.offerPrice.value}
             backgroundColor={currentSchema.config.backgroundColor}
             textColor={currentSchema.config.textColor}
+            
             logo={logo}
             schema={currentSchema}
             offer_id={offer_id}
@@ -368,6 +381,7 @@ const NewLandingPage = ({
             utm_params={utm_params}
             onCheckoutClick={fetchVariance}
             isVarianceLocked={isVarianceLocked}
+            campaign_id={currentSchema._id}
           />
         </div>
         <div ref={bottomRef}></div>

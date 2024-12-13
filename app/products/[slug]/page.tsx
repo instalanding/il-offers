@@ -8,6 +8,7 @@ import Image from "next/image";
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
+   
     const url = new URL(`${process.env.API_URL}campaign`);
     url.searchParams.append("slug", slug);
     if (variant_id) {
@@ -15,9 +16,11 @@ const getCampaign = async (slug: string, variant_id?: string) => {
     }
 
     const response = await fetch(url.toString(), { cache: "no-store" });
+    console.log("res",response)
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
+
     return response.json();
   } catch (error) {
     console.log(error);
@@ -27,7 +30,7 @@ const getCampaign = async (slug: string, variant_id?: string) => {
 interface CampaignProps {
   params: { slug: string };
   searchParams: {
-    mode: string;
+    mode: string; 
     user_ip?: any;
     variant_id?: string;
   };
@@ -93,11 +96,12 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
           </>
         )}
         <RecordImpressions
-          offer_id={slug}
+          offer_id={data.offer_id}
           advertiser={data.advertiser}
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          campaign_id={data._id}
         />
         <NewLandingPage
           schema={data}
@@ -145,11 +149,12 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
           </>
         )}
         <RecordImpressions
-          offer_id={slug}
+          offer_id={data.offer_id}
           advertiser={data.advertiser}
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          campaign_id={data._id}
         />
         <MultipleCTA
           pixel={data.pixel ? data.pixel.id : ""}

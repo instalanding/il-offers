@@ -14,12 +14,12 @@ const Checkout = ({
   user_ip, 
   utm_params,
   onCheckoutClick,
-  isVarianceLocked
+  isVarianceLocked,
+  campaign_id
 }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
   const router = useRouter();
-
   function calculatePercentageOff(
     originalPrice: number,
     offerPrice: number
@@ -115,7 +115,6 @@ const Checkout = ({
         "checkout init"
       );
 
-      // Handle pixel
       if (schema.pixel) {
         const noscript = document.createElement("noscript");
         const img = document.createElement("img");
@@ -141,7 +140,7 @@ const Checkout = ({
     try {
       const visitorId = await getVisitorId();
       const response = await axios.post(
-        `/api/clicks-impressions?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&visitor_id=${visitorId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&visitor_id=${visitorId}&campaign_id=${campaign_id}`,
         {}
       );
     } catch (error) {}
