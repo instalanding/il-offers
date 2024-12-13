@@ -294,7 +294,7 @@ console.log(`${process.env.NEXT_PUBLIC_API_URL}campaign?slug=${schema.product_ha
         </div>
 
         {currentSchema.showVariants && !currentSchema.variant_position && (
-          <div className="mt-3">{renderVariantsSection()}</div>
+          <div className="mt-3 p-4">{renderVariantsSection()}</div>
         )}
 
         <div>
