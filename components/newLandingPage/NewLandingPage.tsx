@@ -42,7 +42,6 @@ const NewLandingPage = ({
 
   const offer_ids = ["a423d8"];
 
-
   function calculatePercentageOff(originalPrice: number, offerPrice: number) {
     let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
     return Math.round(percentageOff);
@@ -129,6 +128,11 @@ const NewLandingPage = ({
     fetchData();
     fetchVariance();
   }, [currentVariantId, schema.product_handle, showDefault]);
+
+  // function hasContentInsidePTags(input: any) {
+  //   const regex = /^<p>.*?<\/p>$/; // Matches <p>...</p> starting and ending
+  //   return regex.test(input) && input.replace(/<\/?p>/g, "").trim().length > 0;
+  // }
 
   const iframeRef = useRef(null);
 
@@ -346,7 +350,7 @@ const NewLandingPage = ({
             )}
           </>
         ) : (
-          <div className="my-3 px-4">
+          <div className="my-3">
             {/* {currentVariance && ( */}
             <div
               className={`${
@@ -380,7 +384,7 @@ const NewLandingPage = ({
                         offer_ids.includes(offer_id)
                           ? "bg-[#122442]"
                           : "bg-white"
-                      } px-4 rounded-lg`}
+                      } rounded-lg`}
                     >
                       <div
                         className="text-editor-css"
