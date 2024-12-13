@@ -11,9 +11,10 @@ import Image from "next/image";
 
 const getCampaign = async (offer_id: string) => {
   try {
+    console.log( `${process.env.API_URL}campaign/?offer_id=${offer_id}`)
+
     const response = await fetch(
-    
-      `${process.env.API_URL}/campaign/?offer_id=${offer_id}`,
+      `${process.env.API_URL}campaign/?offer_id=${offer_id}`,
       { cache: "no-store" }
     );
 
