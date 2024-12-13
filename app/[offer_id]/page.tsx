@@ -53,14 +53,14 @@ const Coupon = async ({
   console.log(data, "inside api")
 
 
-  const domainUrls = Array.isArray(data.domains) ? data.domains : [];
+  // const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
-  const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
+  // const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
 
-  if (!isAllowedDomain) {
-    console.log("Domain not allowed:", domain);
-    return <NotFound />;
-  }
+  // if (!isAllowedDomain) {
+  //   console.log("Domain not allowed:", domain);
+  //   return <NotFound />;
+  // }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
