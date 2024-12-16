@@ -141,19 +141,32 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                                 {/* {openAccordion !== btn.title && <p className="text-xs font-medium">{btn.subtitle || "Pack of 12 at $2.79"}</p>} */}
                                 {/* </div> */}
                                 <div className="flex flex-col items-end justify-center mr-2">
-                                    <p className="font-semibold text-lg"> {btn?.offerPrice} </p>
-                                    <p className="line-through font-light text-xs"> {btn?.originalPrice}</p>
+                                    <p className="font-semibold text-lg">{btn?.offerPrice && `₹${btn?.offerPrice}`}</p>
+                                    <p className="line-through font-light text-xs">{btn?.originalPrice &&
+                                        `₹${btn?.originalPrice}`}</p>
                                 </div>
                             </div>
                         </div>
                     </IntentLink>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <div className="flex mt-4 items-center gap-5 px-4">
-                        <FaTruck size={28} color="gray" />
-                        <div className="flex flex-col items-start">
-                            <p className="text-xs text-left pb-1">{btn.subtitle || "Pack of 12 at $2.79"}</p>
-                            <p className="text-xs text-left">{platform?.subtitle}</p>
+                    <div className="flex mt-4 justify-between items-center gap-5 px-4">
+                        <div className="flex gap-4 items-start">
+                            <FaTruck
+                                size={28}
+                                color="gray"
+                                className="min-h-7 min-w-7"
+                            />
+
+                            <div className="flex flex-col items-start">
+                                <p className="text-xs text-left">
+                                    {btn.subtitle}
+                                </p>
+
+                                {/* <p className="text-xs text-left">
+                                    {platform?.subtitle}
+                                  </p> */}
+                            </div>
                         </div>
                         <div >
                             <IntentLink key={btn._id} href={btn.url} target="_blank">
@@ -203,7 +216,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                                                     ? btn.textColor
                                                     : "white"
                                     }}
-                                        className="cursor-pointer rounded-md px-6 py-[2px] font-semibold flex items-center">
+                                        className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-semibold flex items-center">
                                         Buy Now                                  </button>
                                 </div>
                             </IntentLink></div>
