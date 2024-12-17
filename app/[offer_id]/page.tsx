@@ -11,14 +11,20 @@ import Image from "next/image";
 
 const getCampaign = async (offer_id: string) => {
   try {
+    console.log( `${process.env.API_URL}campaign/?offer_id=${offer_id}`)
+
     const response = await fetch(
-      `${process.env.API_URL}coupon/?offer_id=${offer_id}`,
+      `${process.env.API_URL}campaign/?offer_id=${offer_id}`,
       { cache: "no-store" }
     );
+
+    console.log("resss",response)
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
-    return response.json();
+    const data = await response.json(); // Process the JSON body
+    // console.log(data, "response data"); // Log the actual response data
+    return data; // Return the parsed data
   } catch (error) {
     console.log(error);
   }
@@ -42,18 +48,19 @@ const Coupon = async ({
   }
 
   const data = await getCampaign(offer_id);
-  if (!data) return <NotFound />;
+  // if (!data) return <NotFound />;
 
-  const domainUrls = Array.isArray(data.domains) ? data.domains : [];
+  // console.log(data, "inside api")
 
-  
 
-  const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
+  // const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
-  if (!isAllowedDomain) {
-    console.log("Domain not allowed:", domain);
-    return <NotFound />;
-  }
+  // const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
+
+  // if (!isAllowedDomain) {
+  //   console.log("Domain not allowed:", domain);
+  //   return <NotFound />;
+  // }
 
   if (data.templateType && data.templateType === "new-landing") {
     return (
@@ -92,6 +99,7 @@ const Coupon = async ({
           store_url={data.store_url}
           tags={data?.tags}
           utm_params={utm_params}
+          campaign_id={data._id}
         />
         <NewLandingPage
           schema={data}
@@ -181,6 +189,7 @@ const Coupon = async ({
           store_url={data.store_url}
           tags={data?.tags}
           utm_params={utm_params}
+          campaign_id={data._id}
         />
         <MultipleCTA
           pixel={data.pixel ? data.pixel.id : ""}
@@ -197,41 +206,48 @@ const Coupon = async ({
 export default Coupon;
 
 export async function generateMetadata(
-  { params, searchParams }: any,
+  { params, searchParams }: { params: { offer_id: string }; searchParams: any },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const offer_id = params.offer_id;
 
+
   const data = await getCampaign(offer_id);
 
-  const title = data?.creative?.title || "Instalanding offers";
-  const description = data?.store_description || "Instalanding Offering";
+  // Default fallback values for metadata
+  const title = data?.creative?.title || "Instalanding Offers";
+  const description = data?.store_description || "Explore exclusive offers with Instalanding.";
   const imageUrl =
-    data?.templateType === "multiple-cta" ||
-    data?.templateType === "new-landing"
-      ? data?.creative?.carousel_images?.[0]
-      : data?.creative?.image;
+    data?.templateType === "multiple-cta" || data?.templateType === "new-landing"
+      ? data?.creative?.carousel_images?.[0] || "/default-meta-image.jpg"
+      : data?.creative?.image || "/default-meta-image.jpg";
 
   return {
-    title: title,
-    description: description,
-    icons: [{ rel: "icon", url: data?.store_logo }],
+    title,
+    description,
+    icons: [{ rel: "icon", url: data?.store_logo || "/favicon.ico" }],
     openGraph: {
+      title,
+      description,
+      url: `https://instalanding.shop/${offer_id}`,
       images: [
         {
           url: imageUrl,
-          width: 200,
-          height: 200,
+          width: 1200,
+          height: 630,
+          alt: title,
         },
       ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
     },
     other: {
-      "theme-color": data?.config?.button1Color,
-      "twitter:image": imageUrl,
-      "twitter:card": "summary_large_image",
-      "og:url": `https://instalanding.shop/${offer_id}`,
-      "og:image": imageUrl,
-      "og:type": "website",
+      "theme-color": data?.config?.button1Color || "#ffffff",
     },
   };
 }

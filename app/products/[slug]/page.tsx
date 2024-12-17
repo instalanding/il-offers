@@ -8,6 +8,7 @@ import Image from "next/image";
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
+   
     const url = new URL(`${process.env.API_URL}campaign`);
     url.searchParams.append("slug", slug);
     if (variant_id) {
@@ -15,9 +16,11 @@ const getCampaign = async (slug: string, variant_id?: string) => {
     }
 
     const response = await fetch(url.toString(), { cache: "no-store" });
+    console.log("res",response)
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
+
     return response.json();
   } catch (error) {
     console.log(error);
@@ -27,7 +30,7 @@ const getCampaign = async (slug: string, variant_id?: string) => {
 interface CampaignProps {
   params: { slug: string };
   searchParams: {
-    mode: string;
+    mode: string; 
     user_ip?: any;
     variant_id?: string;
   };
@@ -51,7 +54,10 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 
   const domainUrls = Array.isArray(data.domains) ? data.domains : [];
 
-  const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
+  const isAllowedDomain =
+    domainUrls.includes(domain) || domain === "localhost:3200";
+
+  console.log("_____dimains", domainUrls);
 
   if (!isAllowedDomain) {
     console.log("Domain not allowed:", domain);
@@ -75,22 +81,27 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
                 height="1"
                 width="1"
                 style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${data.pixel.id
-                  }&ev=ViewContent&noscript=1&cd[content_name]=${data.creative.title || "Offer"
-                  }&cd[content_category]=Offer&cd[content_ids]=${data.variant_id || "none"
-                  }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${data.price.offerPrice.value || 0
-                  }&cd[currency]=INR`}
+                src={`https://www.facebook.com/tr?id=${
+                  data.pixel.id
+                }&ev=ViewContent&noscript=1&cd[content_name]=${
+                  data.creative.title || "Offer"
+                }&cd[content_category]=Offer&cd[content_ids]=${
+                  data.variant_id || "none"
+                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
+                  data.price.offerPrice.value || 0
+                }&cd[currency]=INR`}
                 alt="Facebook Pixel ViewContent"
               />
             )}
           </>
         )}
         <RecordImpressions
-          offer_id={slug}
+          offer_id={data.offer_id}
           advertiser={data.advertiser}
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          campaign_id={data._id}
         />
         <NewLandingPage
           schema={data}
@@ -123,22 +134,27 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
                 height="1"
                 width="1"
                 style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${data.pixel.id
-                  }&ev=ViewContent&noscript=1&cd[content_name]=${data.creative.title || "Offer"
-                  }&cd[content_category]=Offer&cd[content_ids]=${data.variant_id || "none"
-                  }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${data.price.offerPrice.value || 0
-                  }&cd[currency]=INR`}
+                src={`https://www.facebook.com/tr?id=${
+                  data.pixel.id
+                }&ev=ViewContent&noscript=1&cd[content_name]=${
+                  data.creative.title || "Offer"
+                }&cd[content_category]=Offer&cd[content_ids]=${
+                  data.variant_id || "none"
+                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
+                  data.price.offerPrice.value || 0
+                }&cd[currency]=INR`}
                 alt="Facebook Pixel ViewContent"
               />
             )}
           </>
         )}
         <RecordImpressions
-          offer_id={slug}
+          offer_id={data.offer_id}
           advertiser={data.advertiser}
           user_ip={userIp}
           store_url={data.store_url}
           tags={data?.tags}
+          campaign_id={data._id}
         />
         <MultipleCTA
           pixel={data.pixel ? data.pixel.id : ""}
@@ -155,9 +171,12 @@ const Campaign = async ({ params, searchParams }: CampaignProps) => {
 export default Campaign;
 
 export async function generateMetadata(
-  { params, searchParams }: {
-    params: { slug: string },
-    searchParams: { variant_id?: string }
+  {
+    params,
+    searchParams,
+  }: {
+    params: { slug: string };
+    searchParams: { variant_id?: string };
   },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
@@ -170,7 +189,7 @@ export async function generateMetadata(
   const description = data?.store_description || "Instalanding Offering";
   const imageUrl =
     data?.templateType === "multiple-cta" ||
-      data?.templateType === "new-landing"
+    data?.templateType === "new-landing"
       ? data?.creative?.carousel_images?.[0]
       : data?.creative?.image;
 
@@ -179,7 +198,7 @@ export async function generateMetadata(
     description: description,
     icons: [{ rel: "icon", url: data?.store_logo }],
     openGraph: {
-      images: [ 
+      images: [
         {
           url: imageUrl,
           width: 200,

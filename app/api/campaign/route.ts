@@ -5,7 +5,8 @@ export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const slug = searchParams.get("slug");
   const variant_id = searchParams.get("variant_id");
-
+console.log("slug",slug)
+console.log("variant_id",variant_id)
   if (!slug) {
     return NextResponse.json(
       { error: "Slug query parameter is required" },
@@ -20,11 +21,12 @@ export const GET = async (req: Request) => {
     const campaignsCollection = database.collection("campaigns");
     const advertisersCollection = database.collection("advertisers");
 
-    // Find all campaigns
+
     const allCampaigns = await campaignsCollection
       .find({ product_handle: slug })
       .toArray();
 
+      console.log("allCampaigns------", allCampaigns)
     // Sort campaigns based on offer price
     const sortedCampaigns = allCampaigns.sort((a, b) => {
       const offerPriceA = parseFloat(a.price.offerPrice.value);

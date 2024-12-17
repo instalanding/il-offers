@@ -256,12 +256,12 @@ const NewLandingPage = ({
             </Link>
           </div>
         </div>
-        {currentSchema.creative.carousel_images.length !== 0 && (
+        {currentSchema.creative?.carousel_images.length !== 0 && (
           <div className="">
             <Carousel>
               <CarouselContent>
-                {currentSchema.creative.carousel_images &&
-                  currentSchema.creative.carousel_images.map(
+                {currentSchema.creative?.carousel_images &&
+                  currentSchema.creative?.carousel_images.map(
                     (image: string, key: number) => (
                       <CarouselItem key={key}>
                         <Image
@@ -286,7 +286,7 @@ const NewLandingPage = ({
             className={`text-[20px] font-semibold ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
               }`}
           >
-            {currentSchema.creative.title}
+            {currentSchema.creative?.title}
           </h1>
         </div>
 
@@ -340,12 +340,12 @@ const NewLandingPage = ({
                   />
                 </div>
               ) : (<>
-                {currentSchema.creative.terms_and_conditions && (
+                {currentSchema.creative?.terms_and_conditions && (
                   <div className={` ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
                     <div
                       className="text-editor-css"
                       dangerouslySetInnerHTML={{
-                        __html: currentSchema.creative.terms_and_conditions,
+                        __html: currentSchema.creative?.terms_and_conditions,
                       }}
                     ></div>
                   </div>
@@ -362,18 +362,18 @@ const NewLandingPage = ({
         <div className="sticky bottom-0">
           <Checkout
             pixel={currentSchema.pixel ? currentSchema.pixel.id : ""}
-            originalPrice={currentSchema.price.originalPrice.value}
-            price={currentSchema.price.offerPrice.value}
-            backgroundColor={currentSchema.config.backgroundColor}
-            textColor={currentSchema.config.textColor}
+            originalPrice={currentSchema.price?.originalPrice.value}
+            price={currentSchema.price?.offerPrice.value}
+            backgroundColor={currentSchema.config?.backgroundColor}
+            textColor={currentSchema.config?.textColor}
             logo={logo}
             schema={currentSchema}
             offer_id={offer_id}
             advertiser={advertiser}
             store_url={store_url}
             user_ip={user_ip}
-            text={currentSchema.creative.footer_text}
-            button_text={currentSchema.config.button1Text}
+            text={currentSchema.creative?.footer_text}
+            button_text={currentSchema.config?.button1Text}
             utm_params={utm_params}
             onCheckoutClick={fetchVariance}
             isVarianceLocked={isVarianceLocked}
