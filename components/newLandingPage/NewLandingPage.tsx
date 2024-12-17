@@ -157,7 +157,7 @@ const NewLandingPage = ({
                       height={50}
                       className="justify-self-center"
                     />
-                    <h2 className="text-[14px] font-semibold">
+                    <h2 className="text-[14px] font-semibold text-center">
                       {truncateText(
                         product.variant_type
                           ? product.variant_type
@@ -169,23 +169,24 @@ const NewLandingPage = ({
                       {parseFloat(product?.price?.offerPrice?.value) <
                         parseFloat(product?.price?.originalPrice?.value) ? (
                         <div className="flex flex-col gap-1">
-                          <div className="flex justify-center items-center gap-1">
-                            <p className="text-[13px] text-gray-600 line-through">
+                          <div className="flex flex-wrap justify-center items-center">
+                            <p className="text-[12px] text-gray-600 line-through pr-1">
                               {product.price.originalPrice.prefix}
                               {product.price.originalPrice.value}
                             </p>
-                            <p className="text-[15px] font-semibold text-green-600">
+                            <p className="text-[18px] font-semibold text-green-600 pr-1">
                               {product.price.offerPrice.prefix}
                               {product.price.offerPrice.value}
                             </p>
-                          </div>
-                          <p className="text-[13px] text-red-600">
+                            <p className="text-[13px] text-red-600 pr-1">
                             {calculatePercentageOff(
                               parseFloat(product.price.originalPrice.value),
                               parseFloat(product.price.offerPrice.value)
                             )}
                             % off
                           </p>
+                          </div>
+                          
                         </div>
                       ) : (
                         <p className="text-[15px] font-semibold text-green-600">
@@ -274,7 +275,7 @@ const NewLandingPage = ({
         )}
         <div className="mx-3 mt-3">
           <h1
-            className={`text-[20px] font-semibold text-center ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
+            className={`text-[20px] font-semibold ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
               }`}
           >
             {currentSchema.creative.title}
@@ -308,7 +309,7 @@ const NewLandingPage = ({
             )}
           </>
         ) : (
-          <div className="my-3 px-4">
+          <div className="">
             {/* {currentVariance && ( */}
             <div className={`${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
               {/* {currentVariance}
@@ -332,7 +333,7 @@ const NewLandingPage = ({
                 </div>
               ) : (<>
                 {currentSchema.creative.terms_and_conditions && (
-                  <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
+                  <div className={` ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
                     <div
                       className="text-editor-css"
                       dangerouslySetInnerHTML={{
