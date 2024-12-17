@@ -8,13 +8,13 @@ import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useRouter } from "next/navigation";
 
-const Checkout = ({ 
-  schema, 
-  logo, 
-  user_ip, 
+const Checkout = ({
+  schema,
+  logo,
+  user_ip,
   utm_params,
   onCheckoutClick,
-  isVarianceLocked
+  isVarianceLocked,
 }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
@@ -165,14 +165,16 @@ const Checkout = ({
         </div>
         <div className="flex gap-2 bg-white p-4 items-center ">
           <div className="flex flex-col">
-            <p
-              style={{ color: schema.config.backgroundColor }}
-              className="font-bold text-[20px] text-center"
-            >
-              ₹{schema.price.offerPrice.value}
-            </p>
-            {schema.price.offerPrice.value.toString() !==
-              schema.price.originalPrice.value.toString() && (
+            {schema.price.offerPrice.value.toString() && (
+              <p
+                style={{ color: schema.config.backgroundColor }}
+                className="font-bold text-[20px] text-center"
+              >
+                ₹{schema.price.offerPrice.value}
+              </p>
+            )}
+
+            {schema.price.originalPrice.value.toString() && (
               <p className="text-slate-500 text-xs cursor-pointer text-center line-through">
                 ₹{schema.price.originalPrice.value}
               </p>

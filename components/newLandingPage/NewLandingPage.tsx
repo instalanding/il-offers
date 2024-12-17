@@ -166,33 +166,41 @@ const NewLandingPage = ({
                       )}
                     </h2>
                     <div className="flex items-center justify-center">
-                      {parseFloat(product?.price?.offerPrice?.value) <
-                        parseFloat(product?.price?.originalPrice?.value) ? (
+                      {product?.price?.offerPrice?.value ? (
                         <div className="flex flex-col gap-1">
-                          <div className="flex flex-col justify-center items-center">
-                            <p className="text-[12px] text-gray-600 line-through ">
-                              {product.price.originalPrice.prefix}
-                              {product.price.originalPrice.value}
-                            </p>
-                            <p className="text-[16px] font-semibold text-green-600">
+                          {product?.price?.originalPrice?.value &&
+                            parseFloat(product.price.offerPrice.value) < parseFloat(product.price.originalPrice.value) ? (
+                            <div className="flex flex-wrap justify-center items-center">
+                              <p className="text-[12px] text-gray-600 line-through pr-1">
+                                {product.price.originalPrice.prefix}
+                                {product.price.originalPrice.value}
+                              </p>
+                              <p className="text-[18px] font-semibold text-green-600 pr-1">
+                                {product.price.offerPrice.prefix}
+                                {product.price.offerPrice.value}
+                              </p>
+                              <p className="text-[13px] text-red-600">
+                                {calculatePercentageOff(
+                                  parseFloat(product.price.originalPrice.value),
+                                  parseFloat(product.price.offerPrice.value)
+                                )}
+                                % off
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="text-[18px] font-semibold text-green-600">
                               {product.price.offerPrice.prefix}
                               {product.price.offerPrice.value}
                             </p>
-                            <p className="text-[13px] text-red-600 pr-1">
-                            {calculatePercentageOff(
-                              parseFloat(product.price.originalPrice.value),
-                              parseFloat(product.price.offerPrice.value)
-                            )}
-                            % off
-                          </p>
-                          </div>
-                          
+                          )}
                         </div>
-                      ) : (
+                      ) : product?.price?.originalPrice?.value ? (
                         <p className="text-[15px] font-semibold text-green-600">
                           {product.price.originalPrice.prefix}
                           {product.price.originalPrice.value}
                         </p>
+                      ) : (
+                        <p className="text-[15px] text-center text-gray-600">Price not available</p>
                       )}
                     </div>
                   </Link>
