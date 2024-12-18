@@ -8,14 +8,14 @@ import axios from "axios";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useRouter } from "next/navigation";
 
-const Checkout = ({ 
-  schema, 
-  logo, 
-  user_ip, 
+const Checkout = ({
+  schema,
+  logo,
+  user_ip,
   utm_params,
   onCheckoutClick,
   isVarianceLocked,
-  campaign_id
+  campaign_id,
 }: any) => {
   const { handleCheckout } = useCheckout();
   const [open, setOpen] = useState(false);
@@ -151,29 +151,31 @@ const Checkout = ({
       <input type="hidden" value={schema.store_url} id="sellerDomain" />
       <div className="shadow-new">
         <div className="bg-white">
-          {schema.creative.footer_text && (
+          {schema.creative?.footer_text && (
             <p
               style={{
-                backgroundColor: schema.config.backgroundColor + "3a",
+                backgroundColor: schema.config?.backgroundColor + "3a",
               }}
               className="top-0 right-0 text-black text-[12px] p-1 text-center"
             >
-              {schema.creative.footer_text}
+              {schema.creative?.footer_text}
             </p>
           )}
         </div>
         <div className="flex gap-2 bg-white p-4 items-center ">
           <div className="flex flex-col">
-            <p
-              style={{ color: schema.config.backgroundColor }}
-              className="font-bold text-[20px] text-center"
-            >
-              ₹{schema.price.offerPrice.value}
-            </p>
-            {schema.price.offerPrice.value.toString() !==
-              schema.price.originalPrice.value.toString() && (
+            {schema.price?.offerPrice.value.toString() && (
+              <p
+                style={{ color: schema.config?.backgroundColor }}
+                className="font-bold text-[20px] text-center"
+              >
+                ₹{schema.price?.offerPrice.value}
+              </p>
+            )}
+
+            {schema.price?.originalPrice.value.toString() && (
               <p className="text-slate-500 text-xs cursor-pointer text-center line-through">
-                ₹{schema.price.originalPrice.value}
+                ₹{schema.price?.originalPrice.value}
               </p>
             )}
           </div>
@@ -183,12 +185,12 @@ const Checkout = ({
                 <Button
                   className="w-full text-[16px] h-full"
                   style={{
-                    backgroundColor: schema.config.backgroundColor,
-                    color: schema.config.textColor,
+                    backgroundColor: schema.config?.backgroundColor,
+                    color: schema.config?.textColor,
                   }}
                   onClick={handleCheckoutButtonClick}
                 >
-                  {schema.config.button1Text}
+                  {schema.config?.button1Text}
                 </Button>
               </div>
             ) : (
