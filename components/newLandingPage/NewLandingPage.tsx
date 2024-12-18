@@ -159,84 +159,84 @@ const NewLandingPage = ({
               </div>
             )}
           </h1>
-
-          <div className="overflow-x-auto">
-            <div className="flex space-x-2">
-              {currentSchema.all_campaigns.map((product: any) => (
-                <div
-                  key={product._id}
-                  className={`flex-shrink-0 w-[calc(100%/2.5-1rem)] cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${
-                    product.variant_id === currentVariantId
-                      ? "border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
-                      : ""
-                  }`}
-                  onClick={() => {
-                    setCurrentVariantId(product.variant_id); // Update selected variant
-                  }}
+  
+          <div className="grid grid-cols-3 gap-2">
+            {currentSchema.all_campaigns.map((product: any) => (
+              <div
+                key={product._id}
+                className={`flex-shrink-0 cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${
+                  product.variant_id === currentVariantId
+                    ? "border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
+                    : ""
+                }`}
+                onClick={() => {
+                  setCurrentVariantId(product.variant_id); // Update selected variant
+                }}
+              >
+                <Link
+                  href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
                 >
-                  <Link
-                    href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
-                  >
-                    <div className="flex justify-center">
-                      <Image
-                        alt={
-                          product.variant_type
-                            ? product.variant_type
-                            : "Variant"
-                        }
-                        src={product.creative.image}
-                        width={60}
-                        height={50}
-                        className="justify-self-center"
-                      />
-                    </div>
-                    <h2 className="text-[14px] font-semibold text-center mt-2">
-                      {truncateText(
+                  {/* <div className="flex justify-center">
+                    <Image
+                      alt={
                         product.variant_type
                           ? product.variant_type
-                          : product.campaign_name,
-                        25
-                      )}
-                    </h2>
-                    <div className="flex items-center">
-                      {parseFloat(product?.price?.offerPrice?.value) <
-                      parseFloat(product?.price?.originalPrice?.value) ? (
-                        <div className="flex flex-col gap-1">
-                          <div className="flex flex-wrap justify-center items-center">
-                            <p className="text-[12px] text-gray-600 line-through pr-1">
-                              {product.price.originalPrice.prefix}
-                              {product.price.originalPrice.value}
-                            </p>
-                            <p className="text-[18px] font-semibold text-green-600 pr-1">
-                              {product.price.offerPrice.prefix}
-                              {product.price.offerPrice.value}
-                            </p>
-                            <p className="text-[13px] text-red-600">
-                              {calculatePercentageOff(
-                                parseFloat(product.price.originalPrice.value),
-                                parseFloat(product.price.offerPrice.value)
-                              )}
-                              % off
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-center"></div>
+                          : "Variant"
+                      }
+                      src={product.creative.image}
+                      width={60}
+                      height={50}
+                      className="justify-self-center"
+                    />
+                  </div> */}
+                  <h2 className="text-[14px] font-semibold text-center mt-2">
+                    {truncateText(
+                      product.variant_type
+                        ? product.variant_type
+                        : product.campaign_name,
+                      25
+                    )}
+                  </h2>
+                  <div className="flex items-center">
+                    {parseFloat(product?.price?.offerPrice?.value) <
+                    parseFloat(product?.price?.originalPrice?.value) ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex flex-wrap justify-center items-center">
+                          <p className="text-[12px] text-gray-600 line-through pr-1">
+                            {product.price.originalPrice.prefix}
+                            {product.price.originalPrice.value}
+                          </p>
+                          <p className="text-[18px] font-semibold text-green-600 pr-1">
+                            {product.price.offerPrice.prefix}
+                            {product.price.offerPrice.value}
+                          </p>
+                          <p className="text-[13px] text-red-600">
+                            {calculatePercentageOff(
+                              parseFloat(product.price.originalPrice.value),
+                              parseFloat(product.price.offerPrice.value)
+                            )}
+                            % off
+                          </p>
                         </div>
-                      ) : (
-                        <p className="text-[15px] font-semibold text-green-600">
-                          {product.price.originalPrice.prefix}
-                          {product.price.originalPrice.value}
-                        </p>
-                      )}
-                    </div>
-                  </Link>
-                </div>
-              ))}
-            </div>
+                        <div className="flex items-center justify-center"></div>
+                      </div>
+                    ) : (
+                      <p className="text-[15px] font-semibold text-green-600">
+                        {product.price.originalPrice.prefix}
+                        {product.price.originalPrice.value}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              </div>
+            ))}
+            
           </div>
         </div>
       )
     );
   };
+
 
   return (
     <div

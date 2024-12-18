@@ -44,7 +44,7 @@ const Reviews = ({ product_handle }: any) => {
   }
 
   return (
-    <div className="py-2 px-5">
+    <div className="py-2">
       <div
         style={{ boxShadow: "0px 4px 0px 0px #063E0914" }}
         className="flex justify-center items-center relative border m-3 p-4 rounded-2xl "
@@ -56,7 +56,7 @@ const Reviews = ({ product_handle }: any) => {
           </p> */}
         </div>
       </div>
-      <h1 className="text-[17px] mx-4 mb-2 font-semibold">Reviews</h1>
+      <h1 className="text-[17px] mx-4 mb-2 font-semibold">Top Reviews</h1>
       <div className="flex overflow-y-auto px-4 gap-4">
         {reviews.map((m: any) => {
           return <ReviewCard review={m} key={m._id} />;
