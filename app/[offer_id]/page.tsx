@@ -9,7 +9,6 @@ import { headers } from "next/headers";
 import Domain from "./Domain";
 import Image from "next/image";
 import { permanentRedirect } from "next/navigation";
-import ServerRedirect from "./ServerRedirect";
 import { userAgent } from 'next/server'
 
 const getCampaign = async (offer_id: string) => {
