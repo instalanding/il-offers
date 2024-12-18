@@ -115,9 +115,14 @@ const NewLandingPage = ({
 
   const renderVariantsSection = () => {
     return (
-      currentSchema.all_campaigns && currentSchema.all_campaigns.length > 1 && (
-        <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
-          <h1 className={`${offer_ids.includes(offer_id) && 'text-white'} flex flex-col text-[17px] mb-2 font-semibold`}>
+      currentSchema.all_campaigns &&
+      currentSchema.all_campaigns.length > 1 && (
+        <div
+          className={`px-4 my-3 ${
+            offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+          } rounded-lg`}
+        >
+          <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
             Available Options
             {currentVariantId && (
               <div className="text-xs my-2 font-semibold">
@@ -131,17 +136,16 @@ const NewLandingPage = ({
               </div>
             )}
           </h1>
-
   
           <div className="grid grid-cols-3 gap-2">
             {currentSchema.all_campaigns.map((product: any) => (
               <div
                 key={product._id}
-                className={`flex-shrink-0 cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${
+                className={`flex-shrink-0 flex justify-center items-center cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${
                   product.variant_id === currentVariantId
                     ? "border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
                     : ""
-                }`}
+                } ${offer_ids.includes(offer_id) && "bg-white"}`}
                 onClick={() => {
                   setCurrentVariantId(product.variant_id); // Update selected variant
                 }}
@@ -149,20 +153,16 @@ const NewLandingPage = ({
                 <Link
                   href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
                 >
-                  {/* <div className="flex justify-center">
-                    <Image
-                      alt={
-                        product.variant_type
-                          ? product.variant_type
-                          : "Variant"
-                      }
-                      src={product.creative.image}
-                      width={60}
-                      height={50}
-                      className="justify-self-center"
-                    />
-                  </div> */}
-                  <h2 className="text-[14px] font-semibold text-center mt-2">
+                  {/* <Image
+                    alt={
+                      product.variant_type ? product.variant_type : "Variant"
+                    }
+                    src={product.creative.image}
+                    width={60}
+                    height={50}
+                    className="justify-self-center"
+                  /> */}
+                  <h2 className="text-[14px] font-semibold text-center">
                     {truncateText(
                       product.variant_type
                         ? product.variant_type
@@ -170,46 +170,56 @@ const NewLandingPage = ({
                       25
                     )}
                   </h2>
-                  <div className="flex items-center">
-                    {parseFloat(product?.price?.offerPrice?.value) <
-                    parseFloat(product?.price?.originalPrice?.value) ? (
+                  <div className="flex items-center justify-center">
+                    {product?.price?.offerPrice?.value ? (
                       <div className="flex flex-col gap-1">
-                        <div className="flex flex-wrap justify-center items-center">
-                          <p className="text-[12px] text-gray-600 line-through pr-1">
-                            {product.price.originalPrice.prefix}
-                            {product.price.originalPrice.value}
-                          </p>
-                          <p className="text-[18px] font-semibold text-green-600 pr-1">
+                        {product?.price?.originalPrice?.value &&
+                        parseFloat(product.price.offerPrice.value) <
+                          parseFloat(product.price.originalPrice.value) ? (
+                          <div className="flex flex-wrap justify-center items-center">
+                            <p className="text-[12px] text-gray-600 line-through pr-1">
+                              {product.price.originalPrice.prefix}
+                              {product.price.originalPrice.value}
+                            </p>
+                            <p className="text-[18px] font-semibold text-green-600 pr-1">
+                              {product.price.offerPrice.prefix}
+                              {product.price.offerPrice.value}
+                            </p>
+                            <p className="text-[13px] text-red-600">
+                              {calculatePercentageOff(
+                                parseFloat(product.price.originalPrice.value),
+                                parseFloat(product.price.offerPrice.value)
+                              )}
+                              % off
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-[18px] font-semibold text-green-600">
                             {product.price.offerPrice.prefix}
                             {product.price.offerPrice.value}
                           </p>
-                          <p className="text-[13px] text-red-600">
-                            {calculatePercentageOff(
-                              parseFloat(product.price.originalPrice.value),
-                              parseFloat(product.price.offerPrice.value)
-                            )}
-                            % off
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-center"></div>
+                        )}
                       </div>
-                    ) : (
+                    ) : product?.price?.originalPrice?.value ? (
                       <p className="text-[15px] font-semibold text-green-600">
                         {product.price.originalPrice.prefix}
                         {product.price.originalPrice.value}
+                      </p>
+                    ) : (
+                      <p className="text-[15px] text-center text-gray-600">
+                        Price not available
                       </p>
                     )}
                   </div>
                 </Link>
               </div>
             ))}
-
+            
           </div>
         </div>
       )
     );
   };
-
 
   return (
     <div
@@ -295,7 +305,7 @@ const NewLandingPage = ({
         <div>
           <div
             className={`${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-              } py-4 rounded-lg shadow-sm`}
+              } rounded-lg shadow-sm`}
           >
             <Reviews product_handle={currentSchema.product_handle} />
           </div>
