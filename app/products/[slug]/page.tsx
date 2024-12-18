@@ -9,7 +9,7 @@ import Image from "next/image";
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
    
-    const url = new URL(`${process.env.API_URL}campaign`);
+    const url = new URL(`${process.env.API_URL}variancecampaigns`);
     url.searchParams.append("slug", slug);
     if (variant_id) {
       url.searchParams.append("variant_id", variant_id);
