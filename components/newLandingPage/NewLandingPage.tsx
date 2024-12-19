@@ -200,7 +200,10 @@ const NewLandingPage = ({
                             </p>
                           </div>
                         ) : (
-                          <p className="text-[18px] font-semibold text-green-600">
+                          <p
+                            style={{ color: schema.config?.backgroundColor }}
+                            className="text-[18px] font-semibold text-green-600"
+                          >
                             {product.price.offerPrice.prefix}
                             {product.price.offerPrice.value}
                           </p>
