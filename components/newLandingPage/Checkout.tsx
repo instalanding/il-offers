@@ -172,12 +172,25 @@ const Checkout = ({
                 ₹{schema.price?.offerPrice.value}
               </p>
             )}
-
-            {schema.price?.originalPrice.value.toString() && (
-              <p className="text-slate-500 text-xs cursor-pointer text-center line-through">
-                ₹{schema.price?.originalPrice.value}
-              </p>
-            )}
+            <div className="flex flex-col justify-center items-center">
+              {schema.price?.originalPrice.value.toString() && (
+                <p className="text-slate-500 text-[11px] cursor-pointer line-through">
+                  ₹{schema.price?.originalPrice.value}
+                </p>
+              )}
+              {parseFloat(schema.price.offerPrice.value) <
+              parseFloat(schema.price.originalPrice.value) ? (
+                <p className="text-[11px] text-red-600">
+                  {calculatePercentageOff(
+                    parseFloat(schema.price.originalPrice.value),
+                    parseFloat(schema.price.offerPrice.value)
+                  )}
+                  % off
+                </p>
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
           <div className="flex-grow pl-2 flex flex-col">
             {schema.variant_id ? (
