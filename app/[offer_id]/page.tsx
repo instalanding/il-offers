@@ -51,8 +51,8 @@ const Coupon = async ({
 
   const data = await getCampaign(offer_id);
   const isPermanentRedirect = data?.permanent_redirect;
-  let redirectUrl = data?.buttons[0].url;
-  let href = data?.buttons[0].url;
+  let redirectUrl = data?.buttons[0]?.url;
+  let href = data?.buttons[0]?.url;
   console.log(data, "data")
   // if (!data) return <NotFound />;
 
