@@ -164,31 +164,59 @@ const Checkout = ({
         </div>
         <div className="flex gap-2 bg-white p-4 items-center ">
           <div className="flex flex-col">
-            {schema.price?.offerPrice.value.toString() && (
+            {/* {schema.price?.offerPrice.value.toString() && (
               <p
                 style={{ color: schema.config?.backgroundColor }}
                 className="font-bold text-[20px] text-center"
               >
                 ₹{schema.price?.offerPrice.value}
               </p>
-            )}
-            <div className="flex flex-col justify-center items-center">
-              {schema.price?.originalPrice.value.toString() && (
-                <p className="text-slate-500 text-[11px] cursor-pointer line-through">
-                  ₹{schema.price?.originalPrice.value}
-                </p>
-              )}
-              {parseFloat(schema.price?.offerPrice.value) <
-              parseFloat(schema.price?.originalPrice.value) ? (
-                <p className="text-[11px] text-red-600">
-                  {calculatePercentageOff(
-                    parseFloat(schema.price?.originalPrice.value),
-                    parseFloat(schema.price?.offerPrice.value)
+            )} */}
+            <div className="flex items-center justify-center">
+              {schema?.price?.offerPrice?.value ? (
+                <div className="flex flex-col gap-1">
+                  {schema?.price?.originalPrice?.value &&
+                  parseFloat(schema.price.offerPrice.value) <
+                    parseFloat(schema.price.originalPrice.value) ? (
+                    <div className="flex flex-col justify-center items-center">
+                      <p
+                        style={{ color: schema.config?.backgroundColor }}
+                        className="font-bold text-[20px] text-center"
+                      >
+                        {schema.price.offerPrice.prefix}
+                        {schema.price.offerPrice.value}
+                      </p>
+                      <p className="text-[11px] text-gray-600 line-through">
+                        {schema.price.originalPrice.prefix}
+                        {schema.price.originalPrice.value}
+                      </p>
+                      <p className="text-[11px] text-red-600">
+                        {calculatePercentageOff(
+                          parseFloat(schema.price.originalPrice.value),
+                          parseFloat(schema.price.offerPrice.value)
+                        )}
+                        % off
+                      </p>
+                    </div>
+                  ) : (
+                    <p
+                      style={{ color: schema.config?.backgroundColor }}
+                      className="text-[20px] font-bold"
+                    >
+                      {schema.price.offerPrice.prefix}
+                      {schema.price.offerPrice.value}
+                    </p>
                   )}
-                  % off
+                </div>
+              ) : schema?.price?.originalPrice?.value ? (
+                <p className="text-[15px] font-semibold text-green-600">
+                  {schema.price.originalPrice.prefix}
+                  {schema.price.originalPrice.value}
                 </p>
               ) : (
-                <></>
+                <p className="text-[15px] text-center text-gray-600">
+                  Price not available
+                </p>
               )}
             </div>
           </div>
