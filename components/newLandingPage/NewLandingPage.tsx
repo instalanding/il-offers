@@ -16,7 +16,8 @@ import Reviews from "./Reviews";
 import Checkout from "./Checkout";
 import Link from "next/link";
 import { modifyCloudinaryUrl } from "@/lib/modifyCloudinaryUrl";
-import IframeResizer from '@iframe-resizer/react'
+import IframeResizer from "@iframe-resizer/react";
+import ReviewsNav from "./ReviewsNav";
 
 const NewLandingPage = ({
   schema,
@@ -27,10 +28,11 @@ const NewLandingPage = ({
   user_ip,
   tags,
   utm_params,
-  showDefault // shows default variance 
+  showDefault, // shows default variance
 }: any) => {
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const reviewsRef = useRef<HTMLDivElement>(null);
   const [accordionState, setAccordionState] = useState<string>("item-1");
   const [currentVariantId, setCurrentVariantId] = useState<string | null>(
     schema.variant_id
@@ -41,7 +43,6 @@ const NewLandingPage = ({
   const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
   const offer_ids = ["a423d8"];
-
 
   function calculatePercentageOff(originalPrice: number, offerPrice: number) {
     let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
@@ -86,7 +87,9 @@ const NewLandingPage = ({
       });
 
       const data = await response.json();
-      setIsVarianceLocked(isCheckoutClicked || data.variance === data.last_variance);
+      setIsVarianceLocked(
+        isCheckoutClicked || data.variance === data.last_variance
+      );
 
       setIframeUrl(data.variance);
       return data.variance;
@@ -111,7 +114,7 @@ const NewLandingPage = ({
     fetchVariance(); // Initial variance fetch
   }, [currentVariantId, schema.product_handle, showDefault]);
 
-  const iframeRef = useRef(null)
+  const iframeRef = useRef(null);
 
   const renderVariantsSection = () => {
     return (
@@ -124,26 +127,29 @@ const NewLandingPage = ({
         >
           <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
             Available Options
-            {currentVariantId && (
-              <div className="text-xs my-2 font-semibold">
-                {currentSchema.all_campaigns.find(
-                  (p: any) => p.variant_id === currentVariantId
-                )?.variant_type
-                  ? currentSchema.all_campaigns.find(
-                    (p: any) => p.variant_id === currentVariantId
-                  )?.variant_type
-                  : currentSchema.campaign_name}
-              </div>
-            )}
           </h1>
-  
+          {currentVariantId && (
+            <div className="text-xs mb-2 space-y-[7px]">
+              {currentSchema.all_campaigns.find(
+                (p: any) => p.variant_id === currentVariantId
+              )?.variant_type
+                ? currentSchema.all_campaigns
+                    .find((p: any) => p.variant_id === currentVariantId)
+                    ?.variant_type.split(/[\|-]/)
+                    .map((part: string, index: number) => (
+                      <p key={index}>{part}</p>
+                    ))
+                : currentSchema.campaign_name}
+            </div>
+          )}
+
           <div className="grid grid-cols-3 gap-2">
             {currentSchema.all_campaigns.map((product: any) => (
               <div
                 key={product._id}
-                className={`flex-shrink-0 flex justify-center items-center cursor-pointer border-2 rounded-lg p-2 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] ${
+                className={`flex-shrink-0 flex justify-center items-center cursor-pointer border rounded-lg p-2 hover:shadow-[0_2px_15px_rgba(0,0,0,0.2)] ${
                   product.variant_id === currentVariantId
-                    ? "border-2 border-black shadow-[0_4px_10px_rgba(0,0,0,0.4)]"
+                    ? "border border-[#0000005a] shadow-[0_1px_10px_rgba(0,0,0,0.1)]"
                     : ""
                 } ${offer_ids.includes(offer_id) && "bg-white"}`}
                 onClick={() => {
@@ -162,13 +168,10 @@ const NewLandingPage = ({
                     height={50}
                     className="justify-self-center"
                   /> */}
-                  <h2 className="text-[14px] font-semibold text-center">
-                    {truncateText(
-                      product.variant_type
-                        ? product.variant_type
-                        : product.campaign_name,
-                      25
-                    )}
+                  <h2 className="text-[13px] line-clamp-2 text-center">
+                    {product.variant_type
+                      ? product.variant_type
+                      : product.campaign_name}
                   </h2>
                   <div className="flex items-center justify-center">
                     {product?.price?.offerPrice?.value ? (
@@ -181,7 +184,10 @@ const NewLandingPage = ({
                               {product.price.originalPrice.prefix}
                               {product.price.originalPrice.value}
                             </p>
-                            <p className="text-[18px] font-semibold text-green-600 pr-1">
+                            <p
+                              style={{ color: schema.config?.backgroundColor }}
+                              className="text-[15px] font-semibold pr-1"
+                            >
                               {product.price.offerPrice.prefix}
                               {product.price.offerPrice.value}
                             </p>
@@ -214,7 +220,6 @@ const NewLandingPage = ({
                 </Link>
               </div>
             ))}
-            
           </div>
         </div>
       )
@@ -230,8 +235,9 @@ const NewLandingPage = ({
       }} // Use currentSchema for background
     >
       <div
-        className={`w-[380px] ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-          } flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}
+        className={`w-[380px] ${
+          offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+        } flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}
       >
         <div className="sticky top-0 z-50">
           {currentSchema?.creative?.text && (
@@ -248,8 +254,9 @@ const NewLandingPage = ({
             </div>
           )}
           <div
-            className={`flex flex-col items-center justify-center py-2 ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-              }`}
+            className={`flex flex-col items-center justify-center py-2 ${
+              offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+            }`}
           >
             <Link
               href={`https://${currentSchema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
@@ -291,30 +298,35 @@ const NewLandingPage = ({
         )}
         <div className="mx-3 mt-3">
           <h1
-            className={`text-[20px] font-semibold ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
-              }`}
+            className={`text-[20px] font-semibold ${
+              offer_ids.includes(offer_id) ? "text-white" : "text-black"
+            }`}
           >
             {currentSchema.creative?.title}
           </h1>
         </div>
 
-        {currentSchema.showVariants && !currentSchema.variant_position && (
-          <div className="mt-3">{renderVariantsSection()}</div>
-        )}
-
-        <div>
-          <div
-            className={`${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-              } rounded-lg shadow-sm`}
-          >
-            <Reviews product_handle={currentSchema.product_handle} />
-          </div>
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            return reviewsRef.current?.scrollIntoView({ behavior: "smooth" });
+          }}
+        >
+          <ReviewsNav product_handle={currentSchema.product_handle} />
         </div>
+
+        {currentSchema.showVariants && !currentSchema.variant_position && (
+          <div>{renderVariantsSection()}</div>
+        )}
 
         {showDefault ? (
           <>
             {currentSchema.creative.terms_and_conditions && (
-              <div className={`my-3 ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} px-4 rounded-lg`}>
+              <div
+                className={`my-3 ${
+                  offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+                } px-4 rounded-lg`}
+              >
                 <div
                   className="text-editor-css"
                   dangerouslySetInnerHTML={{
@@ -327,7 +339,11 @@ const NewLandingPage = ({
         ) : (
           <div className="">
             {/* {currentVariance && ( */}
-            <div className={`${offer_ids.includes(offer_id) ? 'text-white' : 'text-black'}`}>
+            <div
+              className={`${
+                offer_ids.includes(offer_id) ? "text-white" : "text-black"
+              }`}
+            >
               {/* {currentVariance}
                 {isVarianceLocked && (
                   <div className="text-sm text-gray-500 mt-2">
@@ -343,28 +359,49 @@ const NewLandingPage = ({
                     width="100%"
                     // height="600px"
                     title="Variance Content"
-                    // forwardRef={iframeRef} 
-                    style={{ width: '100%', height: '130vh' }}
+                    // forwardRef={iframeRef}
+                    style={{ width: "100%", height: "130vh" }}
                   />
                 </div>
-              ) : (<>
-                {currentSchema.creative?.terms_and_conditions && (
-                  <div className={` ${offer_ids.includes(offer_id) ? 'bg-[#122442]' : 'bg-white'} rounded-lg`}>
+              ) : (
+                <>
+                  {currentSchema.creative?.terms_and_conditions && (
                     <div
-                      className="text-editor-css"
-                      dangerouslySetInnerHTML={{
-                        __html: currentSchema.creative?.terms_and_conditions,
-                      }}
-                    ></div>
-                  </div>
-                )}
-              </>)}
+                      className={` ${
+                        offer_ids.includes(offer_id)
+                          ? "bg-[#122442]"
+                          : "bg-white"
+                      } rounded-lg`}
+                    >
+                      <div
+                        className="text-editor-css"
+                        dangerouslySetInnerHTML={{
+                          __html: currentSchema.creative?.terms_and_conditions,
+                        }}
+                      ></div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             {/* )} */}
           </div>
         )}
+        <div id="reviews" ref={reviewsRef}></div>
 
-        {currentSchema.showVariants && currentSchema.variant_position && renderVariantsSection()}
+        <div>
+          <div
+            className={`${
+              offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+            } rounded-lg shadow-sm`}
+          >
+            <Reviews product_handle={currentSchema.product_handle} />
+          </div>
+        </div>
+
+        {currentSchema.showVariants &&
+          currentSchema.variant_position &&
+          renderVariantsSection()}
 
         <div className="flex-grow"></div>
         <div className="sticky bottom-0">
