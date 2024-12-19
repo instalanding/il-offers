@@ -178,12 +178,12 @@ const Checkout = ({
                   ₹{schema.price?.originalPrice.value}
                 </p>
               )}
-              {parseFloat(schema.price.offerPrice.value) <
-              parseFloat(schema.price.originalPrice.value) ? (
+              {parseFloat(schema.price?.offerPrice.value) <
+              parseFloat(schema.price?.originalPrice.value) ? (
                 <p className="text-[11px] text-red-600">
                   {calculatePercentageOff(
-                    parseFloat(schema.price.originalPrice.value),
-                    parseFloat(schema.price.offerPrice.value)
+                    parseFloat(schema.price?.originalPrice.value),
+                    parseFloat(schema.price?.offerPrice.value)
                   )}
                   % off
                 </p>
