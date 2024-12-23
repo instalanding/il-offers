@@ -8,7 +8,7 @@ const ReviewsNav = ({ product_handle }: any) => {
   const fetchReviews = async () => {
     try {
       const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/reviews/?shopify_product_handle=${product_handle}`
+        `${process.env.NEXT_PUBLIC_API_URL}reviews/?shopify_product_handle=${product_handle}`
       );
       setReviewCount(data.totalReviews);
       console.log(data);
