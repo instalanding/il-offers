@@ -20,7 +20,6 @@ const getCampaign = async (offer_id: string) => {
       { cache: "no-store" }
     );
 
-    console.log("resss", response)
     if (!response.ok) {
       throw new Error("Failed to fetch campaign");
     }
