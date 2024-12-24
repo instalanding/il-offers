@@ -6,10 +6,10 @@ import { Metadata, ResolvingMetadata } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
 
-const getCampaign = async (slug: string, variant_id?: string) => {
+const getCampaign = async (slug: string, variant?: string) => {
   try {
     // Skip fetch if no variant_id is provided
-    if (!variant_id) {
+    if (!variant) {
       console.log("No variant_id provided. Skipping fetch.");
       return null; // Early return avoids further execution
     }
@@ -17,7 +17,7 @@ const getCampaign = async (slug: string, variant_id?: string) => {
     // Construct URL safely
     const url = new URL(`${process.env.API_URL}/variancecampaigns`);
     url.searchParams.append("slug", slug);
-    url.searchParams.append("variant_id", variant_id);
+    url.searchParams.append("variant_id", variant);
 
     console.log("Requesting URL:", url.toString());
 
@@ -45,13 +45,13 @@ interface CampaignProps {
   searchParams: {
     mode: string; 
     user_ip?: any;
-    variant_id?: string;
+    variant?: string;
   };
 }
 
 const Campaign = async ({ params, searchParams }: CampaignProps) => {
   const slug = params.slug;
-  const variantId = searchParams.variant_id;
+  const variantId = searchParams.variant;
   const userIp = searchParams.user_ip ?? "";
   const headersList = headers();
   const domain = headersList.get("host");
@@ -188,12 +188,12 @@ export async function generateMetadata(
     searchParams,
   }: {
     params: { slug: string };
-    searchParams: { variant_id?: string };
+    searchParams: { variant?: string };
   },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const slug = params.slug;
-  const variantId = searchParams.variant_id;
+  const variantId = searchParams.variant;
 
   const data = await getCampaign(slug, variantId);
 

@@ -156,9 +156,11 @@ const NewLandingPage = ({
                   setCurrentVariantId(product.variant_id); // Update selected variant
                 }}
               >
+                
                 <Link
-                  href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
+                  href={`/products/${currentSchema.product_handle}?variant=${product.variant_id}`}
                 >
+
                   {/* <Image
                     alt={
                       product.variant_type ? product.variant_type : "Variant"

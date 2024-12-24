@@ -4,7 +4,7 @@ import { MongoClient, ObjectId } from "mongodb";
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const slug = searchParams.get("slug");
-  const variant_id = searchParams.get("variant_id");
+  const variant_id = searchParams.get("variant");
 console.log("slug",slug)
 console.log("variant_id",variant_id)
   if (!slug) {
