@@ -103,7 +103,7 @@ const NewLandingPage = ({
     const fetchData = async () => {
       if (currentVariantId) {
         const response = await fetch(
-          `/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`
+          `${process.env.NEXT_PUBLIC_API_URL}variancecampaigns?slug=${schema.product_handle}&variant_id=${currentVariantId}`
         );
         const data = await response.json();
         setCurrentSchema(data);
