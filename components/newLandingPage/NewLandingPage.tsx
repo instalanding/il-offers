@@ -103,7 +103,7 @@ const NewLandingPage = ({
     const fetchData = async () => {
       if (currentVariantId) {
         const response = await fetch(
-          `/api/campaign?slug=${schema.product_handle}&variant_id=${currentVariantId}`
+          `${process.env.NEXT_PUBLIC_API_URL}variancecampaigns?slug=${schema.product_handle}&variant_id=${currentVariantId}`
         );
         const data = await response.json();
         setCurrentSchema(data);
@@ -156,9 +156,11 @@ const NewLandingPage = ({
                   setCurrentVariantId(product.variant_id); // Update selected variant
                 }}
               >
+                
                 <Link
-                  href={`/products/${currentSchema.product_handle}?variant_id=${product.variant_id}`}
+                  href={`/products/${currentSchema.product_handle}?variant=${product.variant_id}`}
                 >
+
                   {/* <Image
                     alt={
                       product.variant_type ? product.variant_type : "Variant"
