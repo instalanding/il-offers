@@ -65,8 +65,8 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
         >
             <AccordionItem
                 value={btn.title}
-                className={`rounded-tl-3xl rounded-tr-md shadow-lg shadow-gray-300 hover:shadow-xl hover:shadow-gray-400 ${openAccordion === btn.title
-                    ? "border-2 rounded-bl-md rounded-br-3xl shadow-xl shadow-gray-400"
+                className={`rounded-tl-3xl rounded-tr-md shadow-lg shadow-gray-100 hover:shadow-xl hover:shadow-gray-200 ${openAccordion === btn.title
+                    ? "border-2 rounded-bl-md rounded-br-3xl shadow-xl shadow-gray-300"
                     : "bg-transparent"
                     }`}
                 style={{
@@ -90,7 +90,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                     className={`w-full rounded-tl-2xl rounded-tr-sm ${openAccordion === btn.title ? 'rounded-bl-none rounded-br-none' : 'rounded-bl-sm rounded-br-2xl'} px-3 py-[2px] flex items-center`}       >
                     <IntentLink key={btn._id} href={btn.url} target="_blank">
                         <div
-                            className="flex gap-2 min-h-12 items-center font-semibold cursor-pointer"
+                            className="flex gap-2 min-h-12 items-center font-medium cursor-pointer"
                             id={btn.pixel_event}
                             onClick={(e) => {
                                 if (
@@ -215,9 +215,10 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                                                 : btn.type === "custom"
                                                     ? btn.textColor
                                                     : "white"
+                                                    
                                     }}
-                                        className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-semibold flex items-center">
-                                        Buy Now                                  </button>
+                                        className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap">
+                                        Buy Now  </button>
                                 </div>
                             </IntentLink></div>
                     </div>
