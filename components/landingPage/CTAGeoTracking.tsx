@@ -8,7 +8,7 @@ const CTAGeoTracking = ({
 }: any) => {
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-1">
       {schema.buttons.map((m: any, i: number) => {
         return (
           <CtaButton
