@@ -55,35 +55,49 @@ const Coupon = async ({
   const buttonType = data?.buttons[0]?.type;
   console.log(data, "data");
 
+  // if (isPermanentRedirect) {
+  //   console.log(userAgent, "userAgent");
+  //   const extractASIN = (url: string) => {
+  //     const match = url.match(/\/dp\/([A-Z0-9]{10})/);
+  //     return match ? match[1] : null;
+  //   };
+  //   const asin = extractASIN(href);
+  //   if (asin) {
+  //     if (buttonType === "amazon") {
+  //       redirectUrl = `https://staging-links.instalanding.in/amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`
+  //       // if (/android/i.test(userAgent.toString())) {
+  //       //   redirectUrl = `intent://www.amazon.in/dp/${asin}#Intent;scheme=https;package=in.amazon.mShop.android.shopping;end`;
+  //       // } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
+  //       //   redirectUrl = `com.amazon.mobile.shopping://www.amazon.in/dp/${asin}`;
+  //       // } else {
+  //       //   redirectUrl = href;
+  //       // }
+  //     } else {
+  //       if (/android/i.test(userAgent.toString())) {
+  //         redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+  //       } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
+  //         redirectUrl = href.startsWith('http') ? href : `https://${href}`;
+  //       } else {
+  //         redirectUrl = href;
+  //       }
+  //     }
+  //     permanentRedirect(redirectUrl);
+  //   } else {
+  //     console.error("ASIN not found in the URL");
+  //   }
+  // }
+
   if (isPermanentRedirect) {
-    console.log(userAgent, "userAgent");
-    const extractASIN = (url: string) => {
-      const match = url.match(/\/dp\/([A-Z0-9]{10})/);
-      return match ? match[1] : null;
-    };
-    const asin = extractASIN(href);
-    if (asin) {
-      if (buttonType === "amazon") {
-        redirectUrl = `https://staging-links.instalanding.in/amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`
-        // if (/android/i.test(userAgent.toString())) {
-        //   redirectUrl = `intent://www.amazon.in/dp/${asin}#Intent;scheme=https;package=in.amazon.mShop.android.shopping;end`;
-        // } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-        //   redirectUrl = `com.amazon.mobile.shopping://www.amazon.in/dp/${asin}`;
-        // } else {
-        //   redirectUrl = href;
-        // }
-      } else {
-        if (/android/i.test(userAgent.toString())) {
-          redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
-        } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-          redirectUrl = href.startsWith('http') ? href : `https://${href}`;
-        } else {
-          redirectUrl = href;
-        }
+    if(buttonType === "amazon"){
+      redirectUrl = `https://staging-links.instalanding.in/amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`
+    }
+    else{
+      if (/android/i.test(userAgent.toString())) {
+        redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+      } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
+        redirectUrl = href.startsWith('http') ? href : `https://${href}`;
       }
       permanentRedirect(redirectUrl);
-    } else {
-      console.error("ASIN not found in the URL");
     }
   }
 
