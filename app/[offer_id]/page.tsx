@@ -97,8 +97,8 @@ const Coupon = async ({
       } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
         redirectUrl = href.startsWith('http') ? href : `https://${href}`;
       }
-      permanentRedirect(redirectUrl);
     }
+    permanentRedirect(redirectUrl);
   }
 
   if (data.templateType && data.templateType === "new-landing") {
