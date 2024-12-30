@@ -52,6 +52,7 @@ const Coupon = async ({
   const isPermanentRedirect = data?.permanent_redirect;
   let redirectUrl = data?.buttons[0]?.url;
   let href = data?.buttons[0]?.url;
+  const buttonType = data?.buttons[0]?.type;
   console.log(data, "data")
   // if (!data) return <NotFound />;
 
@@ -68,13 +69,34 @@ const Coupon = async ({
   // }
 
   if (isPermanentRedirect) {
-    console.log(userAgent, "userAgent")
-    if (/android/i.test(userAgent.toString())) {
-      redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
-    } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-      redirectUrl = href.startsWith('http') ? href : `https://${href}`;
+    console.log(userAgent, "userAgent");
+    const extractASIN = (url: string) => {
+      const match = url.match(/\/dp\/([A-Z0-9]{10})/);
+      return match ? match[1] : null;
+    };
+    const asin = extractASIN(href);
+    if (asin) {
+      if (buttonType === "amazon") {
+        if (/android/i.test(userAgent.toString())) {
+          redirectUrl = `amzn://apps/android?asin=${asin}`;
+        } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
+          redirectUrl = `https://www.amazon.com/dp/${asin}`;
+        } else {
+          redirectUrl = `https://www.amazon.com/dp/${asin}`;
+        }
+      } else {
+        if (/android/i.test(userAgent.toString())) {
+          redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+        } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
+          redirectUrl = href.startsWith('http') ? href : `https://${href}`;
+        } else {
+          redirectUrl = href;
+        }
+      }
+      permanentRedirect(redirectUrl);
+    } else {
+      console.error("ASIN not found in the URL");
     }
-    permanentRedirect(redirectUrl);
   }
 
   if (data.templateType && data.templateType === "new-landing") {
