@@ -67,9 +67,9 @@ const Coupon = async ({
         if (/android/i.test(userAgent.toString())) {
           redirectUrl = `intent://www.amazon.in/dp/${asin}#Intent;scheme=https;package=in.amazon.mShop.android.shopping;end`;
         } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-          redirectUrl = `com.amazon.mobile.shopping://www.amazon.in/products/${asin}`;
+          redirectUrl = `com.amazon.mobile.shopping://www.amazon.in/dp/${asin}`;
         } else {
-          redirectUrl = `https://www.amazon.com/dp/${asin}`;
+          redirectUrl = href;
         }
       } else {
         if (/android/i.test(userAgent.toString())) {
