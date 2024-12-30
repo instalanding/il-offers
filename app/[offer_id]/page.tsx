@@ -53,20 +53,7 @@ const Coupon = async ({
   let redirectUrl = data?.buttons[0]?.url;
   let href = data?.buttons[0]?.url;
   const buttonType = data?.buttons[0]?.type;
-  console.log(data, "data")
-  // if (!data) return <NotFound />;
-
-  // console.log(data, "inside api")
-
-
-  // const domainUrls = Array.isArray(data.domains) ? data.domains : [];
-
-  // const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
-
-  // if (!isAllowedDomain) {
-  //   console.log("Domain not allowed:", domain);
-  //   return <NotFound />;
-  // }
+  console.log(data, "data");
 
   if (isPermanentRedirect) {
     console.log(userAgent, "userAgent");
@@ -78,9 +65,9 @@ const Coupon = async ({
     if (asin) {
       if (buttonType === "amazon") {
         if (/android/i.test(userAgent.toString())) {
-          redirectUrl = `amzn://apps/android?asin=${asin}`;
+          redirectUrl = `com.amazon.mobile.shopping://www.amazon.in/products/${asin}`;
         } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-          redirectUrl = `https://www.amazon.com/dp/${asin}`;
+          redirectUrl = `intent://www.amazon.in/dp/${asin}#Intent;scheme=https;package=in.amazon.mShop.android.shopping;end`;
         } else {
           redirectUrl = `https://www.amazon.com/dp/${asin}`;
         }
