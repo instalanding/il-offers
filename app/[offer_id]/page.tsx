@@ -89,7 +89,7 @@ const Coupon = async ({
 
   if (isPermanentRedirect) {
     if(buttonType === "amazon"){
-      redirectUrl = `https://staging-links.instalanding.in/amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`
+      redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`
     }
     else{
       if (/android/i.test(userAgent.toString())) {
