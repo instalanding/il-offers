@@ -54,7 +54,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
       <div className="relative w-[380px] bg-white flex flex-col justify-between max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto">
         <div>
           <div className="sticky top-0 z-50">
-            <div className="flex flex-col items-center justify-center py-2 bg-white">
+            <div className="flex flex-col items-center justify-center bg-white">
               <Link
                 href={`https://${schema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
               >

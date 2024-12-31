@@ -58,7 +58,6 @@ const Coupon = async ({
 
   if (isPermanentRedirect) {
     const isGoogleBot = /Googlebot/i.test(userAgent.toString());
-    // const isGoogleBot = true;
     if (isGoogleBot) {
       return <StaticLandingPage redirectUrl={href} />;
     } else if (buttonType === "amazon") {
