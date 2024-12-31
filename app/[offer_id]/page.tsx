@@ -10,6 +10,7 @@ import Domain from "./Domain";
 import Image from "next/image";
 import { permanentRedirect } from "next/navigation";
 import { userAgent } from 'next/server'
+import StaticLandingPage from "@/components/deeplink/StaticLandingPage";
 
 const getCampaign = async (offer_id: string) => {
   try {
@@ -55,43 +56,14 @@ const Coupon = async ({
   const buttonType = data?.buttons[0]?.type;
   console.log(data, "data");
 
-  // if (isPermanentRedirect) {
-  //   console.log(userAgent, "userAgent");
-  //   const extractASIN = (url: string) => {
-  //     const match = url.match(/\/dp\/([A-Z0-9]{10})/);
-  //     return match ? match[1] : null;
-  //   };
-  //   const asin = extractASIN(href);
-  //   if (asin) {
-  //     if (buttonType === "amazon") {
-  //       redirectUrl = `https://staging-links.instalanding.in/amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`
-  //       // if (/android/i.test(userAgent.toString())) {
-  //       //   redirectUrl = `intent://www.amazon.in/dp/${asin}#Intent;scheme=https;package=in.amazon.mShop.android.shopping;end`;
-  //       // } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-  //       //   redirectUrl = `com.amazon.mobile.shopping://www.amazon.in/dp/${asin}`;
-  //       // } else {
-  //       //   redirectUrl = href;
-  //       // }
-  //     } else {
-  //       if (/android/i.test(userAgent.toString())) {
-  //         redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
-  //       } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-  //         redirectUrl = href.startsWith('http') ? href : `https://${href}`;
-  //       } else {
-  //         redirectUrl = href;
-  //       }
-  //     }
-  //     permanentRedirect(redirectUrl);
-  //   } else {
-  //     console.error("ASIN not found in the URL");
-  //   }
-  // }
-
   if (isPermanentRedirect) {
-    if(buttonType === "amazon"){
-      redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`
-    }
-    else{
+    const isGoogleBot = /Googlebot/i.test(userAgent.toString());
+    // const isGoogleBot = true;
+    if (isGoogleBot) {
+      return <StaticLandingPage redirectUrl={href} />;
+    } else if (buttonType === "amazon") {
+      redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
+    } else {
       if (/android/i.test(userAgent.toString())) {
         redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
       } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
