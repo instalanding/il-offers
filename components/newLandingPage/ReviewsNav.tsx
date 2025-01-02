@@ -11,7 +11,6 @@ const ReviewsNav = ({ product_handle }: any) => {
         `${process.env.NEXT_PUBLIC_API_URL}reviews/?shopify_product_handle=${product_handle}`
       );
       setReviewCount(data.totalReviews);
-      console.log(data);
     } catch (error: any) {
       console.error("Error fetching reviews:", error);
       console.log(error.response.status, "status");
