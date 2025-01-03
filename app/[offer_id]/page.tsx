@@ -14,7 +14,7 @@ import StaticLandingPage from "@/components/deeplink/StaticLandingPage";
 
 const getCampaign = async (offer_id: string) => {
   try {
-    console.log(`${process.env.API_URL}campaign/?offer_id=${offer_id}`)
+    // console.log(`${process.env.API_URL}campaign/?offer_id=${offer_id}`)
 
     const response = await fetch(
       `${process.env.API_URL}campaign/?offer_id=${offer_id}`,
@@ -54,7 +54,7 @@ const Coupon = async ({
   let redirectUrl = data?.buttons[0]?.url;
   let href = data?.buttons[0]?.url;
   const buttonType = data?.buttons[0]?.type;
-  console.log(data, "data");
+  // console.log(data, "data");
 
   if (isPermanentRedirect) {
     const isGoogleBot = /Googlebot/i.test(userAgent.toString());

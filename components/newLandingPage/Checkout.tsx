@@ -13,8 +13,8 @@ const Checkout = ({
   logo,
   user_ip,
   utm_params,
-  onCheckoutClick,
-  isVarianceLocked,
+  // onCheckoutClick,
+  // isVarianceLocked,
   campaign_id,
 }: any) => {
   const { handleCheckout } = useCheckout();
@@ -88,9 +88,9 @@ const Checkout = ({
   const handleCheckoutButtonClick = async (e: React.MouseEvent) => {
     try {
       // First update the variance with checkout clicked
-      if (!isVarianceLocked) {
-        await onCheckoutClick(true); // Pass true to indicate checkout was clicked
-      }
+      // if (!isVarianceLocked) {
+      //   await onCheckoutClick(true); // Pass true to indicate checkout was clicked
+      // }
 
       // Then proceed with normal checkout flow
       if (schema.checkout.checkout_name === "fastr") {
@@ -143,7 +143,7 @@ const Checkout = ({
         `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&visitor_id=${visitorId}&campaign_id=${campaign_id}`,
         {}
       );
-    } catch (error) {}
+    } catch (error) { }
   }
 
   return (
@@ -176,7 +176,7 @@ const Checkout = ({
               {schema?.price?.offerPrice?.value ? (
                 <div className="flex flex-col gap-1">
                   {schema?.price?.originalPrice?.value &&
-                  parseFloat(schema.price.offerPrice.value) <
+                    parseFloat(schema.price.offerPrice.value) <
                     parseFloat(schema.price.originalPrice.value) ? (
                     <div className="flex flex-col justify-center items-center">
                       <p
