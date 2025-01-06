@@ -78,11 +78,11 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
                       <CarouselItem key={key}>
                         <Image
                           alt={"Image"}
-                          src={modifyCloudinaryUrl(image, width, height)}
-                          width={width}
-                          height={height}
+                          src={image}
+                          width={480}
+                          height={480}
                           priority={key === 0}
-                          className=" w-[380px] h-[380px] object-cover"
+                          className=""
                         />
                       </CarouselItem>
                     )
