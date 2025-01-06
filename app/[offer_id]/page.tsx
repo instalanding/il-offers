@@ -10,6 +10,7 @@ import Domain from "./Domain";
 import Image from "next/image";
 import { permanentRedirect } from "next/navigation";
 import { userAgent } from 'next/server'
+import StaticLandingPage from "@/components/deeplink/StaticLandingPage";
 
 const getCampaign = async (offer_id: string) => {
   try {
@@ -52,27 +53,21 @@ const Coupon = async ({
   const isPermanentRedirect = data?.permanent_redirect;
   let redirectUrl = data?.buttons[0]?.url;
   let href = data?.buttons[0]?.url;
-  console.log(data, "data")
-  // if (!data) return <NotFound />;
-
-  // console.log(data, "inside api")
-
-
-  // const domainUrls = Array.isArray(data.domains) ? data.domains : [];
-
-  // const isAllowedDomain = domainUrls.includes(domain) || domain === "localhost:3200";
-
-  // if (!isAllowedDomain) {
-  //   console.log("Domain not allowed:", domain);
-  //   return <NotFound />;
-  // }
+  const buttonType = data?.buttons[0]?.type;
+  console.log(data, "data");
 
   if (isPermanentRedirect) {
-    console.log(userAgent, "userAgent")
-    if (/android/i.test(userAgent.toString())) {
-      redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
-    } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
-      redirectUrl = href.startsWith('http') ? href : `https://${href}`;
+    const isGoogleBot = /Googlebot/i.test(userAgent.toString());
+    if (isGoogleBot) {
+      return <StaticLandingPage redirectUrl={href} />;
+    } else if (buttonType === "amazon") {
+      redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
+    } else {
+      if (/android/i.test(userAgent.toString())) {
+        redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+      } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
+        redirectUrl = href.startsWith('http') ? href : `https://${href}`;
+      }
     }
     permanentRedirect(redirectUrl);
   }

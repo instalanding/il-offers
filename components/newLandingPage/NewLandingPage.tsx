@@ -259,7 +259,7 @@ const NewLandingPage = ({
             </div>
           )}
           <div
-            className={`flex flex-col items-center justify-center py-2 ${
+            className={`flex flex-col items-center justify-center ${
               offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
             }`}
           >
