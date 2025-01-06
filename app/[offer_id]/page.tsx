@@ -11,6 +11,7 @@ import Image from "next/image";
 import { permanentRedirect } from "next/navigation";
 import { userAgent } from 'next/server'
 import StaticLandingPage from "@/components/deeplink/StaticLandingPage";
+import V2 from "@/components/v2/v2";
 
 const getCampaign = async (offer_id: string) => {
   try {
@@ -108,7 +109,7 @@ const Coupon = async ({
           utm_params={utm_params}
           campaign_id={data._id}
         />
-        <NewLandingPage
+        {/* <NewLandingPage
           schema={data}
           logo={data.store_logo}
           offer_id={offer_id}
@@ -117,7 +118,8 @@ const Coupon = async ({
           store_url={data.store_url}
           tags={data?.tags}
           utm_params={utm_params}
-        />
+        /> */}
+        <V2 />
       </>
     );
   }
