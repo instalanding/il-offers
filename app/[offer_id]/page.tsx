@@ -70,19 +70,14 @@ const Coupon = async ({
   let href = data?.buttons[0]?.url;
   const buttonType = data?.buttons[0]?.type;
   console.log(data, "data");
-  const user_agent = await getUserAgent()
+  const user_agent = await getUserAgent();
 
   if (isPermanentRedirect) {
-    console.log(user_agent, "From API")
     const isGoogleBot = user_agent.isBot;
+    console.log(user_agent, "user_agent");
+    console.log(isGoogleBot, "isGoogleBotisGoogleBot");
     if (isGoogleBot) {
-      const formattedUrl = href.startsWith("http") ? href : `https://${href}`;
-      const parsedUrl = new URL(formattedUrl);
-      const fullDomain = parsedUrl.hostname;
-      const mainDomain = "instalanding.shop"
-      const queryParams = new URLSearchParams(parsedUrl.search);
-      const redirectUrl = `https://${mainDomain}/?${queryParams.toString()}`;
-      permanentRedirect(redirectUrl);
+      return <StaticLandingPage redirectUrl={href} />;
     } else if (buttonType === "amazon") {
       redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
     } else {
