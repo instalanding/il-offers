@@ -79,9 +79,10 @@ const Coupon = async ({
       const formattedUrl = href.startsWith("http") ? href : `https://${href}`;
     const parsedUrl = new URL(formattedUrl);
     const fullDomain = parsedUrl.hostname;
-    const mainDomain = process.env.NODE_ENV === 'development'
-      ? 'bombaysweetshop.com'
-      : `${fullDomain.split('.').slice(-2).join('.')}`;
+    // const mainDomain = process.env.NODE_ENV === 'development'
+    //   ? 'bombaysweetshop.com'
+    //   : `${fullDomain.split('.').slice(-2).join('.')}`;
+    const mainDomain = "bombaysweetshop.com"
     const queryParams = new URLSearchParams(parsedUrl.search);
     const redirectUrl = `https://${mainDomain}/?${queryParams.toString()}`;
     permanentRedirect(redirectUrl);
