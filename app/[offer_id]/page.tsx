@@ -32,21 +32,6 @@ const getCampaign = async (offer_id: string) => {
   }
 };
 
-const getUserAgent = async () => {
-  try {
-    console.log(`${process.env.NEXT_PUBLIC_CLIENT_URL}/api/user-agent`, "API call")
-    const response = await fetch(`${process.env.NEXT_PUBLIC_CLIENT_URL}/api/user-agent`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch campaign");
-    }
-    const data = await response.json(); // Process the JSON body
-    // console.log(data, "response data"); // Log the actual response data
-    return data; // Return the parsed data
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 type SearchParams = {
   os?: string;
   cpu?: string;
