@@ -39,7 +39,7 @@ interface Block {
 }
 
 const V2: React.FC<V2Props> = ({ campaignData }) => {
-    console.log('campaignData', campaignData);
+    // console.log('campaignData', campaignData);
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
     const [error, setError] = useState<string | null>(null);
 
