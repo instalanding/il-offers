@@ -91,8 +91,15 @@ const Coupon = async ({
   if (isPermanentRedirect) {
     console.log(isGoogleBot, "isGoogleBotisGoogleBot")
     if (isGoogleBot) {
-      redirectUrl = "https://bombaysweetshop.com/"
-      permanentRedirect(redirectUrl);
+      const formattedUrl = href.startsWith("http") ? href : `https://${href}`;
+    const parsedUrl = new URL(formattedUrl);
+    const fullDomain = parsedUrl.hostname;
+    const mainDomain = process.env.NODE_ENV === 'development'
+      ? 'bombaysweetshop.com'
+      : `${fullDomain.split('.').slice(-2).join('.')}`;
+    const queryParams = new URLSearchParams(parsedUrl.search);
+    const redirectUrl = `https://${mainDomain}/?${queryParams.toString()}`;
+    permanentRedirect(redirectUrl);
     } else if (buttonType === "amazon") {
       redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
     } else {
