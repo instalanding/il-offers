@@ -73,14 +73,13 @@ const Coupon = async ({
   const user_agent = await getUserAgent()
 
   if (isPermanentRedirect) {
-    // const isGoogleBot = /(Googlebot|AdsBot-Google|Mediapartners-Google|Googlebot-Mobile|Googlebot-News|Googlebot-Image|Googlebot-Video|Googlebot-Desktop|Googlebot-Smartphone)/i.test(userAgent.toString());
     console.log(user_agent, "From API")
     const isGoogleBot = user_agent.isBot;
     if (isGoogleBot) {
       const formattedUrl = href.startsWith("http") ? href : `https://${href}`;
       const parsedUrl = new URL(formattedUrl);
       const fullDomain = parsedUrl.hostname;
-      const mainDomain = "bombaysweetshop.com"
+      const mainDomain = "instalanding.shop"
       const queryParams = new URLSearchParams(parsedUrl.search);
       const redirectUrl = `https://${mainDomain}/?${queryParams.toString()}`;
       permanentRedirect(redirectUrl);
