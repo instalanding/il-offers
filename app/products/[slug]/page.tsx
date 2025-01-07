@@ -1,188 +1,54 @@
-import MultipleCTA from "@/components/landingPage/MultipleCTA";
-import NotFound from "@/components/landingPage/NotFound";
-import NewLandingPage from "@/components/newLandingPage/NewLandingPage";
-import RecordImpressions from "@/components/recordImpressions/page";
+"use server";
+import React from "react";
+import V2 from "@/components/v2/v2";
 import { Metadata, ResolvingMetadata } from "next";
-import { headers } from "next/headers";
-import Image from "next/image";
 
-const getCampaign = async (slug: string, variant?: string) => {
+
+const getCampaign = async (slug: string, variant_id?: string) => {
   try {
-    // Skip fetch if no variant_id is provided
-    // if (!variant) {
-    //   console.log("No variant_id provided. Skipping fetch.");
-    //   return null; // Early return avoids further execution
-    // }
-
-    // Construct URL safely
-    const url = new URL(`${process.env.API_URL}/variancecampaigns`);
-    url.searchParams.append("slug", slug);
-    if(variant){
-      url.searchParams.append("variant_id", variant);
+    const query = new URLSearchParams();
+    query.append("slug", slug);
+    if (variant_id) {
+      query.append("variant_id", variant_id);
     }
-    console.log("Requesting URL:", url.toString());
 
-    // Fetch the campaign data
-    const response = await fetch(url.toString(), { cache: "no-store" });
+    const response = await fetch(
+      `${process.env.API_URL_V2}campaign?${query.toString()}`,
+      { cache: "no-store" }
+    );
 
-    // Check for response errors
     if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error fetching campaign:", errorResponse);
       throw new Error("Failed to fetch campaign");
     }
 
     const data = await response.json();
-
-
-    return data;
+    const campaignData = Array.isArray(data.data) ? data.data[0] : data.data;
+    return campaignData;
   } catch (error) {
-    console.error("Error fetching campaign:", error);
-    return null; // Return null to handle gracefully in UI
+    console.log(error);
   }
 };
 
+const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }; searchParams: { variant_id?: string } }) => {
+  const { slug } = params;
+  const variant_id = searchParams.variant_id;
+  const data = await getCampaign(slug, variant_id);
 
-interface CampaignProps {
-  params: { slug: string };
-  searchParams: {
-    mode: string; 
-    user_ip?: any;
-    variant?: string;
-  };
-}
-
-const Campaign = async ({ params, searchParams }: CampaignProps) => {
-  const slug = params.slug;
-  const variantId = searchParams.variant;
-  const userIp = searchParams.user_ip ?? "";
-  const headersList = headers();
-  const domain = headersList.get("host");
-
-  if (!slug) {
-    return (
-      <h1 className="font-semibold text-red-600">Product handle is missing!</h1>
-    );
+  if (!data) {
+    return <h1 className="font-semibold text-red-600">Campaign not found!</h1>;
   }
 
-  const data = await getCampaign(slug, variantId);
-  if (!data) return <NotFound />;
-
-  const domainUrls = Array.isArray(data.domains) ? data.domains : [];
-
-  const isAllowedDomain =
-    domainUrls.includes(domain) || domain === "localhost:3200";
-
-  console.log("_____dimains", domainUrls);
-
-  if (!isAllowedDomain) {
-    console.log("Domain not allowed:", domain);
-    return <NotFound />;
-  }
-
-  if (data.templateType && data.templateType === "new-landing") {
-    return (
-      <>
-        {data.pixel && (
-          <>
-            <img
-              height="1"
-              width="1"
-              style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=PageView&noscript=1`}
-              alt="Facebook Pixel"
-            />
-            {data.variant_id && (
-              <img
-                height="1"
-                width="1"
-                style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${
-                  data.pixel.id
-                }&ev=ViewContent&noscript=1&cd[content_name]=${
-                  data.creative.title || "Offer"
-                }&cd[content_category]=Offer&cd[content_ids]=${
-                  data.variant_id || "none"
-                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
-                  data.price.offerPrice.value || 0
-                }&cd[currency]=INR`}
-                alt="Facebook Pixel ViewContent"
-              />
-            )}
-          </>
-        )}
-        <RecordImpressions
-          offer_id={data.offer_id}
-          advertiser={data.advertiser}
-          user_ip={userIp}
-          store_url={data.store_url}
-          tags={data?.tags}
-          campaign_id={data._id}
-        />
-        <NewLandingPage
-          schema={data}
-          logo={data.store_logo}
-          offer_id={slug}
-          advertiser={data.advertiser}
-          user_ip={userIp}
-          store_url={data.store_url}
-          tags={data?.tags}
-          showDefault={data.showVarientHtml}
-        />
-      </>
-    );
-  }
-
-  if (data.templateType && data.templateType === "multiple-cta") {
-    return (
-      <>
-        {data.pixel && (
-          <>
-            <img
-              height="1"
-              width="1"
-              style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${data.pixel.id}&ev=PageView&noscript=1`}
-              alt="Facebook Pixel"
-            />
-            {data.variant_id && (
-              <img
-                height="1"
-                width="1"
-                style={{ display: "none" }}
-                src={`https://www.facebook.com/tr?id=${
-                  data.pixel.id
-                }&ev=ViewContent&noscript=1&cd[content_name]=${
-                  data.creative.title || "Offer"
-                }&cd[content_category]=Offer&cd[content_ids]=${
-                  data.variant_id || "none"
-                }&cd[content_type]=${data.product_handle || "none"}&cd[value]=${
-                  data.price.offerPrice.value || 0
-                }&cd[currency]=INR`}
-                alt="Facebook Pixel ViewContent"
-              />
-            )}
-          </>
-        )}
-        <RecordImpressions
-          offer_id={data.offer_id}
-          advertiser={data.advertiser}
-          user_ip={userIp}
-          store_url={data.store_url}
-          tags={data?.tags}
-          campaign_id={data._id}
-        />
-        <MultipleCTA
-          pixel={data.pixel ? data.pixel.id : ""}
-          schema={data}
-          logo={data.store_logo}
-          offer_id={slug}
-          userIp={userIp}
-        />
-      </>
-    );
-  }
+  return (
+    <>
+      <V2 campaignData={data} />
+    </>
+  );
 };
 
-export default Campaign;
+export default CampaignSlug;
+
 export async function generateMetadata(
   {
     params,
@@ -203,7 +69,7 @@ export async function generateMetadata(
 
   // Validate image URL
   const imageUrl =
-    data?.templateType === "multiple-cta" || data?.templateType === "new-landing"
+    data?.templateType === "multiple-cta" || data?.templateType === "new-landing" || data?.templateType === "deeplink"
       ? data?.creative?.carousel_images?.[0] || ""
       : data?.creative?.image || "";
 

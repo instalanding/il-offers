@@ -1,4 +1,3 @@
-import { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import { userAgent } from "next/server";
 
