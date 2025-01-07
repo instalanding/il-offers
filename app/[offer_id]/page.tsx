@@ -47,12 +47,24 @@ const getUserAgent = async () => {
   }
 };
 
+type SearchParams = {
+  os?: string;
+  cpu?: string;
+  isBot?: string;
+  ua?: string;
+  browser?: string;
+  device?: string;
+  engine?: string;
+  user_ip?: string;
+
+};
+
 const Coupon = async ({
   params,
   searchParams,
 }: {
   params: { offer_id: string };
-  searchParams: { mode: string; user_ip?: any };
+  searchParams: SearchParams;
 }) => {
   const offer_id = params.offer_id;
   const userIp = searchParams.user_ip ?? "";
@@ -69,15 +81,18 @@ const Coupon = async ({
   let redirectUrl = data?.buttons[0]?.url;
   let href = data?.buttons[0]?.url;
   const buttonType = data?.buttons[0]?.type;
-  console.log(data, "data");
-  const user_agent = await getUserAgent();
+  const isGoogleBot = searchParams.isBot === 'true';
+  const ua = searchParams.ua || '';
+  const browser = JSON.parse(searchParams.browser || '{}');
+  const device = JSON.parse(searchParams.device || '{}');
+  const engine = JSON.parse(searchParams.engine || '{}');
+
 
   if (isPermanentRedirect) {
-    const isGoogleBot = user_agent.isBot;
-    console.log(user_agent, "user_agent");
-    console.log(isGoogleBot, "isGoogleBotisGoogleBot");
+    console.log(isGoogleBot, "isGoogleBotisGoogleBot")
     if (isGoogleBot) {
-      return <StaticLandingPage redirectUrl={href} />;
+      redirectUrl = "https://bombaysweetshop.com/"
+      permanentRedirect(redirectUrl);
     } else if (buttonType === "amazon") {
       redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
     } else {
