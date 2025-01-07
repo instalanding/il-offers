@@ -32,6 +32,21 @@ const getCampaign = async (offer_id: string) => {
   }
 };
 
+const getUserAgent = async () => {
+  try {
+    console.log(`${process.env.NEXT_PUBLIC_CLIENT_URL}/api/user-agent`, "API call")
+    const response = await fetch(`${process.env.NEXT_PUBLIC_CLIENT_URL}/api/user-agent`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch campaign");
+    }
+    const data = await response.json(); // Process the JSON body
+    // console.log(data, "response data"); // Log the actual response data
+    return data; // Return the parsed data
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const Coupon = async ({
   params,
   searchParams,
@@ -55,15 +70,17 @@ const Coupon = async ({
   let href = data?.buttons[0]?.url;
   const buttonType = data?.buttons[0]?.type;
   console.log(data, "data");
+  const user_agent = await getUserAgent()
 
   if (isPermanentRedirect) {
-    const isGoogleBot = /Googlebot/i.test(userAgent.toString());
-    // const isGoogleBot = true;
+    // const isGoogleBot = /(Googlebot|AdsBot-Google|Mediapartners-Google|Googlebot-Mobile|Googlebot-News|Googlebot-Image|Googlebot-Video|Googlebot-Desktop|Googlebot-Smartphone)/i.test(userAgent.toString());
+    console.log(user_agent, "From API")
+    const isGoogleBot = user_agent.isBot;
     if (isGoogleBot) {
       const formattedUrl = href.startsWith("http") ? href : `https://${href}`;
       const parsedUrl = new URL(formattedUrl);
       const fullDomain = parsedUrl.hostname;
-      const mainDomain = fullDomain.split('.').slice(-2).join('.');
+      const mainDomain = "bombaysweetshop.com"
       const queryParams = new URLSearchParams(parsedUrl.search);
       const redirectUrl = `https://${mainDomain}/?${queryParams.toString()}`;
       permanentRedirect(redirectUrl);
