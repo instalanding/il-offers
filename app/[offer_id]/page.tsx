@@ -2,6 +2,7 @@
 import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
 import V2 from "@/components/v2/v2";
+import FontLoader from "@/components/FontLoader";
 
 const getCampaign = async (params: { offer_id?: string }) => {
   try {
@@ -34,12 +35,16 @@ const Campaign = async ({
   const { offer_id } = params;
 
   const data = await getCampaign({ offer_id });
+  const fontFamily = data.config.font_family;
+
   if (!data) {
     return <h1 className="font-semibold text-red-600">Campaign not found!</h1>;
   }
+  
   return (
     <>
-      <V2 campaignData={data} />
+      <FontLoader fontFamily={fontFamily} />
+      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily } }} />
     </>
   );
 };
