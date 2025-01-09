@@ -21,7 +21,7 @@ declare global {
     }
 }
 
-const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue, user_ip, campaign_id }: any) => {
+const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue, user_ip, campaign_id, ctaType }: any) => {
     const platform = platforms.find((p) => p.type === btn.type);
     const [openAccordion, setOpenAccordion] = useState<string | null>(defaultValue);
 
@@ -53,19 +53,10 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue, user_ip, campai
     ) {
         try {
             const visitorId = await getVisitorId();
-            console.log("Sending click data:", {
-                offer_id,
-                advertiser,
-                user_ip,
-                store_url,
-                visitorId,
-                campaign_id
-            });
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&visitor_id=${visitorId}&campaign_id=${campaign_id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&visitor_id=${visitorId}&campaign_id=${campaign_id}&ctatype=${ctaType}`,
                 {}
             );
-            console.log("Click recorded successfully:", response.data);
         } catch (error) {
             console.error("Error recording click:", error);
         }
