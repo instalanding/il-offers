@@ -5,6 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaTruck } from "react-icons/fa";
 // import { useSearchParams } from "next/navigation";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import axios from "axios";
+
 import {
     Accordion,
     AccordionContent,
@@ -18,7 +21,7 @@ declare global {
     }
 }
 
-const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
+const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue, user_ip, campaign_id }: any) => {
     const platform = platforms.find((p) => p.type === btn.type);
     const [openAccordion, setOpenAccordion] = useState<string | null>(defaultValue);
 
@@ -29,8 +32,42 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
 
     // console.table([utm_medium, utm_source, utm_campaign]);
 
+    const getVisitorId = async () => {
+        if (typeof window === "undefined") return;
+
+        try {
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            return result.visitorId;
+        } catch (error) {
+            console.error("Error getting visitor identifier:", error);
+            return null;
+        }
+    };
+
+    async function recordClicks(
+        offer_id: string,
+        advertiser: string,
+        user_ip: string,
+        store_url: string
+    ) {
+        try {
+            const visitorId = await getVisitorId();
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&visitor_id=${visitorId}&campaign_id=${campaign_id}`,
+                {}
+            );
+        } catch (error) { }
+    }
+
     function IntentLink({ href, children, target = "_blank" }: any) {
         const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+            recordClicks(
+                schema.offer_id,
+                schema.advertiser,
+                user_ip,
+                "checkout init"
+            );
             e.preventDefault();
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
@@ -215,7 +252,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                                                 : btn.type === "custom"
                                                     ? btn.textColor
                                                     : "white"
-                                                    
+
                                     }}
                                         className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap">
                                         Buy Now  </button>
