@@ -32,12 +32,24 @@ const getCampaign = async (offer_id: string) => {
   }
 };
 
+type SearchParams = {
+  os?: string;
+  cpu?: string;
+  isBot?: string;
+  ua?: string;
+  browser?: string;
+  device?: string;
+  engine?: string;
+  user_ip?: string;
+
+};
+
 const Coupon = async ({
   params,
   searchParams,
 }: {
   params: { offer_id: string };
-  searchParams: { mode: string; user_ip?: any };
+  searchParams: SearchParams;
 }) => {
   const offer_id = params.offer_id;
   const userIp = searchParams.user_ip ?? "";
@@ -54,12 +66,26 @@ const Coupon = async ({
   let redirectUrl = data?.buttons[0]?.url;
   let href = data?.buttons[0]?.url;
   const buttonType = data?.buttons[0]?.type;
-  console.log(data, "data");
+  const isGoogleBot = searchParams.isBot === 'true';
+  const ua = searchParams.ua || '';
+  const browser = JSON.parse(searchParams.browser || '{}');
+  const device = JSON.parse(searchParams.device || '{}');
+  const engine = JSON.parse(searchParams.engine || '{}');
+
 
   if (isPermanentRedirect) {
-    const isGoogleBot = /Googlebot/i.test(userAgent.toString());
+    console.log(isGoogleBot, "isGoogleBotisGoogleBot")
     if (isGoogleBot) {
-      return <StaticLandingPage redirectUrl={href} />;
+      const formattedUrl = href.startsWith("http") ? href : `https://${href}`;
+    const parsedUrl = new URL(formattedUrl);
+    const fullDomain = parsedUrl.hostname;
+    // const mainDomain = process.env.NODE_ENV === 'development'
+    //   ? 'bombaysweetshop.com'
+    //   : `${fullDomain.split('.').slice(-2).join('.')}`;
+    const mainDomain = "bombaysweetshop.com"
+    const queryParams = new URLSearchParams(parsedUrl.search);
+    const redirectUrl = `https://${mainDomain}/?${queryParams.toString()}`;
+    permanentRedirect(redirectUrl);
     } else if (buttonType === "amazon") {
       redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
     } else {
