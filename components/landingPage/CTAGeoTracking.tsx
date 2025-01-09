@@ -5,6 +5,8 @@ const CTAGeoTracking = ({
   schema,
   offer_id,
   pixel,
+  userIp,
+  campaign_id
 }: any) => {
 
   return (
@@ -18,6 +20,9 @@ const CTAGeoTracking = ({
             schema={schema}
             btn={m}
             defaultValue={schema.buttons[0]?.title}
+            user_ip={userIp}
+            campaign_id={campaign_id}
+            ctaType={m.type}
           />
         );
       })}

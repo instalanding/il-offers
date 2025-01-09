@@ -111,6 +111,7 @@ function MultipleCTA({ schema, logo, offer_id, userIp, pixel }: any) {
               campaignGeoRegion={schema.geo_trackings}
               schema={schema}
               offer_id={offer_id}
+              campaign_id={schema._id}
             />
           </div>
           <div>
