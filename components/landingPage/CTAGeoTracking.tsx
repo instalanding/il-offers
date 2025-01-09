@@ -22,6 +22,7 @@ const CTAGeoTracking = ({
             defaultValue={schema.buttons[0]?.title}
             user_ip={userIp}
             campaign_id={campaign_id}
+            ctaType={m.type}
           />
         );
       })}
