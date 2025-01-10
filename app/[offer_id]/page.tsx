@@ -2,7 +2,7 @@
 import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
 import V2 from "@/components/v2/v2";
-import FontLoader from "@/components/FontLoader";
+import FontLoader from "@/components/v2/FontLoader";
 
 const getCampaign = async (params: { offer_id?: string }) => {
   try {
@@ -35,12 +35,12 @@ const Campaign = async ({
   const { offer_id } = params;
 
   const data = await getCampaign({ offer_id });
-  const fontFamily = data.config.font_family;
 
   if (!data) {
     return <h1 className="font-semibold text-red-600">Campaign not found!</h1>;
   }
-  
+
+  const fontFamily = data.config.font_family;
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
@@ -58,15 +58,14 @@ export async function generateMetadata(
   const { offer_id, slug, variant_id } = params;
   const data = await getCampaign({ offer_id });
 
-  // Default fallback values for metadata
-  const title = data?.creative?.title || "Instalanding Offers";
-  const description = data?.store_description || "Explore exclusive offers with Instalanding.";
-  const imageUrl = data?.creative?.image || "/default-meta-image.jpg";
+  const title = data?.meta_description?.title || "Instalanding Offers";
+  const description = data?.meta_description?.description || "Explore exclusive offers with Instalanding.";
+  const imageUrl = data?.meta_description?.image?.url || "/default-meta-image.jpg";
 
   return {
     title,
     description,
-    icons: [{ rel: "icon", url: data?.store_logo || "/favicon.ico" }],
+    icons: [{ rel: "icon", url: data?.advertiser?.store_logo || "/favicon.ico" }],
     openGraph: {
       title,
       description,
@@ -88,7 +87,7 @@ export async function generateMetadata(
       images: [imageUrl],
     },
     other: {
-      "theme-color": data?.config?.button1Color || "#ffffff",
+      "theme-color": data?.config?.primary_color || "#ffffff",
     },
   };
 }

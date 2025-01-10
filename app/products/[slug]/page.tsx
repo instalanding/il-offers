@@ -2,7 +2,7 @@
 import React from "react";
 import V2 from "@/components/v2/v2";
 import { Metadata, ResolvingMetadata } from "next";
-import FontLoader from "@/components/FontLoader";
+import FontLoader from "@/components/v2/FontLoader";
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
@@ -66,22 +66,15 @@ export async function generateMetadata(
 
   const data = await getCampaign(slug, variantId);
 
-  const title = data?.creative?.title || "Instalanding offers";
-  const description = data?.store_description || "Instalanding Offering";
+  const title = data?.meta_description?.title || "Instalanding Offers";
+  const description = data?.meta_description?.description || "Explore exclusive offers with Instalanding.";
+  const imageUrl = data?.meta_description?.image?.url || "/default-meta-image.jpg";
 
-  // Validate image URL
-  const imageUrl =
-    data?.templateType === "multiple-cta" || data?.templateType === "new-landing" || data?.templateType === "deeplink"
-      ? data?.creative?.carousel_images?.[0] || ""
-      : data?.creative?.image || "";
 
   return {
     title: title,
     description: description,
-    // Validate icons before usage
-    icons: data?.store_logo
-      ? [{ rel: "icon", url: data.store_logo.toString() }]
-      : [],
+    icons: [{ rel: "icon", url: data?.advertiser?.store_logo || "/favicon.ico" }],
     openGraph: {
       images: [
         {
@@ -92,7 +85,7 @@ export async function generateMetadata(
       ],
     },
     other: {
-      "theme-color": data?.config?.button1Color || "#FFFFFF",
+      "theme-color": data?.config?.primary_color || "#FFFFFF",
       "twitter:image": imageUrl,
       "twitter:card": "summary_large_image",
       "og:url": `https://instalanding.shop/${slug}`,
