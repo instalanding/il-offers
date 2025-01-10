@@ -63,7 +63,7 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
 
     return (
         <main
-            className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 mt-[30px]"
+            className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
             style={{ overflowY: 'auto' }}
         >
             <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none max-sm:rounded-none overflow-auto mx-auto rounded-lg">
