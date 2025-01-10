@@ -146,10 +146,15 @@ const NewLandingPage = ({
             {currentSchema.all_campaigns.map((product: any) => (
               <div
                 key={product._id}
-                className={`flex-shrink-0 flex justify-center items-center cursor-pointer border rounded-lg p-2 hover:shadow-[0_2px_15px_rgba(0,0,0,0.2)] ${product.variant_id === currentVariantId
-                    ? "border border-[#0000005a] shadow-[0_1px_10px_rgba(0,0,0,0.1)]"
-                    : ""
-                  } ${offer_ids.includes(offer_id) && "bg-white"}`}
+
+                className={`flex-shrink-0 relative flex justify-center items-center cursor-pointer border rounded-lg p-2 hover:shadow-[0_2px_15px_rgba(0,0,0,0.2)] ${
+                  product.variant_id === currentVariantId
+                    ? "border border-[#0000005a] relative shadow-[0_1px_10px_rgba(0,0,0,0.1)]"
+                    : " relative"
+                } ${offer_ids.includes(offer_id) && "bg-white"}`}
+                style={
+                  product?.inventory === "0" ? { background: "#0000001a" } : {}
+                }
                 onClick={() => {
                   setCurrentVariantId(product.variant_id); // Update selected variant
                 }}
@@ -158,7 +163,6 @@ const NewLandingPage = ({
                 <Link
                   href={`/products/${currentSchema.product_handle}?variant=${product.variant_id}`}
                 >
-
                   {/* <Image
                     alt={
                       product.variant_type ? product.variant_type : "Variant"
@@ -168,7 +172,13 @@ const NewLandingPage = ({
                     height={50}
                     className="justify-self-center"
                   /> */}
-                  <h2 className="text-[13px] line-clamp-2 text-center">
+                  <h2
+                    className={
+                      product?.inventory === "0"
+                        ? "text-[13px] line-clamp-2 text-center text-[#0000006a]"
+                        : "text-[13px] line-clamp-2 text-center"
+                    }
+                  >
                     {product.variant_type
                       ? product.variant_type
                       : product.campaign_name}
@@ -180,18 +190,41 @@ const NewLandingPage = ({
                           parseFloat(product.price.offerPrice.value) <
                           parseFloat(product.price.originalPrice.value) ? (
                           <div className="flex flex-wrap justify-center items-center">
-                            <p className="text-[12px] text-gray-600 line-through pr-1">
+                            <p
+                              style={
+                                product?.inventory === "0"
+                                  ? {
+                                      color:
+                                        schema.config?.backgroundColor + "6a",
+                                    }
+                                  : { color: schema.config?.backgroundColor }
+                              }
+                              className="text-[12px] text-gray-600 line-through pr-1"
+                            >
                               {product.price.originalPrice.prefix}
                               {product.price.originalPrice.value}
                             </p>
                             <p
-                              style={{ color: schema.config?.backgroundColor }}
+                              style={
+                                product?.inventory === "0"
+                                  ? {
+                                      color:
+                                        schema.config?.backgroundColor + "6a",
+                                    }
+                                  : { color: schema.config?.backgroundColor }
+                              }
                               className="text-[15px] font-semibold pr-1"
                             >
                               {product.price.offerPrice.prefix}
                               {product.price.offerPrice.value}
                             </p>
-                            <p className="text-[13px] text-red-600">
+                            <p
+                              className={
+                                product?.inventory === "0"
+                                  ? "text-[13px] text-[#fc03036a]"
+                                  : "text-[13px] text-red-600"
+                              }
+                            >
                               {calculatePercentageOff(
                                 parseFloat(product.price.originalPrice.value),
                                 parseFloat(product.price.offerPrice.value)
@@ -201,8 +234,15 @@ const NewLandingPage = ({
                           </div>
                         ) : (
                           <p
-                            style={{ color: schema.config?.backgroundColor }}
-                            className="text-[18px] font-semibold text-green-600"
+                            style={
+                              product?.inventory === "0"
+                                ? {
+                                    color:
+                                      schema.config?.backgroundColor + "6a",
+                                  }
+                                : { color: schema.config?.backgroundColor }
+                            }
+                            className="text-[18px] font-semibold"
                           >
                             {product.price.offerPrice.prefix}
                             {product.price.offerPrice.value}
