@@ -5,6 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaTruck } from "react-icons/fa";
 // import { useSearchParams } from "next/navigation";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import axios from "axios";
+
 import {
     Accordion,
     AccordionContent,
@@ -18,7 +21,7 @@ declare global {
     }
 }
 
-const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
+const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue, user_ip, campaign_id, ctaType }: any) => {
     const platform = platforms.find((p) => p.type === btn.type);
     const [openAccordion, setOpenAccordion] = useState<string | null>(defaultValue);
 
@@ -29,8 +32,44 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
 
     // console.table([utm_medium, utm_source, utm_campaign]);
 
+    const getVisitorId = async () => {
+        if (typeof window === "undefined") return;
+
+        try {
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            return result.visitorId;
+        } catch (error) {
+            console.error("Error getting visitor identifier:", error);
+            return null;
+        }
+    };
+
+    async function recordClicks(
+        offer_id: string,
+        advertiser: string,
+        user_ip: string,
+        store_url: string
+    ) {
+        try {
+            const visitorId = await getVisitorId();
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${offer_id}&advertiser_id=${advertiser}&user_ip=${user_ip}&product_url=${store_url}&visitor_id=${visitorId}&campaign_id=${campaign_id}&ctatype=${ctaType}`,
+                {}
+            );
+        } catch (error) {
+            console.error("Error recording click:", error);
+        }
+    }
+
     function IntentLink({ href, children, target = "_blank" }: any) {
         const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+            recordClicks(
+                schema.offer_id,
+                schema.advertiser,
+                user_ip,
+                "checkout init"
+            );
             e.preventDefault();
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
@@ -65,8 +104,8 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
         >
             <AccordionItem
                 value={btn.title}
-                className={`rounded-tl-3xl rounded-tr-md shadow-lg shadow-gray-300 hover:shadow-xl hover:shadow-gray-400 ${openAccordion === btn.title
-                    ? "border-2 rounded-bl-md rounded-br-3xl shadow-xl shadow-gray-400"
+                className={`rounded-tl-3xl rounded-tr-md shadow-lg shadow-gray-100 hover:shadow-xl hover:shadow-gray-200 ${openAccordion === btn.title
+                    ? "border-2 rounded-bl-md rounded-br-3xl shadow-xl shadow-gray-300"
                     : "bg-transparent"
                     }`}
                 style={{
@@ -90,7 +129,7 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                     className={`w-full rounded-tl-2xl rounded-tr-sm ${openAccordion === btn.title ? 'rounded-bl-none rounded-br-none' : 'rounded-bl-sm rounded-br-2xl'} px-3 py-[2px] flex items-center`}       >
                     <IntentLink key={btn._id} href={btn.url} target="_blank">
                         <div
-                            className="flex gap-2 min-h-12 items-center font-semibold cursor-pointer"
+                            className="flex gap-2 min-h-12 items-center font-medium cursor-pointer"
                             id={btn.pixel_event}
                             onClick={(e) => {
                                 if (
@@ -215,9 +254,10 @@ const CtaButton = ({ offer_id, schema, btn, pixel, defaultValue }: any) => {
                                                 : btn.type === "custom"
                                                     ? btn.textColor
                                                     : "white"
+
                                     }}
-                                        className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-semibold flex items-center">
-                                        Buy Now                                  </button>
+                                        className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap">
+                                        Buy Now  </button>
                                 </div>
                             </IntentLink></div>
                     </div>

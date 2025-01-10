@@ -9,16 +9,17 @@ import Image from "next/image";
 const getCampaign = async (slug: string, variant?: string) => {
   try {
     // Skip fetch if no variant_id is provided
-    if (!variant) {
-      console.log("No variant_id provided. Skipping fetch.");
-      return null; // Early return avoids further execution
-    }
+    // if (!variant) {
+    //   console.log("No variant_id provided. Skipping fetch.");
+    //   return null; // Early return avoids further execution
+    // }
 
     // Construct URL safely
     const url = new URL(`${process.env.API_URL}/variancecampaigns`);
     url.searchParams.append("slug", slug);
-    url.searchParams.append("variant_id", variant);
-
+    if(variant){
+      url.searchParams.append("variant_id", variant);
+    }
     console.log("Requesting URL:", url.toString());
 
     // Fetch the campaign data

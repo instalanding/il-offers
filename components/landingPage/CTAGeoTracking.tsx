@@ -5,10 +5,12 @@ const CTAGeoTracking = ({
   schema,
   offer_id,
   pixel,
+  userIp,
+  campaign_id
 }: any) => {
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-1">
       {schema.buttons.map((m: any, i: number) => {
         return (
           <CtaButton
@@ -18,6 +20,9 @@ const CTAGeoTracking = ({
             schema={schema}
             btn={m}
             defaultValue={schema.buttons[0]?.title}
+            user_ip={userIp}
+            campaign_id={campaign_id}
+            ctaType={m.type}
           />
         );
       })}

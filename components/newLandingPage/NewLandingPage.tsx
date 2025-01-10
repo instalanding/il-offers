@@ -121,9 +121,8 @@ const NewLandingPage = ({
       currentSchema.all_campaigns &&
       currentSchema.all_campaigns.length > 1 && (
         <div
-          className={`px-4 my-3 ${
-            offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-          } rounded-lg`}
+          className={`px-4 my-3 ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+            } rounded-lg`}
         >
           <h1 className="flex flex-col text-[17px] mb-2 font-semibold">
             Available Options
@@ -134,11 +133,11 @@ const NewLandingPage = ({
                 (p: any) => p.variant_id === currentVariantId
               )?.variant_type
                 ? currentSchema.all_campaigns
-                    .find((p: any) => p.variant_id === currentVariantId)
-                    ?.variant_type.split(/[\|-]/)
-                    .map((part: string, index: number) => (
-                      <p key={index}>{part}</p>
-                    ))
+                  .find((p: any) => p.variant_id === currentVariantId)
+                  ?.variant_type.split(/[\|-]/)
+                  .map((part: string, index: number) => (
+                    <p key={index}>{part}</p>
+                  ))
                 : currentSchema.campaign_name}
             </div>
           )}
@@ -147,6 +146,7 @@ const NewLandingPage = ({
             {currentSchema.all_campaigns.map((product: any) => (
               <div
                 key={product._id}
+
                 className={`flex-shrink-0 relative flex justify-center items-center cursor-pointer border rounded-lg p-2 hover:shadow-[0_2px_15px_rgba(0,0,0,0.2)] ${
                   product.variant_id === currentVariantId
                     ? "border border-[#0000005a] relative shadow-[0_1px_10px_rgba(0,0,0,0.1)]"
@@ -159,7 +159,7 @@ const NewLandingPage = ({
                   setCurrentVariantId(product.variant_id); // Update selected variant
                 }}
               >
-                {product?.inventory === "0" && <div></div>}
+
                 <Link
                   href={`/products/${currentSchema.product_handle}?variant=${product.variant_id}`}
                 >
@@ -187,7 +187,7 @@ const NewLandingPage = ({
                     {product?.price?.offerPrice?.value ? (
                       <div className="flex flex-col gap-1">
                         {product?.price?.originalPrice?.value &&
-                        parseFloat(product.price.offerPrice.value) <
+                          parseFloat(product.price.offerPrice.value) <
                           parseFloat(product.price.originalPrice.value) ? (
                           <div className="flex flex-wrap justify-center items-center">
                             <p
@@ -278,9 +278,8 @@ const NewLandingPage = ({
       }} // Use currentSchema for background
     >
       <div
-        className={`w-[380px] ${
-          offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-        } flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}
+        className={`w-[380px] ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+          } flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none rounded-2xl max-sm:rounded-none overflow-auto mx-auto`}
       >
         <div className="sticky top-0 z-50">
           {currentSchema?.creative?.text && (
@@ -297,9 +296,8 @@ const NewLandingPage = ({
             </div>
           )}
           <div
-            className={`flex flex-col items-center justify-center py-2 ${
-              offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-            }`}
+            className={`flex flex-col items-center justify-center ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+              }`}
           >
             <Link
               href={`https://${currentSchema.store_url}/?utm_source=instalanding&utm_medium=landing_page&utm_campaign=${offer_id}`}
@@ -341,9 +339,8 @@ const NewLandingPage = ({
         )}
         <div className="mx-3 mt-3">
           <h1
-            className={`text-[20px] font-semibold ${
-              offer_ids.includes(offer_id) ? "text-white" : "text-black"
-            }`}
+            className={`text-[20px] font-semibold ${offer_ids.includes(offer_id) ? "text-white" : "text-black"
+              }`}
           >
             {currentSchema.creative?.title}
           </h1>
@@ -366,9 +363,8 @@ const NewLandingPage = ({
           <>
             {currentSchema.creative.terms_and_conditions && (
               <div
-                className={`my-3 ${
-                  offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-                } px-4 rounded-lg`}
+                className={`my-3 ${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+                  } px-4 rounded-lg`}
               >
                 <div
                   className="text-editor-css"
@@ -383,9 +379,8 @@ const NewLandingPage = ({
           <div className="">
             {/* {currentVariance && ( */}
             <div
-              className={`${
-                offer_ids.includes(offer_id) ? "text-white" : "text-black"
-              }`}
+              className={`${offer_ids.includes(offer_id) ? "text-white" : "text-black"
+                }`}
             >
               {/* {currentVariance}
                 {isVarianceLocked && (
@@ -410,11 +405,10 @@ const NewLandingPage = ({
                 <>
                   {currentSchema.creative?.terms_and_conditions && (
                     <div
-                      className={` ${
-                        offer_ids.includes(offer_id)
+                      className={` ${offer_ids.includes(offer_id)
                           ? "bg-[#122442]"
                           : "bg-white"
-                      } rounded-lg`}
+                        } rounded-lg`}
                     >
                       <div
                         className="text-editor-css"
@@ -434,9 +428,8 @@ const NewLandingPage = ({
 
         <div>
           <div
-            className={`${
-              offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
-            } rounded-lg shadow-sm`}
+            className={`${offer_ids.includes(offer_id) ? "bg-[#122442]" : "bg-white"
+              } rounded-lg shadow-sm`}
           >
             <Reviews product_handle={currentSchema.product_handle} />
           </div>
@@ -465,6 +458,7 @@ const NewLandingPage = ({
             utm_params={utm_params}
             onCheckoutClick={fetchVariance}
             isVarianceLocked={isVarianceLocked}
+            campaign_id={currentSchema._id}
           />
         </div>
         <div ref={bottomRef}></div>
