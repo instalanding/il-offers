@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { FaTruck } from "react-icons/fa";
 import {
     Accordion,
@@ -9,8 +7,11 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import Link from "next/link";
+import Image from "next/image";
 
-const MultiCta = ({ value, style }: any) => {
+
+const MultiCta = ({ value }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
     return (
@@ -18,47 +19,49 @@ const MultiCta = ({ value, style }: any) => {
             type="single"
             collapsible
             onValueChange={(value) => setOpenAccordion(value)}
-            className="flex flex-col gap-4" style={style}
+            className="flex flex-col gap-3"
         >
             {value.map((cta: any) => (
                 <AccordionItem
-                    key={cta.id}
-                    value={cta.ctaType}
+                    key={cta._id}
+                    value={cta.type}
                     className={`rounded-tl-3xl rounded-tr-md shadow-lg shadow-gray-100 hover:shadow-xl hover:shadow-gray-200 
-                            ${openAccordion === cta.ctaType
+                            ${openAccordion === cta.type
                             ? "border-2 shadow-xl shadow-gray-300 rounded-br-3xl rounded-bl-md"
                             : "bg-transparent"
                         }`}
                     style={{
-                        borderColor: openAccordion === cta.ctaType ? cta.color : "black",
+                        borderColor: openAccordion === cta.type ? cta.color : "black",
                     }}
                 >
                     <AccordionTrigger
-                        className={`flex items-center justify-between p-4 cursor-pointer rounded-tl-3xl rounded-tr-md 
-                                ${openAccordion !== cta.ctaType
-                                ? "rounded-br-3xl rounded-bl-md"
-                                : ""
-                            }`}
+                        className={`flex items-center justify-between px-4 py-2 cursor-pointer rounded-tl-2xl rounded-tr-sm
+                                ${openAccordion !== cta.type ? "rounded-br-3xl rounded-bl-md" : ""}`}
                         style={{
-                            background: cta.style.backgroundColor,
-                            color:
-                                cta.color === "#FF9900" || cta.color === "#2874F0"
-                                    ? "black"
-                                    : "white",
+                            background: cta.color,
+                            color: cta.textColor
                         }}
                     >
                         <div className="flex items-center justify-between w-full">
                             <div className="flex items-center">
                                 <Image
-                                    alt={`${cta.ctaType}_logo`}
-                                    src={cta.logo}
-                                    width={50}
-                                    height={50}
+                                    alt={`${cta.type}_logo`}
+                                    src={cta.icon}
+                                    width={35}
+                                    height={35}
                                     className="object-contain"
                                 />
-                                <span className="ml-2 font-medium">{cta.ctaType}</span>
+                                <span className="ml-2 font-medium">{cta.title}</span>
                             </div>
-                            <div className="font-semibold mr-2">₹{cta.price}</div>
+                            <div className="flex flex-col items-end justify-center mr-2">
+                                <p className="font-semibold text-lg">
+                                    {cta?.offerPrice && `₹${cta?.offerPrice}`}
+                                </p>
+                                <p className="line-through font-light text-xs">
+                                    {cta?.originalPrice && `₹${cta?.originalPrice}`}
+                                </p>
+                            </div>
+
                         </div>
                     </AccordionTrigger>
 
@@ -71,14 +74,11 @@ const MultiCta = ({ value, style }: any) => {
                                 <p className="text-xs text-left">{cta.subtitle}</p>
                             </div>
                         </div>
-                        <Link href={cta.link} target="_blank" rel="noopener noreferrer">
+                        <Link href={cta.url} target="_blank" rel="noopener noreferrer">
                             <button
                                 style={{
-                                    background: cta.style.backgroundColor,
-                                    color:
-                                        cta.color === "#FF9900" || cta.color === "#2874F0"
-                                            ? "black"
-                                            : "white",
+                                    background: cta.color,
+                                    color: cta.textColor,
                                 }}
                                 className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap"
                             >

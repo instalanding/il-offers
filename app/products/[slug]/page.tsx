@@ -3,6 +3,7 @@ import React from "react";
 import V2 from "@/components/v2/v2";
 import { Metadata, ResolvingMetadata } from "next";
 import FontLoader from "@/components/v2/FontLoader";
+import { MdErrorOutline } from "react-icons/md";
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
@@ -38,7 +39,14 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   const fontFamily = data.config.font_family;
 
   if (!data) {
-    return <h1 className="font-semibold text-red-600">Campaign not found!</h1>;
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-6 rounded-md shadow-md">
+        <MdErrorOutline className="text-red-600 text-6xl mb-4" />
+        <h1 className="font-bold text-red-600 text-lg mb-2">Campaign Not Found</h1>
+        <p className="text-gray-600 text-sm text-center">
+          The campaign you’re looking for doesn’t exist or may have been removed.
+        </p>
+      </div>)
   }
 
   return (

@@ -11,7 +11,6 @@ import MultipleCta from './components/MultipleCta';
 import VariantSelector from './components/Variants/VariantsSelector';
 
 interface CampaignData {
-
     blocks: string;
     config: {
         font_family: string;
@@ -31,7 +30,7 @@ interface Block {
     id: string;
     type: string;
     images?: { url: string }[];
-    value?: string;
+    value?: any;
     style?: React.CSSProperties;
     price?: number;
     discount?: number;
@@ -48,7 +47,7 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
     }, [campaignData]);
 
     if (error) return <div>Error: {error}</div>;
-    if (!campaign) return <div>Loading...</div>;
+    if (!campaign) return <></>;
 
     const blocks: Block[] = JSON.parse(campaign.blocks);
 
@@ -60,6 +59,8 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
         footerText: campaign.config.footer_text,
         buttonText: campaign.config.button_text,
     };
+
+    const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
 
     return (
         <main
@@ -92,8 +93,7 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                             return (
                                 <RatingsComponent
                                     key={block.id}
-                                    price={block.price ?? 0}
-                                    discount={block.discount ?? 0}
+                                    value={block.value || ''}
                                 />
                             );
                         case 'accordion':
@@ -111,19 +111,18 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                     value={block.variantType as 'size' | 'color' | 'quantity' || 'size'}
                                 />
                             );
-                        case 'muliple-cta':
+                        case 'multiple-cta':
                             return (
                                 <MultipleCta
                                     key={block.id}
                                     value={block.value}
-                                    style={block.style}
                                 />
                             );
                         default:
                             return null;
                     }
                 })}
-                <Footer config={campaignConfig} />
+                {!hasMultipleCta && <Footer config={campaignConfig} />}
             </div>
         </main>
     );
