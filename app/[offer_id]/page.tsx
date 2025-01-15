@@ -29,6 +29,30 @@ const getCampaign = async (params: { offer_id?: string }) => {
   }
 };
 
+// const getCollection = async (params: { offer_id?: string }) => {
+//   try {
+//     const { offer_id } = params;
+//     const query = new URLSearchParams();
+
+//     if (offer_id) query.append("offer_id", offer_id);
+
+//     const response = await fetch(
+//       `${process.env.API_URL_V2}collection?${query.toString()}`,
+//       { cache: "no-store" }
+//     );
+//     if (!response.ok) {
+//       const errorResponse = await response.json();
+//       console.error("Error fetching collection:", errorResponse);
+//       throw new Error("Failed to fetch collection");
+//     }
+//     const data = await response.json();
+//     console.log("colllection_____", data);
+//     return data.data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
 const Campaign = async ({
   params
 }: {
@@ -37,7 +61,8 @@ const Campaign = async ({
   const { offer_id } = params;
 
   const data = await getCampaign({ offer_id });
-
+  // const collection = await getCollection({ offer_id });
+  // console.log(collection);
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-6 rounded-md shadow-md">
@@ -51,7 +76,7 @@ const Campaign = async ({
     );
   }
 
-  const fontFamily = data.config.font_family;
+  const fontFamily = data?.config?.font_family || "Inter";
   return (
     <>
       <FontLoader fontFamily={fontFamily} />

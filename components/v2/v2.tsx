@@ -24,8 +24,12 @@ interface CampaignData {
 
 interface V2Props {
     campaignData: CampaignData;
+    // collection: Collection;
 }
 
+// interface Collection {
+
+// }
 interface Block {
     id: string;
     type: string;
@@ -94,6 +98,7 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                 <RatingsComponent
                                     key={block.id}
                                     value={block.value || ''}
+                                    style={block.style}
                                 />
                             );
                         case 'accordion':
@@ -109,6 +114,7 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                 <VariantSelector
                                     key={block.id}
                                     value={block.variantType as 'size' | 'color' | 'quantity' || 'size'}
+                                // collection={collection}
                                 />
                             );
                         case 'multiple-cta':
