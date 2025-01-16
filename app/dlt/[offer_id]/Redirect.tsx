@@ -7,10 +7,6 @@ import { permanentRedirect } from "next/navigation";
 import { new_backend_url } from "@/utils/constants";
 
 const Redirect = ({ data }: any) => {
-  if (!data) {
-    return <div>Deeplink not found</div>;
-  }
-
   const getVisitorId = async () => {
     if (typeof window === "undefined") return;
 
@@ -60,7 +56,7 @@ const Redirect = ({ data }: any) => {
     getVisitorId().then(permanentRedirect(redirectUrl));
   }, []);
 
-  return <>redirecting...</>;
+  return <div>redirecting...</div>;
 };
 
 export default Redirect;
