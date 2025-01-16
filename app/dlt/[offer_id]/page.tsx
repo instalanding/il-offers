@@ -1,7 +1,7 @@
 "use server";
 import React from "react";
-import { userAgent } from "next/server";
-import { permanentRedirect } from "next/navigation";
+import Redirect from "./Redirect";
+import { new_backend_url } from "@/utils/constants";
 
 interface PageProps {
   params: { offer_id: string };
@@ -10,9 +10,9 @@ interface PageProps {
 
 const getDeeplink = async (offer_id: string) => {
   try {
-    console.log(`${process.env.API_URL}deeplink/${offer_id}`);
+    console.log(`${new_backend_url}deeplink/${offer_id}`);
 
-    const response = await fetch(`${process.env.API_URL}deeplink/${offer_id}`, {
+    const response = await fetch(`${new_backend_url}deeplink/${offer_id}`, {
       cache: "no-store",
     });
 
@@ -30,30 +30,13 @@ const getDeeplink = async (offer_id: string) => {
 const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
   const { offer_id } = params;
 
+  // data fetched here
+
   const data = await getDeeplink(offer_id);
 
-  console.log(data);
+  // redirect happens here
 
-  let redirectUrl = data.product_url;
-  let href = data.product_url;
-  const buttonType: string = data.cta_type;
-
-  if (buttonType === "amazon") {
-    redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
-  } else {
-    if (/android/i.test(userAgent.toString())) {
-      redirectUrl = `intent:${href.replace(
-        /^https?:\/\//,
-        ""
-      )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
-    } else if (
-      /iPad|iPhone|iPod/.test(userAgent.toString()) &&
-      !/windows/i.test(userAgent.toString())
-    ) {
-      redirectUrl = href.startsWith("http") ? href : `https://${href}`;
-    }
-  }
-  permanentRedirect(redirectUrl);
+  return <Redirect data={data} />;
 };
 
 export default Page;
