@@ -9,7 +9,7 @@ import { new_backend_url } from "@/utils/constants";
 const Redirect = ({ data }: any) => {
   const redirectToExternal = (url: string) => {
     // Set the external URL you want to redirect to
-    permanentRedirect(url);
+    window.location.href = url;
   };
 
   const getVisitorId = async () => {
