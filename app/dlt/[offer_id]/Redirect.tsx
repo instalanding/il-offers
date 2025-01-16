@@ -7,6 +7,11 @@ import { permanentRedirect } from "next/navigation";
 import { new_backend_url } from "@/utils/constants";
 
 const Redirect = ({ data }: any) => {
+  const redirectToExternal = (url: string) => {
+    // Set the external URL you want to redirect to
+    window.location.href = url;
+  };
+
   const getVisitorId = async () => {
     if (typeof window === "undefined") return;
 
@@ -14,7 +19,7 @@ const Redirect = ({ data }: any) => {
       const fp = await FingerprintJS.load();
       const result = await fp.get();
       console.log(result.visitorId);
-      hit(result.visitorId);
+      await hit(result.visitorId);
     } catch (error) {
       console.error("Error getting visitor identifier:", error);
       return null;
@@ -53,10 +58,12 @@ const Redirect = ({ data }: any) => {
   }
 
   useEffect(() => {
-    getVisitorId().then(permanentRedirect(redirectUrl));
+    getVisitorId().then(() => {
+      redirectToExternal(redirectUrl);
+    });
   }, []);
 
-  return <div>redirecting...</div>;
+  return <>redirecting...</>;
 };
 
 export default Redirect;
