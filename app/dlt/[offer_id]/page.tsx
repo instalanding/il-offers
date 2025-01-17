@@ -12,9 +12,9 @@ interface PageProps {
 
 const getDeeplink = async (offer_id: string) => {
   try {
-    console.log(`${new_backend_url}deeplink/${offer_id}`);
+    console.log(`${process.env.NEW_BACKEND_URL}deeplink/${offer_id}`);
 
-    const response = await fetch(`${new_backend_url}deeplink/${offer_id}`, {
+    const response = await fetch(`${process.env.NEW_BACKEND_URL}deeplink/${offer_id}`, {
       cache: "no-store",
     });
 

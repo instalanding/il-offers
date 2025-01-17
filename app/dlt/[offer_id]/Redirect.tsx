@@ -27,10 +27,10 @@ const Redirect = ({ data }: any) => {
   };
 
   const hit = async (fp: string) => {
-    console.log(new_backend_url);
+    console.log(process.env.NEW_BACKEND_URL);
 
     await fetch(
-      `${new_backend_url}record-redirect/?fp=${fp}&offer_id=${data.offer_id}&advertiser=${data.advertiser}`,
+      `${process.env.NEW_BACKEND_URL}record-redirect/?fp=${fp}&offer_id=${data.offer_id}&advertiser=${data.advertiser}`,
       {
         cache: "no-store",
       }
