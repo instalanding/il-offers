@@ -32,11 +32,35 @@ const getCampaign = async (slug: string, variant_id?: string) => {
   }
 };
 
+const getReviews = async (variantId: string) => {
+  try {
+    const response = await fetch(`${process.env.API_URL_V2}/reviews?variantId=${variantId}`, {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error fetching reviews:", errorResponse);
+      throw new Error("Failed to fetch reviews");
+    }
+    const data = await response.json();
+    return data.statusCode.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }; searchParams: { variant_id?: string } }) => {
   const { slug } = params;
   const variant_id = searchParams.variant_id;
   const data = await getCampaign(slug, variant_id);
-  const fontFamily = data.config.font_family;
+  const apiReviews = data ? await getReviews(data.variant_id) : [];
+
+  const reviews = apiReviews?.map((review: any) => ({
+    userName: review.reviewer_name,
+    comment: review.review_body_text,
+    rating: review.review_rating,
+    date: new Date(review.review_date).toISOString().split('T')[0]
+  }));
 
   if (!data) {
     return (
@@ -49,10 +73,12 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
       </div>)
   }
 
+  const fontFamily = data?.config?.font_family || "Inter";
+
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
-      <V2 campaignData={data} />
+      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews }} />
     </>
   );
 };

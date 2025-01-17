@@ -9,8 +9,11 @@ import TextComponent from './components/TextComponent';
 import RatingsComponent from './components/RatingsComponent';
 import MultipleCta from './components/MultipleCta';
 import VariantSelector from './components/Variants/VariantsSelector';
+import ReviewsComponent from './components/ReviewsComponent';
 
 interface CampaignData {
+    offer_id: string,
+    variant_id: string,
     blocks: string;
     config: {
         font_family: string;
@@ -20,16 +23,23 @@ interface CampaignData {
         footer_text: string;
         button_text: string;
     };
+    price: {
+        offerPrice: {
+            prefix: string;
+            value: string;
+        },
+        originalPrice: {
+            prefix: string;
+            value: string;
+        }
+    };
+    reviews: [];
 }
 
 interface V2Props {
     campaignData: CampaignData;
-    // collection: Collection;
 }
 
-// interface Collection {
-
-// }
 interface Block {
     id: string;
     type: string;
@@ -63,6 +73,17 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
         footerText: campaign.config.footer_text,
         buttonText: campaign.config.button_text,
     };
+
+    const price = {
+        offerPrice: {
+            prefix: campaign.price.offerPrice.prefix,
+            value: campaign.price.offerPrice.value,
+        },
+        originalPrice: {
+            prefix: campaign.price.originalPrice.prefix,
+            value: campaign.price.originalPrice.value,
+        }
+    }
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
 
@@ -101,6 +122,14 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                     style={block.style}
                                 />
                             );
+                        case 'reviews':
+                            return campaignData.reviews && campaignData.reviews.length > 0 ? (
+                                <ReviewsComponent
+                                    key={block.id}
+                                    value={{ ...block.value, reviews: campaignData.reviews }}
+                                    style={block.style}
+                                />
+                            ) : null;
                         case 'accordion':
                             return (
                                 <AccordionComponent
@@ -114,7 +143,6 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                 <VariantSelector
                                     key={block.id}
                                     value={block.variantType as 'size' | 'color' | 'quantity' || 'size'}
-                                // collection={collection}
                                 />
                             );
                         case 'multiple-cta':
@@ -128,7 +156,7 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                             return null;
                     }
                 })}
-                {!hasMultipleCta && <Footer config={campaignConfig} />}
+                {!hasMultipleCta && <Footer config={campaignConfig} price={price} />}
             </div>
         </main>
     );

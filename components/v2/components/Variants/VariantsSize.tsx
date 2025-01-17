@@ -6,10 +6,10 @@ interface VariantSizeProps {
 }
 
 const VariantSize: FC<VariantSizeProps> = ({ selectedVariant, onVariantSelect }) => {
-    const variants = ["XS", "S", "M", "L", "XL", "XXL"];
+    const variants = ["XXS", "XS", "S", "M", "L", "XL", "XXL"];
 
     return (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex justify-center flex-wrap gap-2">
             {variants.map((variant, index) => (
                 <button
                     key={index}
