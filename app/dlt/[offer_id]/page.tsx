@@ -2,6 +2,8 @@
 import React from "react";
 import Redirect from "./Redirect";
 import { new_backend_url } from "@/utils/constants";
+import { userAgent } from "next/server";
+import { permanentRedirect } from "next/navigation";
 
 interface PageProps {
   params: { offer_id: string };
@@ -30,6 +32,7 @@ const getDeeplink = async (offer_id: string) => {
 const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
   const { offer_id } = params;
 
+
   // data fetched here
 
   const data = await getDeeplink(offer_id);
@@ -41,6 +44,7 @@ const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
   }
 
   return <Redirect data={data} />;
+
 };
 
 export default Page;
