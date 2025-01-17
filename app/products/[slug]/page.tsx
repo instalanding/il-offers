@@ -4,6 +4,7 @@ import V2 from "@/components/v2/v2";
 import { Metadata, ResolvingMetadata } from "next";
 import FontLoader from "@/components/v2/FontLoader";
 import { MdErrorOutline } from "react-icons/md";
+import { formatDate } from "@/lib/formatUtils";
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
@@ -59,7 +60,7 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
     userName: review.reviewer_name,
     comment: review.review_body_text,
     rating: review.review_rating,
-    date: new Date(review.review_date).toISOString().split('T')[0]
+    date: formatDate(review.review_date)
   }));
 
   if (!data) {

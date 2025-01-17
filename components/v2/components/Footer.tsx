@@ -1,5 +1,7 @@
 import React from 'react'
 import { TbShoppingBagPlus } from "react-icons/tb";
+import { calculateDiscount } from '@/lib/calculateDiscount';
+import { formatPrice } from '@/lib/formatUtils';
 
 interface Config {
     primaryColor: string;
@@ -20,15 +22,6 @@ interface Price {
 }
 
 const Footer: React.FC<{ config: Config, price: Price }> = ({ config, price }) => {
-    function calculatePercentageOff(originalPrice: number, offerPrice: number): number {
-        let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
-        return Math.round(percentageOff);
-    }
-
-    const formatPrice = (value: number, prefix: string): string => {
-        return `${prefix}${new Intl.NumberFormat('en-IN').format(value)}`;
-    };
-
     return (
         <div className="sticky bottom-0 bg-white">
             <div className="flex flex-col">
@@ -63,7 +56,7 @@ const Footer: React.FC<{ config: Config, price: Price }> = ({ config, price }) =
                                             {formatPrice(parseFloat(price.originalPrice.value), price.originalPrice.prefix)}
                                         </p>
                                         <p className="text-[11px] text-red-600">
-                                            {calculatePercentageOff(
+                                            {calculateDiscount(
                                                 parseFloat(price.originalPrice.value),
                                                 parseFloat(price.offerPrice.value)
                                             )}
