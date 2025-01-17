@@ -59,7 +59,7 @@ const Redirect = ({ data }: any) => {
 
   useEffect(() => {
     getVisitorId().then(() => {
-      // redirectToExternal(redirectUrl);
+      redirectToExternal(redirectUrl);
     });
   }, []);
 
