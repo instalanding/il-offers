@@ -1,8 +1,17 @@
-export function calculateDiscount(originalPrice: number, offerPrice: number): number {
+export function calculatePercentageOff(originalPrice: number, offerPrice: number): number {
     let percentageOff = ((originalPrice - offerPrice) / originalPrice) * 100;
     return Math.round(percentageOff);
 }
+export function calculateDiscount(price:number, discountPercent: number) {
+    if (typeof price !== 'number' || typeof discountPercent !== 'number') {
+      throw new Error('Both arguments must be numbers.');
+    }
+  
+    const discountValue = (price * discountPercent) / 100;
+    const discountPrice = price - discountValue;
 
-export const formatPrice = (value: number, prefix: string): string => {
-    return `${prefix}${new Intl.NumberFormat('en-IN').format(value)}`;
-};
+    return {
+      discountPrice: discountPrice,
+      discountValue: discountValue
+    };
+  }
