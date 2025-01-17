@@ -9,7 +9,7 @@ const FontLoader = ({ fontFamily }: { fontFamily: string }) => {
         if (fontFamily) {
             loadFonts(fontFamily);
         }
-    }, [fontFamily]);
+    }, [fontFamily, loadFonts]);
 
     return null; // This component does not render anything
 };

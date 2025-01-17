@@ -6,6 +6,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
+import Image from 'next/image';
 
 const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) => {
     const placeholderImages = [
@@ -22,13 +23,13 @@ const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) 
                 <CarouselContent>
                     {finalImages.map((image, key) => (
                         <CarouselItem key={key}>
-                            <img
+                            <Image
                                 alt={"Image"}
                                 src={image?.url}
                                 width={480}
                                 height={480}
                                 className="w-full"
-                                // priority={key === 0}
+                            // priority={key === 0}
                             />
                         </CarouselItem>
                     ))}

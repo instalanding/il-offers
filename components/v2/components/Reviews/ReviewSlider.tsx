@@ -51,7 +51,7 @@ const ReviewSlider: React.FC<ReviewSliderProps> = ({ reviews, totalStars, Star }
                     );
                   })}
                 </div>
-                <p className="text-gray-700 mb-2">"{review.comment}"</p>
+                <p className="text-gray-700 mb-2">&quot;{review.comment}&quot;</p>
                 <div className="text-sm text-gray-500">
                   <div className="flex gap-2 items-center justify-start">
                     <FaUserCircle size={28} />
