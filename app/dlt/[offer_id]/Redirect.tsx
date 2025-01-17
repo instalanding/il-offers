@@ -27,10 +27,10 @@ const Redirect = ({ data }: any) => {
   };
 
   const hit = async (fp: string) => {
-    console.log(process.env.NEW_BACKEND_URL);
+    console.log(new_backend_url);
 
     await fetch(
-      `${process.env.NEW_BACKEND_URL}record-redirect/?fp=${fp}&offer_id=${data.offer_id}&advertiser=${data.advertiser}`,
+      `${new_backend_url}record-redirect/?fp=${fp}&offer_id=${data.offer_id}&advertiser=${data.advertiser}`,
       {
         cache: "no-store",
       }
@@ -59,7 +59,7 @@ const Redirect = ({ data }: any) => {
 
   useEffect(() => {
     getVisitorId().then(() => {
-      redirectToExternal(redirectUrl);
+      // redirectToExternal(redirectUrl);
     });
   }, []);
 
