@@ -24,9 +24,9 @@ const getCampaign = async (params: { offer_id?: string }) => {
   }
 };
 
-const getReviews = async (variantId: string) => {
+const getReviews = async (product_handle: string) => {
   try {
-    const response = await fetch(`${process.env.API_URL_V2}/reviews?variantId=${variantId}`, {
+    const response = await fetch(`${process.env.API_URL_V2}/reviews?slug=${product_handle}`, {
       cache: "no-store",
     });
     if (!response.ok) {
@@ -48,7 +48,7 @@ const Campaign = async ({
 }) => {
   const { offer_id } = params;
   const data = await getCampaign({ offer_id });
-  const apiReviews = data ? await getReviews(data.variant_id) : [];
+  const apiReviews = data ? await getReviews(data.product_handle) : [];
 
   const reviews = apiReviews?.map((review: any) => ({
     userName: review.reviewer_name,

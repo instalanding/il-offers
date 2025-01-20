@@ -33,9 +33,9 @@ const getCampaign = async (slug: string, variant_id?: string) => {
   }
 };
 
-const getReviews = async (variantId: string) => {
+const getReviews = async (product_handle: string) => {
   try {
-    const response = await fetch(`${process.env.API_URL_V2}/reviews?variantId=${variantId}`, {
+    const response = await fetch(`${process.env.API_URL_V2}/reviews?slug=${product_handle}`, {
       cache: "no-store",
     });
     if (!response.ok) {
@@ -54,7 +54,7 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   const { slug } = params;
   const variant_id = searchParams.variant_id;
   const data = await getCampaign(slug, variant_id);
-  const apiReviews = data ? await getReviews(data.variant_id) : [];
+  const apiReviews = data ? await getReviews(slug) : [];
 
   const reviews = apiReviews?.map((review: any) => ({
     userName: review.reviewer_name,
