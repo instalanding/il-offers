@@ -83,7 +83,7 @@ const Campaign = async ({
         <MdErrorOutline className="text-red-600 text-6xl mb-4" />
         <h1 className="font-bold text-red-600 text-lg mb-2">Campaign Not Found</h1>
         <p className="text-gray-600 text-sm text-center">
-          The campaign you're looking for doesn't exist or may have been removed.
+          The campaign you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
       </div>
     );

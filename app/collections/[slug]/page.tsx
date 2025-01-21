@@ -41,7 +41,7 @@ const Collection = async ({
                 <MdErrorOutline className="text-red-600 text-6xl mb-4" />
                 <h1 className="font-bold text-red-600 text-lg mb-2">Collections Not Found</h1>
                 <p className="text-gray-600 text-sm text-center">
-                    The collections you're looking for don't exist or may have been removed.
+                    The collections you&apos;re looking for don&apos;t exist or may have been removed.
                 </p>
             </div>
         );
