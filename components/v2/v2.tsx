@@ -10,6 +10,7 @@ import RatingsComponent from './components/RatingsComponent';
 import MultipleCta from './components/MultipleCta';
 import VariantSelector from './components/Variants/VariantsSelector';
 import ReviewsComponent from './components/ReviewsComponent';
+import CollectionsComponent from './components/CollectionsComponent';
 
 interface CampaignData {
     offer_id: string,
@@ -34,6 +35,7 @@ interface CampaignData {
         }
     };
     reviews: [];
+    collections: [];
 }
 
 interface V2Props {
@@ -152,6 +154,14 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                     value={block.value}
                                 />
                             );
+                        case 'collections':
+                            return (
+                                <CollectionsComponent
+                                    key={block.id}
+                                    value={{ ...block.value, collections: campaignData.collections }}
+                                    style={block.style}
+                                />
+                            )
                         default:
                             return null;
                     }

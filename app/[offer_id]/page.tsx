@@ -24,6 +24,25 @@ const getCampaign = async (params: { offer_id?: string }) => {
   }
 };
 
+const getCollections = async (slug: string, variant_id: string) => {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL_V2}collection?slug=${slug}&variant_id=${variant_id}`, {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error fetching collections:", errorResponse);
+      throw new Error("Failed to fetch collections");
+    }
+    const data = await response.json();
+    console.log(data)
+    return data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const getReviews = async (product_handle: string) => {
   try {
     const response = await fetch(`${process.env.API_URL_V2}/reviews?slug=${product_handle}`, {
@@ -49,6 +68,7 @@ const Campaign = async ({
   const { offer_id } = params;
   const data = await getCampaign({ offer_id });
   const apiReviews = data ? await getReviews(data.product_handle) : [];
+  const collections = data ? await getCollections(data.product_handle, data.variant_id) : [];
 
   const reviews = apiReviews?.map((review: any) => ({
     userName: review.reviewer_name,
@@ -63,7 +83,7 @@ const Campaign = async ({
         <MdErrorOutline className="text-red-600 text-6xl mb-4" />
         <h1 className="font-bold text-red-600 text-lg mb-2">Campaign Not Found</h1>
         <p className="text-gray-600 text-sm text-center">
-          The campaign you’re looking for doesn’t exist or may have been removed.
+          The campaign you're looking for doesn't exist or may have been removed.
         </p>
       </div>
     );
@@ -74,7 +94,7 @@ const Campaign = async ({
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
-      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews }} />
+      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} />
     </>
   );
 };
