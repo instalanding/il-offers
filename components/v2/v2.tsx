@@ -55,6 +55,7 @@ interface Block {
 
 const V2: React.FC<V2Props> = ({ campaignData }) => {
     // console.log('campaignData', campaignData);
+
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -142,9 +143,14 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                             );
                         case 'variants':
                             return (
-                                <VariantSelector
+                                // <VariantSelector
+                                //     key={block.id}
+                                //     value={block.variantType as 'size' | 'color' | 'quantity' || 'size'}
+                                // />
+                                <CollectionsComponent
                                     key={block.id}
-                                    value={block.variantType as 'size' | 'color' | 'quantity' || 'size'}
+                                    value={{ ...block.value, variant: block.variantType as 'size' | 'color' | 'quantity' || 'size', collections: campaignData.collections }}
+                                    style={block.style}
                                 />
                             );
                         case 'multiple-cta':
@@ -154,14 +160,14 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                     value={block.value}
                                 />
                             );
-                        case 'collections':
-                            return (
-                                <CollectionsComponent
-                                    key={block.id}
-                                    value={{ ...block.value, collections: campaignData.collections }}
-                                    style={block.style}
-                                />
-                            )
+                        // case 'collections':
+                        //     return (
+                        //         <CollectionsComponent
+                        //             key={block.id}
+                        //             value={{ ...block.value, collections: campaignData.collections }}
+                        //             style={block.style}
+                        //         />
+                        //     )
                         default:
                             return null;
                     }

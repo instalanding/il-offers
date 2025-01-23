@@ -30,6 +30,7 @@ const getCollections = async (slug: string, variant_id: string) => {
       `${process.env.API_URL_V2}collection?slug=${slug}&variant_id=${variant_id}`, {
       cache: "no-store",
     });
+    console.log(response);
     if (!response.ok) {
       const errorResponse = await response.json();
       console.error("Error fetching collections:", errorResponse);
@@ -37,7 +38,7 @@ const getCollections = async (slug: string, variant_id: string) => {
     }
     const data = await response.json();
     console.log(data)
-    return data;
+    return data.data;
   } catch (error) {
     console.log(error)
   }
