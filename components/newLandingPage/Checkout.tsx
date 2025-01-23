@@ -222,14 +222,23 @@ const Checkout = ({
           </div>
           <div className="flex-grow pl-2 flex flex-col">
             {schema.variant_id ? (
-              <div className="flex flex-col gap-[5px] justify-end items-center">
+              <div className="flex flex-col gap-[5px] justify-end items-center ">
                 <Button
-                  className="w-full text-[16px] h-full"
-                  style={{
-                    backgroundColor: schema.config?.backgroundColor,
-                    color: schema.config?.textColor,
-                  }}
+                  className={
+                    schema.inventory === "0"
+                      ? "w-full text-[16px] h-full line-through bg-[#0000005a]"
+                      : "w-full text-[16px] h-full "
+                  }
+                  style={
+                    schema?.inventory === "0"
+                      ? {}
+                      : {
+                          backgroundColor: schema.config?.backgroundColor,
+                          color: schema.config?.textColor,
+                        }
+                  }
                   onClick={handleCheckoutButtonClick}
+                  disabled={schema.inventory === "0" ? true : false}
                 >
                   {schema.config?.button1Text}
                 </Button>

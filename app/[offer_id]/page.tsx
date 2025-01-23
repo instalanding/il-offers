@@ -24,6 +24,7 @@ const getCampaign = async (params: { offer_id?: string }) => {
   }
 };
 
+<<<<<<< HEAD
 const getCollections = async (slug: string, variant_id: string) => {
   try {
     const response = await fetch(
@@ -35,6 +36,70 @@ const getCollections = async (slug: string, variant_id: string) => {
       const errorResponse = await response.json();
       console.error("Error fetching collections:", errorResponse);
       throw new Error("Failed to fetch collections");
+=======
+type SearchParams = {
+  os?: string;
+  cpu?: string;
+  isBot?: string;
+  ua?: string;
+  browser?: string;
+  device?: string;
+  engine?: string;
+  user_ip?: string;
+
+};
+
+const Coupon = async ({
+  params,
+  searchParams,
+}: {
+  params: { offer_id: string };
+  searchParams: SearchParams;
+}) => {
+  const offer_id = params.offer_id;
+  const userIp = searchParams.user_ip ?? "";
+  const utm_params = searchParams;
+  const headersList = headers();
+  const domain = headersList.get("host");
+
+  if (!offer_id) {
+    return <h1 className="font-semibold text-red-600">Offer id missing!</h1>;
+  }
+
+  const data = await getCampaign(offer_id);
+  const isPermanentRedirect = data?.permanent_redirect;
+  let redirectUrl = data?.buttons[0]?.url;
+  let href = data?.buttons[0]?.url;
+  const buttonType = data?.buttons[0]?.type;
+  const isGoogleBot = searchParams.isBot === 'true';
+  const ua = searchParams.ua || '';
+  const browser = JSON.parse(searchParams.browser || '{}');
+  const device = JSON.parse(searchParams.device || '{}');
+  const engine = JSON.parse(searchParams.engine || '{}');
+
+
+  if (isPermanentRedirect) {
+    console.log(isGoogleBot, "isGoogleBotisGoogleBot")
+    if (isGoogleBot) {
+      const formattedUrl = href.startsWith("http") ? href : `https://${href}`;
+    const parsedUrl = new URL(formattedUrl);
+    const fullDomain = parsedUrl.hostname;
+    // const mainDomain = process.env.NODE_ENV === 'development'
+    //   ? 'bombaysweetshop.com'
+    //   : `${fullDomain.split('.').slice(-2).join('.')}`;
+    const mainDomain = "bombaysweetshop.com"
+    const queryParams = new URLSearchParams(parsedUrl.search);
+    const redirectUrl = `https://${mainDomain}/?${queryParams.toString()}`;
+    permanentRedirect(redirectUrl);
+    } else if (buttonType === "amazon") {
+      redirectUrl = `${process.env.REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
+    } else {
+      if (/android/i.test(userAgent.toString())) {
+        redirectUrl = `intent:${href.replace(/^https?:\/\//, '')}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+      } else if (/iPad|iPhone|iPod/.test(userAgent.toString()) && !/windows/i.test(userAgent.toString())) {
+        redirectUrl = href.startsWith('http') ? href : `https://${href}`;
+      }
+>>>>>>> bc94517891f88acbdfd9c834e43120d87e7099df
     }
     const data = await response.json();
     console.log(data)
