@@ -6,10 +6,19 @@ import VariantSize from './VariantsSize';
 import VariantsComponent from './VariantsComponent';
 
 interface VariantSelectorProps {
-    value: 'size' | 'color' | 'quantity'; // Define the expected values for the 'value' prop
+    value: 'size' | 'color' | 'quantity';
+    variants?: Array<{
+        label: string;
+        price: number;
+        originalPrice: number;
+        discount: string;
+        variant_id?: string;
+        product_handle?: string;
+        offer_id?: string;
+    }>;
 }
 
-const VariantSelector: FC<VariantSelectorProps> = ({ value }) => {
+const VariantSelector: FC<VariantSelectorProps> = ({ value, variants = [] }) => {
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
 
     const handleVariantClick = (variant: string) => {
@@ -20,8 +29,8 @@ const VariantSelector: FC<VariantSelectorProps> = ({ value }) => {
         return (
             <VariantSize selectedVariant={selectedVariant} onVariantSelect={handleVariantClick} />
         );
-
     }
+
     if (value === "color") {
         return (
             <div className="flex gap-3 justify-center">
@@ -33,8 +42,9 @@ const VariantSelector: FC<VariantSelectorProps> = ({ value }) => {
             </div>
         );
     }
+
     if (value === "quantity") {
-        return (<VariantsCarousel />);
+        return <VariantsCarousel variants={variants} />;
     }
 
     return <VariantsComponent variantType={selectedVariant} />;

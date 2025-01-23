@@ -38,11 +38,11 @@ const CollectionsComponent: React.FC<CollectionsComponentProps> = ({ value, styl
     const renderVariantComponent = () => {
         switch (value.variant) {
             case 'size':
-                return <VariantSelector value="size" />;
+                return <VariantSelector value="size" variants={variantData} />;
             case 'color':
-                return <VariantSelector value="color" />;
+                return <VariantSelector value="color" variants={variantData} />;
             case 'quantity':
-                return <VariantsCarousel variants={variantData} />;
+                return <VariantSelector value="quantity" variants={variantData} />;
             default:
                 return null;
         }
