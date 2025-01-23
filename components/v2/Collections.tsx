@@ -223,7 +223,7 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
                                 className="relative bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
                                 onClick={() => handleCardClick(variant)}
                             >
-                                {variant.price.discount !== '0.00' && (
+                                {variant.price.discount !== '0.00' && variant.price.discount !== '0' && (
                                     <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg shadow">
                                         {variant.price.discount}% OFF
                                     </div>
@@ -246,7 +246,7 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
                                             {variant.price.offerPrice.value}
                                         </span>
                                         {/* Original Price */}
-                                        {variant.price.discount !== '0.00' && (
+                                        {variant.price.discount !== '0.00' && variant.price.discount !== '0' && (
                                             <span className="text-gray-400 line-through text-sm">
                                                 {variant.price.originalPrice.prefix}
                                                 {variant.price.originalPrice.value}

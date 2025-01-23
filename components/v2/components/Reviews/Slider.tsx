@@ -36,7 +36,7 @@ function processRating(rating: number): { fullStars: number; hasHalfStar: boolea
   return { fullStars, hasHalfStar };
 }
 
-const ReviewSlider: React.FC<ReviewSliderProps> = ({ reviews, totalStars, Star }) => {
+const Slider: React.FC<ReviewSliderProps> = ({ reviews, totalStars, Star }) => {
   return (
     <div className="relative pt-[15%] w-full">
       <Carousel
@@ -82,4 +82,4 @@ const ReviewSlider: React.FC<ReviewSliderProps> = ({ reviews, totalStars, Star }
   );
 };
 
-export default ReviewSlider;
+export default Slider;

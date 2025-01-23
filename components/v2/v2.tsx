@@ -8,9 +8,8 @@ import HtmlComponent from './components/HtmlComponent';
 import TextComponent from './components/TextComponent';
 import RatingsComponent from './components/RatingsComponent';
 import MultipleCta from './components/MultipleCta';
-import VariantSelector from './components/Variants/VariantsSelector';
+import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
-import CollectionsComponent from './components/CollectionsComponent';
 
 interface CampaignData {
     offer_id: string,
@@ -143,13 +142,9 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                             );
                         case 'variants':
                             return (
-                                // <VariantSelector
-                                //     key={block.id}
-                                //     value={block.variantType as 'size' | 'color' | 'quantity' || 'size'}
-                                // />
-                                <CollectionsComponent
+                                <VariantsComponent
                                     key={block.id}
-                                    value={{ ...block.value, variant: block.variantType as 'size' | 'color' | 'quantity' || 'size', collections: campaignData.collections }}
+                                    value={{ ...block.value, variant: block.variantType as 'size' | 'color' | 'quantity' || 'quantity', collections: campaignData.collections }}
                                     style={block.style}
                                 />
                             );
@@ -160,14 +155,6 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
                                     value={block.value}
                                 />
                             );
-                        // case 'collections':
-                        //     return (
-                        //         <CollectionsComponent
-                        //             key={block.id}
-                        //             value={{ ...block.value, collections: campaignData.collections }}
-                        //             style={block.style}
-                        //         />
-                        //     )
                         default:
                             return null;
                     }

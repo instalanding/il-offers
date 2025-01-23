@@ -33,6 +33,24 @@ const getCampaign = async (slug: string, variant_id?: string) => {
   }
 };
 
+const getVariantCollection = async (slug: string, variant_id: string) => {
+  try {
+    const response = await fetch(
+      `${process.env.API_URL_V2}collection?slug=${slug}&variant_id=${variant_id}`, {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Error fetching collections:", errorResponse);
+      throw new Error("Failed to fetch collections");
+    }
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const getReviews = async (product_handle: string) => {
   try {
     const response = await fetch(`${process.env.API_URL_V2}/reviews?slug=${product_handle}`, {
@@ -54,7 +72,11 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   const { slug } = params;
   const variant_id = searchParams.variant_id;
   const data = await getCampaign(slug, variant_id);
-  const apiReviews = data ? await getReviews(slug) : [];
+  const blocks = Array.isArray(data?.blocks) ? data.blocks : JSON.parse(data?.blocks || '[]');
+  const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
+  const apiReviews = hasReviewsBlock && data ? await getReviews(data.product_handle) : [];
+  const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
+  const collections = hasVariantsBlock && data ? await getVariantCollection(data.product_handle, data.variant_id) : [];
 
   const reviews = apiReviews?.map((review: any) => ({
     userName: review.reviewer_name,
@@ -79,7 +101,7 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
-      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews }} />
+      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} />
     </>
   );
 };
@@ -109,13 +131,19 @@ export async function generateMetadata(
   return {
     title: title,
     description: description,
-    icons: [{ rel: "icon", url: data?.advertiser?.store_logo || "/favicon.ico" }],
+    icons: data?.advertiser?.store_logo
+      ? [{ rel: "icon", url: data.advertiser.store_logo.toString() }]
+      : [],
     openGraph: {
+      title,
+      description,
+      url: `https://instalanding.shop/${slug}`,
       images: [
         {
           url: imageUrl,
-          width: 200,
-          height: 200,
+          width: 1200,
+          height: 630,
+          alt: title,
         },
       ],
     },

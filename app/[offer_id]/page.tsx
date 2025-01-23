@@ -24,20 +24,18 @@ const getCampaign = async (params: { offer_id?: string }) => {
   }
 };
 
-const getCollections = async (slug: string, variant_id: string) => {
+const getVariantCollection = async (slug: string, variant_id: string) => {
   try {
     const response = await fetch(
       `${process.env.API_URL_V2}collection?slug=${slug}&variant_id=${variant_id}`, {
       cache: "no-store",
     });
-    console.log(response);
     if (!response.ok) {
       const errorResponse = await response.json();
       console.error("Error fetching collections:", errorResponse);
       throw new Error("Failed to fetch collections");
     }
     const data = await response.json();
-    console.log(data)
     return data.data;
   } catch (error) {
     console.log(error)
@@ -61,15 +59,16 @@ const getReviews = async (product_handle: string) => {
   }
 };
 
-const Campaign = async ({
-  params
-}: {
-  params: { offer_id?: string };
-}) => {
+const Campaign = async ({ params }: { params: { offer_id?: string }; }) => {
+
   const { offer_id } = params;
   const data = await getCampaign({ offer_id });
-  const apiReviews = data ? await getReviews(data.product_handle) : [];
-  const collections = data ? await getCollections(data.product_handle, data.variant_id) : [];
+
+  const blocks = Array.isArray(data?.blocks) ? data.blocks : JSON.parse(data?.blocks || '[]');
+  const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
+  const apiReviews = hasReviewsBlock && data ? await getReviews(data.product_handle) : [];
+  const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
+  const collections = hasVariantsBlock && data ? await getVariantCollection(data.product_handle, data.variant_id) : [];
 
   const reviews = apiReviews?.map((review: any) => ({
     userName: review.reviewer_name,
@@ -103,10 +102,10 @@ const Campaign = async ({
 export default Campaign;
 
 export async function generateMetadata(
-  { params, searchParams }: { params: { offer_id?: string; slug?: string; variant_id?: string }; searchParams: any },
+  { params, searchParams }: { params: { offer_id: string; }; searchParams: any },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { offer_id, slug, variant_id } = params;
+  const { offer_id } = params;
   const data = await getCampaign({ offer_id });
 
   const title = data?.meta_description?.title || "Instalanding Offers";
@@ -116,11 +115,14 @@ export async function generateMetadata(
   return {
     title,
     description,
-    icons: [{ rel: "icon", url: data?.advertiser?.store_logo || "/favicon.ico" }],
+    icons: data?.advertiser?.store_logo
+      ? [{ rel: "icon", url: data.advertiser.store_logo.toString() }]
+      : [],
+    // icons: [{ rel: "icon", url: data.advertiser.store_logo || "/favicon.ico" }],
     openGraph: {
       title,
       description,
-      url: `https://instalanding.shop/${offer_id || slug}`,
+      url: `https://instalanding.shop/${offer_id}`,
       images: [
         {
           url: imageUrl,
@@ -138,7 +140,12 @@ export async function generateMetadata(
       images: [imageUrl],
     },
     other: {
-      "theme-color": data?.config?.primary_color || "#ffffff",
+      "theme-color": data?.config?.primary_color || "#FFFFFF",
+      "twitter:image": imageUrl,
+      "twitter:card": "summary_large_image",
+      "og:url": `https://instalanding.shop/${offer_id}`,
+      "og:image": imageUrl,
+      "og:type": "website",
     },
   };
 }

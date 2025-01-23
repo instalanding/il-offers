@@ -1,6 +1,6 @@
 import React from "react";
-import ReviewSlider from "./Reviews/ReviewSlider";
-import ReviewStack from "./Reviews/ReviewStack";
+import Slider from "./Reviews/Slider";
+import Stack from "./Reviews/Stack";
 import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
 
 interface RatingsComponentProps {
@@ -34,9 +34,9 @@ const ReviewsComponent: React.FC<RatingsComponentProps> = ({ value, style }) => 
             <p className="text-sm text-center font-light mb-2">{value.subtitle}</p>
 
             {value.reviewType === "slider" ? (
-                <ReviewSlider reviews={reviews} totalStars={totalStars} Star={Star} />
+                <Slider reviews={reviews} totalStars={totalStars} Star={Star} />
             ) : value.reviewType === "stack" ? (
-                <ReviewStack reviews={reviews} totalStars={totalStars} Star={Star} />
+                <Stack reviews={reviews} totalStars={totalStars} Star={Star} />
             ) : null}
         </div>
     );

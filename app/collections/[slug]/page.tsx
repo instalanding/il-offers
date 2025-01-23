@@ -71,11 +71,14 @@ export async function generateMetadata(
     return {
         title,
         description,
-        icons: [{ rel: "icon", url: data?.meta_description?.icon.url || "/favicon.ico" }],
+        icons: data?.advertiser?.store_logo
+            ? [{ rel: "icon", url: data.advertiser.store_logo.toString() }]
+            : [],
+        metadataBase: new URL(`https://instalanding.shop`),
         openGraph: {
             title,
             description,
-            url: `https://instalanding.shop/${slug}`,
+            url: `https://instalanding.shop/collections/${slug}`,
             images: [
                 {
                     url: imageUrl,
@@ -93,8 +96,12 @@ export async function generateMetadata(
             images: [imageUrl],
         },
         other: {
-            "theme-color": "#ffffff",
-            // data?.config?.primary_color ||
+            "theme-color": data?.config?.primary_color || "#FFFFFF",
+            "twitter:image": imageUrl,
+            "twitter:card": "summary_large_image",
+            "og:url": `https://instalanding.shop/collections/${slug}`,
+            "og:image": imageUrl,
+            "og:type": "website",
         },
     };
 }

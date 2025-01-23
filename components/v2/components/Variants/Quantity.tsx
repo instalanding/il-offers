@@ -15,7 +15,7 @@ interface VariantsCarouselProps {
     variants: VariantData[];
 }
 
-const VariantsCarousel: React.FC<VariantsCarouselProps> = ({ variants }) => {
+const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
     const router = useRouter();
 
     const handleVariantClick = (variant: VariantData) => {
@@ -54,4 +54,4 @@ const VariantsCarousel: React.FC<VariantsCarouselProps> = ({ variants }) => {
     );
 };
 
-export default VariantsCarousel;
+export default Quantity;

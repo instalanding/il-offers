@@ -1,8 +1,9 @@
-import React from 'react';
-import VariantsCarousel from './Variants/VariantsCarousel';
-import VariantSelector from './Variants/VariantsSelector';
+import React, { useState } from 'react';
+import Size from './Variants/Size';
+import Quantity from './Variants/Quantity';
+import Color from './Variants/Color';
 
-interface CollectionsComponentProps {
+interface VariantsComponentProps {
     value: {
         variant: string;
         collections: {
@@ -23,8 +24,8 @@ interface CollectionsComponentProps {
     style?: React.CSSProperties;
 }
 
-const CollectionsComponent: React.FC<CollectionsComponentProps> = ({ value, style }) => {
-    // Transform the variant data into the format expected by VariantsCarousel
+const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) => {
+    const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
     const variantData = value.collections?.variant?.map(item => ({
         label: item.campaign_title,
         price: parseFloat(item.price.offerPrice.value),
@@ -35,14 +36,30 @@ const CollectionsComponent: React.FC<CollectionsComponentProps> = ({ value, styl
         offer_id: item.offer_id
     })) || [];
 
+    const handleVariantClick = (variant: string) => {
+        setSelectedVariant(variant);
+    };
+
     const renderVariantComponent = () => {
         switch (value.variant) {
             case 'size':
-                return <VariantSelector value="size" variants={variantData} />;
+                return (
+                    <Size
+                        selectedVariant={selectedVariant}
+                        onVariantSelect={handleVariantClick}
+                        variants={variantData}
+                    />
+                );
             case 'color':
-                return <VariantSelector value="color" variants={variantData} />;
+                return (
+                    <Color
+                        selectedVariant={selectedVariant}
+                        onVariantSelect={handleVariantClick}
+                        variants={variantData}
+                    />
+                );
             case 'quantity':
-                return <VariantSelector value="quantity" variants={variantData} />;
+                return <Quantity variants={variantData} />;
             default:
                 return null;
         }
@@ -55,4 +72,4 @@ const CollectionsComponent: React.FC<CollectionsComponentProps> = ({ value, styl
     );
 };
 
-export default CollectionsComponent;
+export default VariantsComponent;
