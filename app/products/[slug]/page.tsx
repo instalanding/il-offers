@@ -68,9 +68,24 @@ const getReviews = async (product_handle: string) => {
   }
 };
 
-const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }; searchParams: { variant_id?: string } }) => {
+type SearchParams = {
+  os?: string;
+  cpu?: string;
+  isBot?: string;
+  ua?: string;
+  browser?: string;
+  device?: string;
+  engine?: string;
+  user_ip?: string;
+  variant_id?: string;
+};
+
+const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }; searchParams: SearchParams }) => {
   const { slug } = params;
   const variant_id = searchParams.variant_id;
+  const userIp = searchParams.user_ip ?? "";
+  const utm_params = searchParams;
+
   const data = await getCampaign(slug, variant_id);
   const blocks = Array.isArray(data?.blocks) ? data.blocks : JSON.parse(data?.blocks || '[]');
   const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
@@ -101,7 +116,7 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
-      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} />
+      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} utm_params={utm_params} userIp={userIp} />
     </>
   );
 };

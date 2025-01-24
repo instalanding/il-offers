@@ -73,7 +73,6 @@ const Footer: React.FC<{ config: Config, price: Price, checkoutData: Checkout }>
             }
 
             recordClicks();
-
             if (checkoutData.pixel_id) {
                 const noscript = document.createElement("noscript");
                 const img = document.createElement("img");
