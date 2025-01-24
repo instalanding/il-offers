@@ -59,12 +59,25 @@ const getReviews = async (product_handle: string) => {
   }
 };
 
-const Campaign = async ({ params }: { params: { offer_id?: string }; }) => {
+type SearchParams = {
+  os?: string;
+  cpu?: string;
+  isBot?: string;
+  ua?: string;
+  browser?: string;
+  device?: string;
+  engine?: string;
+  user_ip?: string;
+};
+
+const Campaign = async ({ params, searchParams }: { params: { offer_id?: string }; searchParams: SearchParams; }) => {
 
   const { offer_id } = params;
+  const userIp = searchParams.user_ip ?? "";
+  const utm_params = searchParams;
   const data = await getCampaign({ offer_id });
 
-  const blocks = Array.isArray(data?.blocks) ? data.blocks : JSON.parse(data?.blocks || '[]');
+  const blocks = JSON.parse(data?.blocks || '[]');
   const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
   const apiReviews = hasReviewsBlock && data ? await getReviews(data.product_handle) : [];
   const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
@@ -94,7 +107,7 @@ const Campaign = async ({ params }: { params: { offer_id?: string }; }) => {
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
-      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} />
+      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} userIp={userIp} utm_params={utm_params} />
     </>
   );
 };

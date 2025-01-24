@@ -10,8 +10,10 @@ import RatingsComponent from './components/RatingsComponent';
 import MultipleCta from './components/MultipleCta';
 import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
+import RecordImpressions from '../recordImpressions/page';
 
 interface CampaignData {
+    _id: string,
     offer_id: string,
     variant_id: string,
     blocks: string;
@@ -35,10 +37,23 @@ interface CampaignData {
     };
     reviews: [];
     collections: [];
+    advertiser: {
+        id: string;
+        store_url: string;
+        coupon_code: string;
+        checkout: {
+            checkout_name: string;
+        }
+        pixel: {
+            id: string;
+        }
+    }
 }
 
 interface V2Props {
     campaignData: CampaignData;
+    userIp: string;
+    utm_params: Object;
 }
 
 interface Block {
@@ -52,7 +67,7 @@ interface Block {
     variantType?: string;
 }
 
-const V2: React.FC<V2Props> = ({ campaignData }) => {
+const V2: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
     // console.log('campaignData', campaignData);
 
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
@@ -87,81 +102,108 @@ const V2: React.FC<V2Props> = ({ campaignData }) => {
         }
     }
 
+    const checkoutData = {
+        campaign_id: campaign._id,
+        variant_id: campaign.variant_id,
+        offer_id: campaign.offer_id,
+        store_url: campaign.advertiser?.store_url,
+        checkout_name: campaign.advertiser?.checkout?.checkout_name,
+        userIp: userIp,
+        utm_params: utm_params,
+        pixel_id: campaign.advertiser.pixel?.id ?? "",
+        advertiser_id: "",
+        coupon_code: "",
+        tags: "",
+    }
+
+    console.log("checkout data", checkoutData);
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
 
     return (
-        <main
-            className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
-            style={{ overflowY: 'auto' }}
-        >
-            <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none max-sm:rounded-none overflow-auto mx-auto rounded-lg">
-                <Header config={campaignConfig} />
-                {blocks.map((block: Block) => {
-                    switch (block.type) {
-                        case 'carousel':
-                            return <CarouselComponent key={block.id} images={block.images || []} />;
-                        case 'text':
-                            return (
-                                <TextComponent
-                                    key={block.id}
-                                    value={block.value || ''}
-                                    style={block.style}
-                                />
-                            );
-                        case 'html':
-                            return (
-                                <HtmlComponent
-                                    key={block.id}
-                                    value={block.value || ''}
-                                    style={block.style}
-                                />
-                            );
-                        case 'ratings':
-                            return (
-                                <RatingsComponent
-                                    key={block.id}
-                                    value={block.value || ''}
-                                    style={block.style}
-                                />
-                            );
-                        case 'reviews':
-                            return campaignData.reviews && campaignData.reviews.length > 0 ? (
-                                <ReviewsComponent
-                                    key={block.id}
-                                    value={{ ...block.value, reviews: campaignData.reviews }}
-                                    style={block.style}
-                                />
-                            ) : null;
-                        case 'accordion':
-                            return (
-                                <AccordionComponent
-                                    key={block.id}
-                                    value={Array.isArray(block.value) ? block.value : []}
-                                    style={block.style}
-                                />
-                            );
-                        case 'variants':
-                            return (
-                                <VariantsComponent
-                                    key={block.id}
-                                    value={{ ...block.value, variant: block.variantType as 'size' | 'color' | 'quantity' || 'quantity', collections: campaignData.collections }}
-                                    style={block.style}
-                                />
-                            );
-                        case 'multiple-cta':
-                            return (
-                                <MultipleCta
-                                    key={block.id}
-                                    value={block.value}
-                                />
-                            );
-                        default:
-                            return null;
-                    }
-                })}
-                {!hasMultipleCta && <Footer config={campaignConfig} price={price} />}
-            </div>
-        </main>
+        <>
+            <RecordImpressions
+                offer_id={checkoutData.offer_id}
+                advertiser={checkoutData.advertiser_id}
+                user_ip={userIp}
+                store_url={checkoutData.store_url}
+                tags={checkoutData?.tags}
+                utm_params={utm_params}
+                campaign_id={checkoutData.campaign_id}
+            />
+            <main
+                className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
+                style={{ overflowY: 'auto' }}
+            >
+                <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none max-sm:rounded-none overflow-auto mx-auto rounded-lg">
+                    <Header config={campaignConfig} />
+                    {blocks.map((block: Block) => {
+                        switch (block.type) {
+                            case 'carousel':
+                                return <CarouselComponent key={block.id} images={block.images || []} />;
+                            case 'text':
+                                return (
+                                    <TextComponent
+                                        key={block.id}
+                                        value={block.value || ''}
+                                        style={block.style}
+                                    />
+                                );
+                            case 'html':
+                                return (
+                                    <HtmlComponent
+                                        key={block.id}
+                                        value={block.value || ''}
+                                        style={block.style}
+                                    />
+                                );
+                            case 'ratings':
+                                return (
+                                    <RatingsComponent
+                                        key={block.id}
+                                        value={block.value || ''}
+                                        style={block.style}
+                                    />
+                                );
+                            case 'reviews':
+                                return campaignData.reviews && campaignData.reviews.length > 0 ? (
+                                    <ReviewsComponent
+                                        key={block.id}
+                                        value={{ ...block.value, reviews: campaignData.reviews }}
+                                        style={block.style}
+                                    />
+                                ) : null;
+                            case 'accordion':
+                                return (
+                                    <AccordionComponent
+                                        key={block.id}
+                                        value={Array.isArray(block.value) ? block.value : []}
+                                        style={block.style}
+                                    />
+                                );
+                            case 'variants':
+                                return (
+                                    <VariantsComponent
+                                        key={block.id}
+                                        value={{ ...block.value, variant: block.variantType as 'size' | 'color' | 'quantity' || 'quantity', collections: campaignData.collections }}
+                                        style={block.style}
+                                    />
+                                );
+                            case 'multiple-cta':
+                                return (
+                                    <MultipleCta
+                                        key={block.id}
+                                        value={block.value}
+                                        checkoutData={checkoutData}
+                                    />
+                                );
+                            default:
+                                return null;
+                        }
+                    })}
+                    {!hasMultipleCta && <Footer config={campaignConfig} price={price} checkoutData={checkoutData} />}
+                </div>
+            </main>
+        </>
     );
 };
 

@@ -74,7 +74,6 @@ export async function generateMetadata(
         icons: data?.advertiser?.store_logo
             ? [{ rel: "icon", url: data.advertiser.store_logo.toString() }]
             : [],
-        metadataBase: new URL(`https://instalanding.shop`),
         openGraph: {
             title,
             description,

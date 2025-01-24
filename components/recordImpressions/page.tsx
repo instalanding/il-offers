@@ -10,11 +10,11 @@ type ImpressionsProp = {
     store_url: string,
     tags: any,
     utm_params?: any,
-    campaign_id :string,
+    campaign_id: string,
 };
 
-const RecordImpressions = ({ offer_id, advertiser, user_ip, store_url, tags, utm_params,campaign_id }: ImpressionsProp) => {
-    
+const RecordImpressions = ({ offer_id, advertiser, user_ip, store_url, tags, utm_params, campaign_id }: ImpressionsProp) => {
+
     const [visitorId, setVisitorId] = useState<string>();
 
     const getVisitorId = async () => {

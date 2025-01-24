@@ -11,7 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 
-const MultiCta = ({ value }: any) => {
+const MultiCta = ({ value, checkoutData }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
     return (
