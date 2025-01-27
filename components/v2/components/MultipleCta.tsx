@@ -9,10 +9,40 @@ import {
 } from "@/components/ui/accordion";
 import Link from "next/link";
 import Image from "next/image";
-
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 const MultiCta = ({ value, checkoutData }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+
+    const getVisitorId = async () => {
+        if (typeof window === "undefined") return;
+
+        try {
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            return result.visitorId;
+        } catch (error) {
+            console.error("Error getting visitor identifier:", error);
+            return null;
+        }
+    };
+
+    async function recordClicks(
+        ctaType: string
+    ) {
+        try {
+            const visitorId = await getVisitorId();
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&visitor_id=${visitorId}&campaign_id=${checkoutData.campaign_id}&ctatype=${ctaType}`,
+                {}
+            );
+            console.log("hua record", response)
+        } catch (error) {
+            console.error("Error recording click:", error);
+        }
+    }
 
     return (
         <Accordion
@@ -75,7 +105,8 @@ const MultiCta = ({ value, checkoutData }: any) => {
                             </div>
                         </div>
                         <Link href={cta.url} target="_blank" rel="noopener noreferrer">
-                            <button
+                            <Button
+                                onClick={() => recordClicks(cta.type)}
                                 style={{
                                     background: cta.color,
                                     color: cta.textColor,
@@ -83,7 +114,7 @@ const MultiCta = ({ value, checkoutData }: any) => {
                                 className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap"
                             >
                                 Buy Now
-                            </button>
+                            </Button>
                         </Link>
                     </AccordionContent>
                 </AccordionItem>

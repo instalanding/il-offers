@@ -16,6 +16,7 @@ interface CampaignData {
     _id: string,
     offer_id: string,
     variant_id: string,
+    coupon_code: string;
     blocks: string;
     config: {
         font_family: string;
@@ -38,9 +39,8 @@ interface CampaignData {
     reviews: [];
     collections: [];
     advertiser: {
-        id: string;
+        _id: string;
         store_url: string;
-        coupon_code: string;
         checkout: {
             checkout_name: string;
         }
@@ -111,24 +111,19 @@ const V2: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
         userIp: userIp,
         utm_params: utm_params,
         pixel_id: campaign.advertiser.pixel?.id ?? "",
-        advertiser_id: "",
-        coupon_code: "",
-        tags: "",
-    }
+        advertiser_id: campaign.advertiser?._id,
+        coupon_code: campaign.coupon_code ?? "",
+        tags: [],
+    };
 
-    console.log("checkout data", checkoutData);
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
 
     return (
         <>
             <RecordImpressions
-                offer_id={checkoutData.offer_id}
-                advertiser={checkoutData.advertiser_id}
-                user_ip={userIp}
-                store_url={checkoutData.store_url}
-                tags={checkoutData?.tags}
+                checkoutData={checkoutData}
+                userIp={userIp}
                 utm_params={utm_params}
-                campaign_id={checkoutData.campaign_id}
             />
             <main
                 className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
