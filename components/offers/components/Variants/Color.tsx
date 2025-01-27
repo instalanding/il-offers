@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { Button } from '@/components/ui/button';
+import { Label } from '@radix-ui/react-label';
 interface VariantData {
     label: string;
     price: number;
@@ -9,7 +10,7 @@ interface VariantData {
     variant_id?: string;
     product_handle?: string;
     offer_id?: string;
-    color?: string;
+    color: string;
 }
 
 interface ColorVariantProps {
@@ -22,7 +23,7 @@ const Color: FC<ColorVariantProps> = ({ selectedVariant, onVariantSelect, varian
     const router = useRouter();
 
     const handleVariantClick = (variant: VariantData) => {
-        onVariantSelect(variant.label);
+        onVariantSelect(variant.color);
         if (variant.offer_id) {
             router.push(`/${variant.offer_id}`);
         } else if (variant.product_handle) {
@@ -30,7 +31,6 @@ const Color: FC<ColorVariantProps> = ({ selectedVariant, onVariantSelect, varian
         }
     };
 
-    // Color mapping helper
     const getColorClass = (color: string) => {
         const colorMap: { [key: string]: string } = {
             blue: 'bg-blue-500',
@@ -52,25 +52,13 @@ const Color: FC<ColorVariantProps> = ({ selectedVariant, onVariantSelect, varian
             <div className="flex flex-wrap gap-4 justify-center">
                 {variants.map((variant, index) => (
                     <div key={index} className="flex flex-col items-center">
-                        <button
+                        <Button
                             onClick={() => handleVariantClick(variant)}
-                            className={`w-10 h-10 rounded-full ${getColorClass(variant.label)} 
-                                transition-transform hover:scale-110
-                                ${selectedVariant === variant.label
-                                    ? 'ring-2 ring-offset-2 ring-blue-500'
-                                    : ''}`}
-                            title={variant.label}
+                            className={`w-10 h-10 rounded-full ${getColorClass(variant.color || 'gray')} 
+                                transition-transform hover:scale-110 ${selectedVariant === variant.color ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`}
+                            title={variant.color}
                         />
-                        {/* <div className="mt-2 text-center">
-                            <p className="text-sm font-medium">{variant.label}</p>
-                            <div className="flex items-center gap-2 justify-center">
-                                <span className="text-sm font-semibold">₹{variant.price}</span>
-                                <span className="text-xs text-gray-500 line-through">
-                                    ₹{variant.originalPrice}
-                                </span>
-                            </div>
-                            <p className="text-xs text-red-500">{variant.discount}</p>
-                        </div> */}
+                        <Label className="mt-2 font-semibold text-gray-500 text-xs">{variant.color}</Label>
                     </div>
                 ))}
             </div>
@@ -78,4 +66,4 @@ const Color: FC<ColorVariantProps> = ({ selectedVariant, onVariantSelect, varian
     );
 };
 
-export default Color;
+export default React.memo(Color);

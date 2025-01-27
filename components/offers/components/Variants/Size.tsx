@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 interface VariantData {
     label: string;
@@ -9,6 +10,7 @@ interface VariantData {
     variant_id?: string;
     product_handle?: string;
     offer_id?: string;
+    size: string;
 }
 
 interface VariantSizeProps {
@@ -19,9 +21,8 @@ interface VariantSizeProps {
 
 const Size: FC<VariantSizeProps> = ({ selectedVariant, onVariantSelect, variants = [] }) => {
     const router = useRouter();
-
     const handleVariantClick = (variant: VariantData) => {
-        onVariantSelect(variant.label);
+        onVariantSelect(variant.size);
         if (variant.offer_id) {
             router.push(`/${variant.offer_id}`);
         } else if (variant.product_handle) {
@@ -29,20 +30,26 @@ const Size: FC<VariantSizeProps> = ({ selectedVariant, onVariantSelect, variants
         }
     };
 
+    const sizeOrder = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL', '4XL', '5XL'];
+
+    const sortedVariants = [...variants].sort((a, b) => {
+        return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
+    });
+
     return (
         <div className="w-full">
             <div className="flex justify-center flex-wrap gap-2">
-                {variants.map((variant, index) => (
+                {sortedVariants.map((variant, index) => (
                     <div key={index} className="flex flex-col items-center">
-                        <button
+                        <Button
                             onClick={() => handleVariantClick(variant)}
                             className={`px-4 py-2 rounded-xl border transition-colors 
-                                ${selectedVariant === variant.label
+                                ${selectedVariant === variant.size
                                     ? 'bg-blue-500 text-white'
                                     : 'hover:bg-gray-50'}`}
                         >
-                            {variant.label}
-                        </button>
+                            {variant.size}
+                        </Button>
                     </div>
                 ))}
             </div>
@@ -50,4 +57,4 @@ const Size: FC<VariantSizeProps> = ({ selectedVariant, onVariantSelect, variants
     );
 };
 
-export default Size;
+export default React.memo(Size);

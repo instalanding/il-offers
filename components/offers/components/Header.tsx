@@ -1,11 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 
 const Header: React.FC<{ config: { primaryColor: string; secondaryColor: string; headerText: string; }, logo: string; }> = ({ config, logo }) => {
     return (
         <>
-            <Link rel="preload" href={logo} as="image" />
+            <link rel="preload" href={logo} as="image" />
             <div className="sticky top-0 h-auto z-50">
                 <p
                     style={{

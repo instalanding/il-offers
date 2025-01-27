@@ -33,7 +33,7 @@ const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
                     <div
                         key={index}
                         onClick={() => handleVariantClick(variant)}
-                        className="snap-start flex-shrink-0 w-[180px] border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                        className="snap-start flex-shrink-0 w-[174px] border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                     >
                         <p className="text-sm font-medium line-clamp-2">{variant.label}</p>
                         <div className="mt-1 flex items-baseline gap-2">

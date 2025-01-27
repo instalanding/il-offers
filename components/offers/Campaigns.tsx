@@ -17,6 +17,8 @@ interface CampaignData {
     offer_id: string,
     variant_id: string,
     coupon_code: string;
+    color?: string;
+    size?: string;
     blocks: string;
     config: {
         font_family: string;

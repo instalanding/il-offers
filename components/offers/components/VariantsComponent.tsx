@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Size from './Variants/Size';
 import Quantity from './Variants/Quantity';
 import Color from './Variants/Color';
@@ -18,6 +18,8 @@ interface VariantsComponentProps {
                 variant_id?: string;
                 product_handle?: string;
                 offer_id?: string;
+                size: string;
+                color: string;
             }>;
         };
     };
@@ -26,6 +28,7 @@ interface VariantsComponentProps {
 
 const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) => {
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+
     const variantData = value.collections?.variant?.map(item => ({
         label: item.campaign_title,
         price: parseFloat(item.price.offerPrice.value),
@@ -33,12 +36,14 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         discount: `${item.price.discount}% off`,
         variant_id: item.variant_id,
         product_handle: item.product_handle,
-        offer_id: item.offer_id
+        offer_id: item.offer_id,
+        size: item.size,
+        color: item.color,
     })) || [];
 
-    const handleVariantClick = (variant: string) => {
+    const handleVariantClick = useCallback((variant: string) => {
         setSelectedVariant(variant);
-    };
+    }, []);
 
     const renderVariantComponent = () => {
         switch (value.variant) {
@@ -72,4 +77,4 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
     );
 };
 
-export default VariantsComponent;
+export default React.memo(VariantsComponent);
