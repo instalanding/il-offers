@@ -4,7 +4,10 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { GoogleTagManager } from "@next/third-parties/google";
 
-const openSans = Open_Sans({ subsets: ["latin"] });
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Instalanding",

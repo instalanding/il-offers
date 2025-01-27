@@ -1,18 +1,12 @@
-import React from 'react'
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "@/components/ui/carousel";
+import React from 'react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Image from 'next/image';
 
 const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) => {
     const placeholderImages = [
-        { url: "https://via.placeholder.com/480?text=Add+image+1" },
-        { url: "https://via.placeholder.com/480?text=Add+image+2" },
-        { url: "https://via.placeholder.com/480?text=Add+image+3" }
+        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.jpg", },
+        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.jpg" },
+        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.jpg" }
     ];
 
     const finalImages = (images && images.length > 0) ? images : placeholderImages;
@@ -31,6 +25,8 @@ const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) 
                                 className="w-full"
                                 priority={key === 0}
                                 loading={key !== 0 ? "lazy" : "eager"}
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
                             />
                         </CarouselItem>
                     ))}

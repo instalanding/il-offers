@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FiSearch, FiChevronDown } from 'react-icons/fi';
+import { FiSearch } from 'react-icons/fi';
 import { TbSortAscendingNumbers, TbSortDescendingNumbers } from 'react-icons/tb';
 import { MdClear } from 'react-icons/md';
 
@@ -229,11 +229,13 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
                                     </div>
                                 )}
 
-                                <Image src={variant.meta_description.image.url}
+                                <Image
+                                    src={variant.meta_description.image.url}
                                     alt="Image"
                                     height={340}
                                     width={340}
                                     className='rounded-t-lg'
+                                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
                                 />
 
                                 <div className="p-4 ">
