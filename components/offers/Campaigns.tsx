@@ -41,6 +41,9 @@ interface CampaignData {
     advertiser: {
         _id: string;
         store_url: string;
+        store_logo: {
+            url: string;
+        };
         checkout: {
             checkout_name: string;
         }
@@ -130,7 +133,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                 style={{ overflowY: 'auto' }}
             >
                 <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none max-sm:rounded-none overflow-auto mx-auto rounded-lg">
-                    <Header config={campaignConfig} />
+                    <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
                             case 'carousel':
