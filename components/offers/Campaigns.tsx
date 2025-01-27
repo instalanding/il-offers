@@ -67,7 +67,7 @@ interface Block {
     variantType?: string;
 }
 
-const V2: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
+const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
     // console.log('campaignData', campaignData);
 
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
@@ -202,4 +202,4 @@ const V2: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
     );
 };
 
-export default V2;
+export default Campaigns;

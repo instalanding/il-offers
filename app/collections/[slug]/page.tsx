@@ -1,9 +1,9 @@
 "use server";
 import React from "react";
 import { MdErrorOutline } from "react-icons/md";
-import Collections from "@/components/v2/Collections";
+import Collections from "@/components/offers/Collections";
 import { Metadata, ResolvingMetadata } from "next";
-import FontLoader from "@/components/v2/FontLoader";
+import FontLoader from "@/components/offers/components/FontLoader";
 const getCollections = async (slug: string, variant_id?: string) => {
     try {
         const query = new URLSearchParams({ slug });

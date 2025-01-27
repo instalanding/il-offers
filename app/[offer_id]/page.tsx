@@ -1,8 +1,8 @@
 "use server";
 import React from "react";
 import { Metadata, ResolvingMetadata } from "next";
-import V2 from "@/components/v2/v2";
-import FontLoader from "@/components/v2/FontLoader";
+import Campaigns from "@/components/offers/Campaigns";
+import FontLoader from "@/components/offers/components/FontLoader";
 import { MdErrorOutline } from "react-icons/md";
 import { formatDate } from "@/lib/formatUtils";
 
@@ -107,7 +107,7 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
-      <V2 campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} userIp={userIp} utm_params={utm_params} />
+      <Campaigns campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} userIp={userIp} utm_params={utm_params} />
     </>
   );
 };
