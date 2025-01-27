@@ -24,12 +24,13 @@ const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) 
                     {finalImages.map((image, key) => (
                         <CarouselItem key={key}>
                             <Image
-                                alt={"Image"}
+                                alt={"Main Image"}
                                 src={image?.url}
                                 width={480}
                                 height={480}
                                 className="w-full"
-                            // priority={key === 0}
+                                priority={key === 0}
+                                loading={key !== 0 ? "lazy" : "eager"}
                             />
                         </CarouselItem>
                     ))}
