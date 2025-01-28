@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { GoogleTagManager } from "@next/third-parties/google";
+import FontLoader from "@/components/offers/components/FontLoader";
+// import { GoogleTagManager } from "@next/third-parties/google";
+// import { Open_Sans } from "next/font/google";
 
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  display: "swap",
-});
+// const openSans = Open_Sans({
+//   subsets: ["latin"],
+//   display: "swap",
+// });
 
 export const metadata: Metadata = {
   title: "Instalanding",
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       {/* <GoogleTagManager gtmId="GTM-P6D6G8DC" /> */}
-      <body className={openSans.className}>
+      {/* <body className={openSans.className}> */}
+      <body>
+        <FontLoader fontFamily="Inter" />
         <Toaster />
         {children}
       </body>

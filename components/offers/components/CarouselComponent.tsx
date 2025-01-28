@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) => {
     const placeholderImages = [
-        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.jpg", },
+        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.jpg" },
         { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.jpg" },
         { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.jpg" }
     ];
@@ -27,6 +27,7 @@ const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) 
                                 loading={key !== 0 ? "lazy" : "eager"}
                                 placeholder="blur"
                                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                         </CarouselItem>
                     ))}

@@ -44,7 +44,7 @@ const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
                                 ₹{variant.originalPrice}
                             </span>
                         </div>
-                        <p className="text-red-500 text-sm font-medium mt-1">
+                        <p className="text-red-600 text-sm font-medium mt-1">
                             {variant.discount}
                         </p>
                     </div>
