@@ -128,8 +128,8 @@ export async function generateMetadata(
   return {
     title,
     description,
-    icons: data?.advertiser?.store_logo
-      ? [{ rel: "icon", url: data.advertiser.store_logo.toString() }]
+    icons: data?.advertiser?.store_logo?.url
+      ? [{ rel: "icon", url: data.advertiser.store_logo.url.toString() }]
       : [],
     // icons: [{ rel: "icon", url: data.advertiser.store_logo || "/favicon.ico" }],
     openGraph: {
