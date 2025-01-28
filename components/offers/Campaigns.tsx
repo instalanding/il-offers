@@ -194,6 +194,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                                         key={block.id}
                                         value={block.value}
                                         checkoutData={checkoutData}
+                                        style={block.style}
                                     />
                                 );
                             default:

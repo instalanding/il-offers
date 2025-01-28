@@ -55,7 +55,7 @@ const Color: FC<ColorVariantProps> = ({ selectedVariant, onVariantSelect, varian
                         <Button
                             onClick={() => handleVariantClick(variant)}
                             className={`w-10 h-10 rounded-full ${getColorClass(variant.color || 'gray')} 
-                                transition-transform hover:scale-110 ${selectedVariant === variant.color ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`}
+                                transition-transform hover:scale-110 ${selectedVariant === variant.color ? 'ring-2 ring-offset-2 ring-blue-500' : 'bg-white border-2 ring-0'}`}
                             title={variant.color}
                         />
                         <Label className="mt-2 font-semibold text-gray-500 text-xs">{variant.color}</Label>

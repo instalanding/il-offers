@@ -13,7 +13,7 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 
-const MultiCta = ({ value, checkoutData }: any) => {
+const MultiCta = ({ value, style, checkoutData }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
     const getVisitorId = async () => {
@@ -50,6 +50,7 @@ const MultiCta = ({ value, checkoutData }: any) => {
             collapsible
             onValueChange={(value) => setOpenAccordion(value)}
             className="flex flex-col gap-3"
+            style={style}
         >
             {value.map((cta: any) => (
                 <AccordionItem

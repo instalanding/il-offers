@@ -36,6 +36,8 @@ const Size: FC<VariantSizeProps> = ({ selectedVariant, onVariantSelect, variants
         return sizeOrder.indexOf(a.size) - sizeOrder.indexOf(b.size);
     });
 
+    console.log("select", selectedVariant)
+
     return (
         <div className="w-full">
             <div className="flex justify-center flex-wrap gap-2">
@@ -43,10 +45,10 @@ const Size: FC<VariantSizeProps> = ({ selectedVariant, onVariantSelect, variants
                     <div key={index} className="flex flex-col items-center">
                         <Button
                             onClick={() => handleVariantClick(variant)}
-                            className={`px-4 py-2 rounded-xl border transition-colors 
+                            className={`px-4 py-2 rounded-xl border
                                 ${selectedVariant === variant.size
                                     ? 'bg-blue-500 text-white'
-                                    : 'hover:bg-gray-50'}`}
+                                    : 'bg-white text-black hover:bg-gray-200'}`}
                         >
                             {variant.size}
                         </Button>
