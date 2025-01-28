@@ -38,7 +38,6 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
                 `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&visitor_id=${visitorId}&campaign_id=${checkoutData.campaign_id}&ctatype=${ctaType}`,
                 {}
             );
-            console.log("hua record", response)
         } catch (error) {
             console.error("Error recording click:", error);
         }

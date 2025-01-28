@@ -10,6 +10,8 @@ interface CollectionsProps {
     data: {
         campaign_title: string;
         description: string;
+        size?: string;
+        color?: string;
         price: {
             offerPrice: { value: string; prefix: string };
             originalPrice: { value: string; prefix: string };
@@ -20,10 +22,12 @@ interface CollectionsProps {
         };
         product_handle?: string;
         offer_id?: string;
-        variant: Array<{
+        variants: Array<{
             _id: string;
             campaign_title: string;
             description: string;
+            size?: string;
+            color?: string;
             price: {
                 offerPrice: { value: string; prefix: string };
                 originalPrice: { value: string; prefix: string };
@@ -44,16 +48,22 @@ interface CollectionsProps {
             footer_text: string;
             button_text: string;
         };
+        advertiser: {
+            store_logo: {
+                url: string
+            }
+        }
     };
 }
 
 const Collections: React.FC<CollectionsProps> = ({ data }) => {
+
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [sortOrder, setSortOrder] = useState<'none' | 'low-to-high' | 'high-to-low'>('none');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const handleCardClick = (variant: typeof data.variant[0]) => {
+    const handleCardClick = (variant: typeof data.variants[0]) => {
         if (variant.product_handle) {
             router.push(`/products/${variant.product_handle}?variant_id=${variant.variant_id}`);
         } else if (variant.offer_id) {
@@ -62,10 +72,18 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
     };
 
     const filteredAndSortedVariants = useMemo(() => {
-        let filtered = data.variant.filter(variant =>
+        let filtered = data.variants.filter(variant =>
             variant.campaign_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             variant.description.toLowerCase().includes(searchTerm.toLowerCase())
         );
+
+        // Sort by size if present
+        filtered.sort((a, b) => {
+            const sizeOrder = ['xxs','s', 'm', 'l', 'xl', 'xxl', '2xl', '3xl', '4xl', '5xl']; // Define the size order
+            const sizeA = a.size ? sizeOrder.indexOf(a.size.toLowerCase()) : Infinity; // Use Infinity if size is not present
+            const sizeB = b.size ? sizeOrder.indexOf(b.size.toLowerCase()) : Infinity; // Use Infinity if size is not present
+            return sizeA - sizeB; // Sort by size order
+        });
 
         if (sortOrder !== 'none') {
             filtered.sort((a, b) => {
@@ -76,7 +94,7 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
         }
 
         return filtered;
-    }, [data.variant, searchTerm, sortOrder]);
+    }, [data.variants, searchTerm, sortOrder]);
 
     const getSortLabel = () => {
         switch (sortOrder) {
@@ -99,23 +117,25 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
             <div className="sticky top-0 h-auto z-50">
                 <p
                     style={{
-                        backgroundColor: "#073e0a",
-                        color: 'white',
+                        backgroundColor: data.config.primary_color,
+                        color: data.config.secondary_color,
                     }}
                     className="text-[12px] text-center p-2 px-6"
                 >
-                    Buy 2 Get 1 FREE
+                    {data.config.header_text}
                 </p>
                 <div className="flex flex-col items-center justify-center py-2 bg-white -z-50">
                     <Image
-                        alt={"upload a logo"}
-                        src={"https://res.cloudinary.com/duslrhgcq/image/upload/v1732677222/lbjwkpakjmxeos1cpedq.png"}
+                        alt={"Upload a logo"}
+                        src={data.advertiser.store_logo.url}
                         className="h-[60px] py-2 height-auto object-contain"
                         width={310}
                         height={310}
                     />
                 </div>
             </div>
+
+            {/* to be implemented later (hero banner image) currently static img */}
             <Image src={"https://saptamveda.com/cdn/shop/files/Group-02_70c7f1fa-78c4-4612-a668-c831e60a8221.jpg?v=1642836797"}
                 alt="hero banner image"
                 width={1500}
@@ -240,7 +260,20 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
 
                                 <div className="p-4 ">
                                     <h2 className="text-lg font-semibold text-gray-800">{variant.campaign_title}</h2>
+                                    <div className='flex justify-between my-1'>
+                                        {variant.size && (
+                                            <span className="text-gray-500 text-sm">
+                                                Size: {variant.size}
+                                            </span>
+                                        )}
+                                        {variant.color && (
+                                            <span className="text-gray-500 text-sm ml-2">
+                                                Color: {variant.color}
+                                            </span>
+                                        )}
+                                    </div>
                                     <p className="text-gray-500 text-sm mt-1 line-clamp-2">{variant.description}</p>
+
                                     <div className="mt-3 flex items-center justify-between">
                                         {/* Offer Price */}
                                         <span className="text-green-600 font-bold text-lg">

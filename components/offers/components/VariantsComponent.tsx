@@ -7,7 +7,7 @@ interface VariantsComponentProps {
     value: {
         variant: string;
         collections: {
-            variant: Array<{
+            variants: Array<{
                 _id: string;
                 campaign_title: string;
                 price: {
@@ -29,7 +29,7 @@ interface VariantsComponentProps {
 const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) => {
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
 
-    const variantData = value.collections?.variant?.map(item => ({
+    const variantData = value.collections?.variants?.map(item => ({
         label: item.campaign_title,
         price: parseFloat(item.price.offerPrice.value),
         originalPrice: parseFloat(item.price.originalPrice.value),

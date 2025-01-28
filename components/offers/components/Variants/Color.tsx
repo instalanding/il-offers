@@ -24,10 +24,10 @@ const Color: FC<ColorVariantProps> = ({ selectedVariant, onVariantSelect, varian
 
     const handleVariantClick = (variant: VariantData) => {
         onVariantSelect(variant.color);
-        if (variant.offer_id) {
-            router.push(`/${variant.offer_id}`);
-        } else if (variant.product_handle) {
+        if (variant.product_handle) {
             router.push(`/products/${variant.product_handle}?variant_id=${variant.variant_id}`);
+        } else if (variant.offer_id) {
+            router.push(`/${variant.offer_id}`);
         }
     };
 
