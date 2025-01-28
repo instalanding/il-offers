@@ -4,11 +4,15 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { GoogleTagManager } from "@next/third-parties/google";
 
-const openSans = Open_Sans({ subsets: ["latin"] });
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Instalanding",
   description: "Instalanding offers",
+  metadataBase: new URL(`https://instalanding.shop`),
 };
 
 export default function RootLayout({
@@ -19,8 +23,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       {/* <GoogleTagManager gtmId="GTM-P6D6G8DC" /> */}
-      
-
       <body className={openSans.className}>
         <Toaster />
         {children}

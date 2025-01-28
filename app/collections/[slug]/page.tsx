@@ -1,9 +1,9 @@
 "use server";
 import React from "react";
 import { MdErrorOutline } from "react-icons/md";
-import Collections from "@/components/v2/Collections";
+import Collections from "@/components/offers/Collections";
 import { Metadata, ResolvingMetadata } from "next";
-import FontLoader from "@/components/v2/FontLoader";
+import FontLoader from "@/components/offers/components/FontLoader";
 const getCollections = async (slug: string, variant_id?: string) => {
     try {
         const query = new URLSearchParams({ slug });
@@ -71,11 +71,13 @@ export async function generateMetadata(
     return {
         title,
         description,
-        icons: [{ rel: "icon", url: data?.meta_description?.icon.url || "/favicon.ico" }],
+        icons: data?.advertiser?.store_logo
+            ? [{ rel: "icon", url: data.advertiser.store_logo.url.toString() }]
+            : [],
         openGraph: {
             title,
             description,
-            url: `https://instalanding.shop/${slug}`,
+            url: `https://instalanding.shop/collections/${slug}`,
             images: [
                 {
                     url: imageUrl,
@@ -93,8 +95,12 @@ export async function generateMetadata(
             images: [imageUrl],
         },
         other: {
-            "theme-color": "#ffffff",
-            // data?.config?.primary_color ||
+            "theme-color": data?.config?.primary_color || "#FFFFFF",
+            "twitter:image": imageUrl,
+            "twitter:card": "summary_large_image",
+            "og:url": `https://instalanding.shop/collections/${slug}`,
+            "og:image": imageUrl,
+            "og:type": "website",
         },
     };
 }

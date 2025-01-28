@@ -29,7 +29,7 @@ function processRating(rating: number): { fullStars: number; hasHalfStar: boolea
   return { fullStars, hasHalfStar };
 }
 
-const ReviewStack: React.FC<ReviewStackProps> = ({ reviews, totalStars, Star }) => {
+const Stack: React.FC<ReviewStackProps> = ({ reviews, totalStars, Star }) => {
   return (
     <div className="flex flex-col gap-4 pt-4">
       {reviews.map((review, index) => {
@@ -65,4 +65,4 @@ const ReviewStack: React.FC<ReviewStackProps> = ({ reviews, totalStars, Star }) 
   );
 };
 
-export default ReviewStack;
+export default Stack;

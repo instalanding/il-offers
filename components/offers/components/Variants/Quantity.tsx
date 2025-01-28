@@ -15,14 +15,14 @@ interface VariantsCarouselProps {
     variants: VariantData[];
 }
 
-const VariantsCarousel: React.FC<VariantsCarouselProps> = ({ variants }) => {
+const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
     const router = useRouter();
 
     const handleVariantClick = (variant: VariantData) => {
-        if (variant.offer_id) {
-            router.push(`/${variant.offer_id}`);
-        } else if (variant.product_handle) {
+        if (variant.product_handle) {
             router.push(`/products/${variant.product_handle}?variant_id=${variant.variant_id}`);
+        } else if (variant.offer_id) {
+            router.push(`/${variant.offer_id}`);
         }
     };
 
@@ -33,7 +33,7 @@ const VariantsCarousel: React.FC<VariantsCarouselProps> = ({ variants }) => {
                     <div
                         key={index}
                         onClick={() => handleVariantClick(variant)}
-                        className="snap-start flex-shrink-0 w-[180px] border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                        className="snap-start flex-shrink-0 w-[174px] border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                     >
                         <p className="text-sm font-medium line-clamp-2">{variant.label}</p>
                         <div className="mt-1 flex items-baseline gap-2">
@@ -44,7 +44,7 @@ const VariantsCarousel: React.FC<VariantsCarouselProps> = ({ variants }) => {
                                 ₹{variant.originalPrice}
                             </span>
                         </div>
-                        <p className="text-red-500 text-sm font-medium mt-1">
+                        <p className="text-red-600 text-sm font-medium mt-1">
                             {variant.discount}
                         </p>
                     </div>
@@ -54,4 +54,4 @@ const VariantsCarousel: React.FC<VariantsCarouselProps> = ({ variants }) => {
     );
 };
 
-export default VariantsCarousel;
+export default Quantity;
