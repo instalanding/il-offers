@@ -39,10 +39,11 @@ const Redirect = ({ data }: any) => {
 
   let redirectUrl = data.product_url;
   let href = data.product_url;
+  const encodeUrlForAmazon = encodeURIComponent(data.product_url);
   const buttonType: string = data.cta_type;
 
   if (buttonType === "amazon") {
-    redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
+    redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${encodeUrlForAmazon}&ctatype=${buttonType}`;
   } else {
     if (/android/i.test(userAgent.toString())) {
       redirectUrl = `intent:${href.replace(
