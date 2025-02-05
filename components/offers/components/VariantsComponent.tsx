@@ -33,7 +33,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         label: item.campaign_title,
         price: parseFloat(item.price.offerPrice.value),
         originalPrice: parseFloat(item.price.originalPrice.value),
-        discount: `${item.price.discount}% off`,
+        discount: item.price.discount,
         variant_id: item.variant_id,
         product_handle: item.product_handle,
         offer_id: item.offer_id,

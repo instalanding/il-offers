@@ -58,7 +58,7 @@ const Footer: React.FC<{ config: Config, price: Price, checkoutData: Checkout }>
 
     const handleCheckoutButtonClick = async (e: React.MouseEvent) => {
         try {
-            if (checkoutData.checkout_name === "fastr") {
+            if (checkoutData.checkout_name === "fastrr") {
                 handleCheckout(
                     e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
                     checkoutData.variant_id,
