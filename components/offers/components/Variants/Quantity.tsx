@@ -26,6 +26,12 @@ const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
         }
     };
 
+    const calculateDiscount = (originalPrice: number, price: number): string => {
+        if (originalPrice <= 0 || originalPrice <= price) return "";
+        const discount = ((originalPrice - price) / originalPrice) * 100;
+        return `${Math.round(discount)}% Off`;
+    };
+
     return (
         <div className="w-full bg-white">
             <div className="flex flex-wrap gap-4">
@@ -45,8 +51,12 @@ const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
                             </span>
                         </div>
                         <p className="text-red-600 text-sm font-medium mt-1">
-                            {variant.discount}
+
+                            {variant.discount ? (
+                                `${Math.round(Number(variant.discount))} % off`
+                            ) : calculateDiscount(variant.originalPrice, variant.price)}
                         </p>
+
                     </div>
                 ))}
             </div>

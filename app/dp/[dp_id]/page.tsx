@@ -7,7 +7,6 @@ const getDeepLink = async (dp_id: string) => {
     if (!response.ok) {
         throw new Error("Deep link not found");
     }
-    console.log(response.json)
     return response.json();
 };
 
