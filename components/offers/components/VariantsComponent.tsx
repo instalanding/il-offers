@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import Size from './Variants/Size';
-import Quantity from './Variants/Quantity';
-import Color from './Variants/Color';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import OptionVariant from './Variants/OptionVariant';
 
 interface VariantsComponentProps {
     value: {
@@ -18,8 +17,9 @@ interface VariantsComponentProps {
                 variant_id?: string;
                 product_handle?: string;
                 offer_id?: string;
-                size: string;
-                color: string;
+                variant_options: {
+                    [key: string]: string;
+                };
             }>;
         };
     };
@@ -27,9 +27,17 @@ interface VariantsComponentProps {
 }
 
 const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) => {
-    const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const searchParams = useSearchParams();
+    const currentVariantId = searchParams.get('variant_id');
 
-    const variantData = value.collections?.variants?.map(item => ({
+    // Return null if no variants or variant_options
+    if (!value.collections?.variants?.length ||
+        !value.collections.variants.some(v => v.variant_options && Object.keys(v.variant_options).length > 0)) {
+        return null;
+    }
+
+    const variantData = value.collections.variants.map(item => ({
         label: item.campaign_title,
         price: parseFloat(item.price.offerPrice.value),
         originalPrice: parseFloat(item.price.originalPrice.value),
@@ -37,42 +45,44 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         variant_id: item.variant_id,
         product_handle: item.product_handle,
         offer_id: item.offer_id,
-        size: item.size,
-        color: item.color,
-    })) || [];
+        options: item.variant_options || {}
+    }));
 
-    const handleVariantClick = useCallback((variant: string) => {
-        setSelectedVariant(variant);
-    }, []);
+    const sortedVariantData = [...variantData].sort((a, b) => a.price - b.price);
 
-    const renderVariantComponent = () => {
-        switch (value.variant) {
-            case 'size':
-                return (
-                    <Size
-                        selectedVariant={selectedVariant}
-                        onVariantSelect={handleVariantClick}
-                        variants={variantData}
-                    />
-                );
-            case 'color':
-                return (
-                    <Color
-                        selectedVariant={selectedVariant}
-                        onVariantSelect={handleVariantClick}
-                        variants={variantData}
-                    />
-                );
-            case 'quantity':
-                return <Quantity variants={variantData} />;
-            default:
-                return null;
+    const optionKeys = sortedVariantData[0]?.options
+        ? Object.keys(sortedVariantData[0].options).filter(key => key !== 'title')
+        : [];
+
+    if (optionKeys.length === 0) {
+        return null;
+    }
+
+    useEffect(() => {
+        if (currentVariantId) {
+            const currentVariant = sortedVariantData.find(v => v.variant_id === currentVariantId);
+            if (currentVariant?.options?.option1) {
+                setSelectedOption(currentVariant.options.option1);
+            }
         }
-    };
+    }, [currentVariantId, sortedVariantData]);
+
+    const handleOptionClick = useCallback((option: string) => {
+        setSelectedOption(option);
+    }, []);
 
     return (
         <div style={style} className="flex flex-col p-4">
-            {renderVariantComponent()}
+            {optionKeys.map(optionKey => (
+                <OptionVariant
+                    key={optionKey}
+                    optionKey={optionKey}
+                    selectedOption={selectedOption}
+                    onOptionSelect={handleOptionClick}
+                    variants={sortedVariantData}
+                    showPrices={false}
+                />
+            ))}
         </div>
     );
 };
