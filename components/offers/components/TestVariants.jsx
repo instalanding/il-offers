@@ -1,3 +1,5 @@
+import VariantsComponent from "./VariantsComponent";
+
 // Mock data for testing
 const mockCampaignData = {
   collections: {

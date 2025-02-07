@@ -31,8 +31,21 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
     const searchParams = useSearchParams();
     const currentVariantId = searchParams.get('variant_id');
 
+    const handleOptionClick = useCallback((option: string) => {
+        setSelectedOption(option);
+    }, []);
+
+    useEffect(() => {
+        if (currentVariantId && value.collections?.variants) {
+            const currentVariant = value.collections.variants.find(v => v.variant_id === currentVariantId);
+            if (currentVariant?.variant_options?.option1) {
+                setSelectedOption(currentVariant.variant_options.option1);
+            }
+        }
+    }, [currentVariantId, value.collections?.variants]);
+
     // Return null if no variants or variant_options
-    if (!value.collections?.variants?.length ||
+    if (!value.collections?.variants?.length || 
         !value.collections.variants.some(v => v.variant_options && Object.keys(v.variant_options).length > 0)) {
         return null;
     }
@@ -50,26 +63,13 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
 
     const sortedVariantData = [...variantData].sort((a, b) => a.price - b.price);
 
-    const optionKeys = sortedVariantData[0]?.options
+    const optionKeys = sortedVariantData[0]?.options 
         ? Object.keys(sortedVariantData[0].options).filter(key => key !== 'title')
         : [];
 
     if (optionKeys.length === 0) {
         return null;
     }
-
-    useEffect(() => {
-        if (currentVariantId) {
-            const currentVariant = sortedVariantData.find(v => v.variant_id === currentVariantId);
-            if (currentVariant?.options?.option1) {
-                setSelectedOption(currentVariant.options.option1);
-            }
-        }
-    }, [currentVariantId, sortedVariantData]);
-
-    const handleOptionClick = useCallback((option: string) => {
-        setSelectedOption(option);
-    }, []);
 
     return (
         <div style={style} className="flex flex-col p-4">
