@@ -11,6 +11,7 @@ import MultipleCta from './components/MultipleCta';
 import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
 import RecordImpressions from '../recordImpressions/page';
+import createGradient from "../../lib/createGradient";
 
 interface CampaignData {
     _id: string,
@@ -122,7 +123,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
     };
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
-
+  console.log(campaign)
     return (
         <>
             <RecordImpressions
@@ -131,8 +132,10 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                 utm_params={utm_params}
             />
             <main
-                className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
-                style={{ overflowY: 'auto' }}
+                className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 "
+                style={{ overflowY: 'auto', backgroundImage: campaign?.config?.primary_color
+                    ? createGradient(campaign.config.primary_color)
+                    : 'none'  }}
             >
                 <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none max-sm:rounded-none overflow-auto mx-auto rounded-lg">
                     <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} />
