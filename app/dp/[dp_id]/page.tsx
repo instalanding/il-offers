@@ -1,4 +1,3 @@
-import { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import { userAgent } from "next/server";
 
@@ -8,7 +7,6 @@ const getDeepLink = async (dp_id: string) => {
     if (!response.ok) {
         throw new Error("Deep link not found");
     }
-    console.log(response.json)
     return response.json();
 };
 

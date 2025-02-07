@@ -1,9 +1,9 @@
 "use client"
-import { formatDate } from '@/lib/dateFormat';
+import { formatDate } from '@/lib/formatUtils';
 import { jsPDF } from 'jspdf';
 
 const useGenerateOfferPDF = () => {
-  const generatePDF = (data:any, phone:string, name: string, qrCode:string) => {
+  const generatePDF = (data: any, phone: string, name: string, qrCode: string) => {
     const pdf = new jsPDF({
       orientation: 'landscape',
       unit: 'px',
