@@ -6,7 +6,7 @@ const Header: React.FC<{ config: { primaryColor: string; secondaryColor: string;
         <>
             <link rel="preload" href={logo} as="image" />
             <div className="sticky top-0 h-auto z-50">
-                <p
+            {config.headerText && ( <p
                     style={{
                         backgroundColor: config.primaryColor,
                         color: config.secondaryColor,
@@ -14,8 +14,8 @@ const Header: React.FC<{ config: { primaryColor: string; secondaryColor: string;
                     className="text-[12px] text-center p-2 px-6"
                 >
                     {config.headerText}
-                </p>
-                <div className="flex flex-col items-center justify-center py-2 bg-white -z-50">
+                </p>)}
+               {logo && ( <div className="flex flex-col items-center justify-center py-2 bg-white -z-50">
                     <Image
                         alt={"Upload a logo"}
                         src={logo}
@@ -25,7 +25,7 @@ const Header: React.FC<{ config: { primaryColor: string; secondaryColor: string;
                         priority={true}
                         loading='eager'
                     />
-                </div>
+                </div>)}
             </div>
         </>
     );

@@ -18,6 +18,12 @@ interface VariantsCarouselProps {
 const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
     const router = useRouter();
 
+    const sortedVariants = variants.sort((a, b) => {
+        const aPrice = a.offer_id ? a.price : a.originalPrice;
+        const bPrice = b.offer_id ? b.price : b.originalPrice;
+        return aPrice - bPrice;
+    });
+
     const handleVariantClick = (variant: VariantData) => {
         if (variant.product_handle) {
             router.push(`/products/${variant.product_handle}?variant_id=${variant.variant_id}`);
@@ -35,7 +41,7 @@ const Quantity: React.FC<VariantsCarouselProps> = ({ variants }) => {
     return (
         <div className="w-full bg-white">
             <div className="flex flex-wrap gap-4">
-                {variants.map((variant, index) => (
+                {sortedVariants.map((variant, index) => (
                     <div
                         key={index}
                         onClick={() => handleVariantClick(variant)}

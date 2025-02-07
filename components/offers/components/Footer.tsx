@@ -108,7 +108,7 @@ const Footer: React.FC<{
       <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
       <div className="sticky bottom-0 bg-white">
         <div className="flex flex-col">
-          <div
+        {config.footerText && ( <div
             style={{
               backgroundColor: config?.primaryColor + "3a",
               color: config.secondaryColor || "#000000",
@@ -117,6 +117,7 @@ const Footer: React.FC<{
           >
             <p className="text-sm text-center">{config.footerText}</p>
           </div>
+          )}
 
           {/* Price and Button Section */}
           <div className="flex items-center justify-between text-black p-3 rounded-lg gap-5">
