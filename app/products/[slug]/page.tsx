@@ -11,7 +11,7 @@ const getCampaign = async (slug: string, variant_id?: string) => {
     const query = new URLSearchParams();
     query.append("slug", slug);
     if (variant_id) {
-      query.append("variant_id", variant_id);
+      query.append("variant", variant_id);
     }
 
     const response = await fetch(

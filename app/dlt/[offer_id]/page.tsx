@@ -5,6 +5,7 @@ import { new_backend_url } from "@/utils/constants";
 import { userAgent } from "next/server";
 import { permanentRedirect } from "next/navigation";
 import { Metadata, ResolvingMetadata } from "next";
+
 interface PageProps {
   params: { offer_id: string };
   searchParams: { mode: string; user_ip?: any };
@@ -39,7 +40,7 @@ const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
 
   // redirect happens here
 
-  if(!data){
+  if (!data) {
     return <div>Deeplink not found</div>
   }
 
