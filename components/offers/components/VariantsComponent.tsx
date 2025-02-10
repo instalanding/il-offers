@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import OptionVariant from './Variants/OptionVariant';
 import { useSearchParams } from 'next/navigation';
+import Quantity from './Variants/Quantity';
 
 interface VariantsComponentProps {
     value: {
@@ -93,13 +94,19 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
     return (
         <div style={style} className="flex flex-col p-4">
             {optionKeys.map(optionKey => (
-                <OptionVariant
+                value.variant === "size" ? <OptionVariant
                     key={optionKey}
                     optionKey={optionKey}
                     selectedOption={selectedOptions[optionKey] || null}
                     onOptionSelect={(option) => handleOptionClick(option, optionKey)}
                     variants={sortedVariantData}
                     showPrices={false}
+                /> : <Quantity
+                    key={optionKey}
+                    optionKey={optionKey}
+                    selectedOption={selectedOptions[optionKey] || null}
+                    onOptionSelect={(option) => handleOptionClick(option, optionKey)}
+                    variants={sortedVariantData}
                 />
             ))}
         </div>
