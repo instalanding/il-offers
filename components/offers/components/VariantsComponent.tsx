@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import OptionVariant from './Variants/OptionVariant';
+import { useSearchParams } from 'next/navigation';
 
 interface VariantsComponentProps {
     value: {
@@ -16,10 +16,11 @@ interface VariantsComponentProps {
                 };
                 variant_id?: string;
                 product_handle?: string;
-                offer_id?: string;
+                offer_id: string;
                 variant_options: {
                     [key: string]: string;
                 };
+                inventory?: number;
             }>;
         };
     };
@@ -27,25 +28,42 @@ interface VariantsComponentProps {
 }
 
 const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) => {
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
     const searchParams = useSearchParams();
     const currentVariantId = searchParams.get('variant_id');
 
-    const handleOptionClick = useCallback((option: string) => {
-        setSelectedOption(option);
+
+    const handleOptionClick = useCallback((option: string, optionKey: string) => {
+        setSelectedOptions(prev => ({
+            ...prev,
+            [optionKey]: option
+        }));
     }, []);
 
     useEffect(() => {
-        if (currentVariantId && value.collections?.variants) {
-            const currentVariant = value.collections.variants.find(v => v.variant_id === currentVariantId);
-            if (currentVariant?.variant_options?.option1) {
-                setSelectedOption(currentVariant.variant_options.option1);
+        if (value.collections?.variants) {
+            let targetVariant
+            if (currentVariantId) {
+                targetVariant = value.collections.variants.find(v => v.variant_id === currentVariantId);
+            } else {
+                targetVariant = value.collections.variants[0];
+            }
+
+            if (targetVariant?.variant_options) {
+                // Initialize all available options from the variant
+                const initialOptions: Record<string, string> = {};
+                Object.entries(targetVariant.variant_options).forEach(([key, value]) => {
+                    if (value) {
+                        initialOptions[key] = value;
+                    }
+                });
+                setSelectedOptions(initialOptions);
             }
         }
-    }, [currentVariantId, value.collections?.variants]);
+    }, [value.collections?.variants, currentVariantId]);
 
     // Return null if no variants or variant_options
-    if (!value.collections?.variants?.length || 
+    if (!value.collections?.variants?.length ||
         !value.collections.variants.some(v => v.variant_options && Object.keys(v.variant_options).length > 0)) {
         return null;
     }
@@ -58,12 +76,13 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         variant_id: item.variant_id,
         product_handle: item.product_handle,
         offer_id: item.offer_id,
+        inventory: item.inventory,
         options: item.variant_options || {}
     }));
 
-    const sortedVariantData = [...variantData].sort((a, b) => a.price - b.price);
+    const sortedVariantData = variantData.sort((a, b) => a.price - b.price);
 
-    const optionKeys = sortedVariantData[0]?.options 
+    const optionKeys = sortedVariantData[0]?.options
         ? Object.keys(sortedVariantData[0].options).filter(key => key !== 'title')
         : [];
 
@@ -77,8 +96,8 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
                 <OptionVariant
                     key={optionKey}
                     optionKey={optionKey}
-                    selectedOption={selectedOption}
-                    onOptionSelect={handleOptionClick}
+                    selectedOption={selectedOptions[optionKey] || null}
+                    onOptionSelect={(option) => handleOptionClick(option, optionKey)}
                     variants={sortedVariantData}
                     showPrices={false}
                 />

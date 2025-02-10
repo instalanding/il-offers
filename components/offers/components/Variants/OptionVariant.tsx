@@ -10,6 +10,7 @@ interface VariantData {
     variant_id?: string;
     product_handle?: string;
     offer_id?: string;
+    inventory?: number;
     options: {
         option1?: string;
         option2?: string;
@@ -66,16 +67,27 @@ const OptionVariant: FC<OptionVariantProps> = ({
             <div className="flex flex-wrap gap-2 justify-center">
                 {uniqueOptions.map((optionValue, index) => {
                     const variant = getVariantForOption(optionValue);
+                    const isSoldOut = variant?.inventory === 0;
+                    
                     return (
                         <div key={index} className="flex flex-col items-center">
                             <Button
-                                onClick={() => variant && handleVariantClick(variant)}
-                                className={`px-4 py-2 rounded-xl border
-                                    ${selectedOption === optionValue
-                                        ? 'bg-black-500 text-white'
-                                        : 'bg-white text-black hover:bg-gray-200'}`}
+                                onClick={() => variant && !isSoldOut && handleVariantClick(variant)}
+                                disabled={isSoldOut}
+                                className={`px-4 py-2 rounded-xl border relative
+                                    ${isSoldOut 
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                        : selectedOption === optionValue
+                                            ? 'bg-gray-900 text-white'
+                                            : 'bg-white text-black hover:bg-gray-200'
+                                    }`}
                             >
                                 {optionValue}
+                                {isSoldOut && (
+                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] mt-1 px-1 rounded-full">
+                                        Sold Out
+                                    </span>
+                                )}
                             </Button>
                             {showPrices && variant && (
                                 <div className="text-sm mt-1">
