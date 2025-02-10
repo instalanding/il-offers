@@ -11,6 +11,8 @@ import MultipleCta from './components/MultipleCta';
 import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
 import RecordImpressions from '../recordImpressions/page';
+// import TestVariants from './components/TestVariants'
+import createGradient from "../../lib/createGradient";
 
 interface CampaignData {
     _id: string,
@@ -40,6 +42,7 @@ interface CampaignData {
     };
     reviews: [];
     collections: [];
+    inventory: number,
     advertiser: {
         _id: string;
         store_url: string;
@@ -64,6 +67,7 @@ interface V2Props {
 interface Block {
     id: string;
     type: string;
+    htmlTag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
     images?: { url: string }[];
     value?: any;
     style?: React.CSSProperties;
@@ -118,11 +122,12 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
         pixel_id: campaign.advertiser.pixel?.id ?? "",
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.coupon_code ?? "",
+        inventory: campaign.inventory,
         tags: [],
     };
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
-
+    console.log(campaign)
     return (
         <>
             <RecordImpressions
@@ -131,10 +136,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                 utm_params={utm_params}
             />
             <main
-                className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
-                style={{ overflowY: 'auto' }}
+                className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 "
+                style={{
+                    overflowY: 'auto', backgroundImage: campaign?.config?.primary_color
+                        ? createGradient(campaign.config.primary_color)
+                        : 'none'
+                }}
             >
-                <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none max-sm:rounded-none overflow-auto mx-auto rounded-lg">
+                <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none md:rounded-lg overflow-auto mx-auto rounded-none">
                     <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
@@ -146,6 +155,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                                         key={block.id}
                                         value={block.value || ''}
                                         style={block.style}
+                                        htmlTag={block.htmlTag || 'p'}
                                     />
                                 );
                             case 'html':

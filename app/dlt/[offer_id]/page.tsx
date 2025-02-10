@@ -40,7 +40,7 @@ const Page: React.FC<PageProps> = async ({ params, searchParams }) => {
 
   // redirect happens here
 
-  if(!data){
+  if (!data) {
     return <div>Deeplink not found</div>
   }
 
