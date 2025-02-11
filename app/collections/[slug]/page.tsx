@@ -8,7 +8,7 @@ const getCollections = async (slug: string, variant_id?: string) => {
     try {
         const query = new URLSearchParams({ slug });
         if (variant_id) {
-            query.append("variant_id", variant_id);
+            query.append("variant", variant_id);
         }
 
         const response = await fetch(
