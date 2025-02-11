@@ -37,6 +37,7 @@ interface Checkout {
   advertiser_id: string;
   coupon_code: string;
   utm_params: Object;
+  inventory?: number;
 }
 
 const Footer: React.FC<{
@@ -100,23 +101,26 @@ const Footer: React.FC<{
         `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&visitor_id=${visitorId}&campaign_id=${checkoutData.campaign_id}`,
         {}
       );
-    } catch (error) {}
+    } catch (error) { }
   }
+
+  const isSoldOut = checkoutData.inventory === 0;
 
   return (
     <>
       <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
       <div className="sticky bottom-0 bg-white">
         <div className="flex flex-col">
-          <div
+          {config.footerText && (<div
             style={{
-              backgroundColor: config?.primaryColor + "3a",
+              backgroundColor: config?.primaryColor + "6a",
               color: config.secondaryColor || "#000000",
             }}
-            className="p-1 bg-opacity-25 flex justify-center items-center gap-2"
+            className="p-1 flex justify-center items-center gap-2"
           >
             <p className="text-sm text-center">{config.footerText}</p>
           </div>
+          )}
 
           {/* Price and Button Section */}
           <div className="flex items-center justify-between text-black p-3 rounded-lg gap-5">
@@ -124,7 +128,7 @@ const Footer: React.FC<{
               {price?.offerPrice?.value ? (
                 <div className="flex flex-col gap-1">
                   {price?.originalPrice?.value &&
-                  parseFloat(price.offerPrice.value) <
+                    parseFloat(price.offerPrice.value) <
                     parseFloat(price.originalPrice.value) ? (
                     <div className="flex flex-col justify-center items-center">
                       <p
@@ -178,14 +182,19 @@ const Footer: React.FC<{
 
             <Button
               onClick={handleCheckoutButtonClick}
-              className="flex items-center justify-center gap-2 px-8 py-2 bg-black w-full rounded-lg transition-colors"
+              disabled={isSoldOut}
+              className={`flex items-center justify-center gap-2 px-8 py-2 w-full rounded-lg transition-colors
+                ${isSoldOut
+                  ? 'cursor-not-allowed'
+                  : ''
+                }`}
               style={{
                 backgroundColor: config.primaryColor,
                 color: config.secondaryColor,
               }}
             >
-              <TbShoppingBagPlus size={20} />
-              {config.buttonText}
+
+              {isSoldOut ? 'Sold Out' : <> <TbShoppingBagPlus size={20} /> {config.buttonText}</>}
             </Button>
           </div>
         </div>

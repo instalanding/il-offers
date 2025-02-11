@@ -11,6 +11,7 @@ import MultipleCta from './components/MultipleCta';
 import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
 import RecordImpressions from '../recordImpressions/page';
+import createGradient from "../../lib/createGradient";
 
 interface CampaignData {
     _id: string,
@@ -39,7 +40,10 @@ interface CampaignData {
         }
     };
     reviews: [];
-    collections: [];
+    collections: {
+        variants: VariantOption[];
+    };
+    inventory: number,
     advertiser: {
         _id: string;
         store_url: string;
@@ -64,6 +68,7 @@ interface V2Props {
 interface Block {
     id: string;
     type: string;
+    htmlTag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
     images?: { url: string }[];
     value?: any;
     style?: React.CSSProperties;
@@ -72,14 +77,84 @@ interface Block {
     variantType?: string;
 }
 
+interface VariantOption {
+    variant_id: string;
+    variant_options: {
+        title?: string;
+        option1?: string;
+        option2?: string;
+        [key: string]: string | undefined;
+    };
+    price: {
+        offerPrice: { value: string; prefix: string };
+        originalPrice: { value: string; prefix: string };
+        discount: string;
+    };
+    product_handle?: string;
+}
+
 const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
     // console.log('campaignData', campaignData);
 
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
     const [error, setError] = useState<string | null>(null);
 
+    // Function to find and set the correct campaign variant
+    const updateCampaignVariant = (variants: any[], variantId: string | null) => {
+        if (!variantId) {
+            setCampaign(campaignData);
+            return;
+        }
+
+        const newVariant = variants.find(v => v.variant_id === variantId);
+        if (newVariant) {
+            setCampaign(prev => ({
+                ...prev!,
+                variant_id: newVariant.variant_id,
+                price: newVariant.price,
+                variant_options: newVariant.variant_options,
+                blocks: newVariant.blocks,
+                config: newVariant.config
+            }));
+        }
+    };
+
+    // Initial campaign setup
     useEffect(() => {
         setCampaign(campaignData);
+    }, [campaignData]);
+
+    // Listen for URL changes
+    useEffect(() => {
+        const handleUrlChange = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const variantId = urlParams.get('variant');
+            if (campaignData.collections && campaignData.collections.variants) {
+                updateCampaignVariant(campaignData.collections.variants, variantId);
+            }
+        };
+
+        window.addEventListener('popstate', handleUrlChange);
+        handleUrlChange();
+
+        return () => {
+            window.removeEventListener('popstate', handleUrlChange);
+        };
+    }, [campaignData]);
+
+    // Listen for variant changes
+    useEffect(() => {
+        const handleVariantChange = (event: CustomEvent) => {
+            const variantId = event.detail.variantId;
+            if (campaignData.collections?.variants) {
+                updateCampaignVariant(campaignData.collections.variants, variantId);
+            }
+        };
+
+        window.addEventListener('variantChanged', handleVariantChange as EventListener);
+        return () => {
+            window.removeEventListener('variantChanged', handleVariantChange as EventListener);
+        };
     }, [campaignData]);
 
     if (error) return <div>Error: {error}</div>;
@@ -118,11 +193,11 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
         pixel_id: campaign.advertiser.pixel?.id ?? "",
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.coupon_code ?? "",
+        inventory: campaign.inventory,
         tags: [],
     };
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
-
     return (
         <>
             <RecordImpressions
@@ -131,10 +206,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                 utm_params={utm_params}
             />
             <main
-                className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0"
-                style={{ overflowY: 'auto' }}
+                className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 "
+                style={{
+                    overflowY: 'auto', backgroundImage: campaign?.config?.primary_color
+                        ? createGradient(campaign.config.primary_color)
+                        : 'none'
+                }}
             >
-                <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none max-sm:rounded-none overflow-auto mx-auto rounded-lg">
+                <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none md:rounded-lg overflow-auto mx-auto rounded-none">
                     <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
@@ -146,6 +225,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                                         key={block.id}
                                         value={block.value || ''}
                                         style={block.style}
+                                        htmlTag={block.htmlTag || 'p'}
                                     />
                                 );
                             case 'html':
@@ -184,7 +264,11 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                                 return (
                                     <VariantsComponent
                                         key={block.id}
-                                        value={{ ...block.value, variant: block.variantType as 'size' | 'color' | 'quantity' || 'quantity', collections: campaignData.collections }}
+                                        value={{
+                                            ...block.value,
+                                            variant: block.variantType as 'size' | 'color' | 'quantity' || 'quantity',
+                                            collections: campaignData.collections
+                                        }}
                                         style={block.style}
                                     />
                                 );
@@ -201,7 +285,10 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                                 return null;
                         }
                     })}
-                    {!hasMultipleCta && <Footer config={campaignConfig} price={price} checkoutData={checkoutData} />}
+                    {!hasMultipleCta && <Footer config={campaignConfig} price={price} checkoutData={{
+                        ...checkoutData,
+                        variant_id: campaign.variant_id
+                    }} />}
                 </div>
             </main>
         </>
