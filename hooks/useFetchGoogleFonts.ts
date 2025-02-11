@@ -17,7 +17,7 @@ const useFetchGoogleFonts = () => {
                 if (font) {
                     const link = document.createElement('link');
                     link.rel = 'stylesheet';
-                    link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400&display=swap`;
+                    link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400;500;600;700;800&display=swap`;
                     document.head.appendChild(link);
                 }
             }
