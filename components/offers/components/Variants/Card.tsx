@@ -34,20 +34,22 @@ const Card: React.FC<CardProps> = ({
         discountText = discount > 0 ? `${Math.round(discount)}% Off` : "";
     }
 
+    
+
     return (
         <button
             onClick={onClick}
             disabled={isDisabled || isSoldOut}
             className={`
                 flex flex-col h-auto relative bg-none text-wrap text-sm justify-center
-                snap-start flex-shrink-0 w-[174px] border rounded-lg p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer
+                snap-start flex-shrink-0 border rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow cursor-pointer
                 ${isSelected
-                    ? "border-2 bg-white border-gray-900 text-black hover:bg-gray-100"
+                    ? "border-1 bg-white border-gray-900 text-black hover:bg-gray-100"
                     : isSoldOut
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                         : isDisabled
                             ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
-                            : "bg-white text-black hover:bg-gray-200"
+                            : "bg-white text-black hover:bg-gray-100"
                 }
             `}
         >
@@ -56,22 +58,22 @@ const Card: React.FC<CardProps> = ({
                     Sold Out
                 </span>
             )}
-            <span>{value}</span>
+            <span className="w-full text-center text-xs line-clamp-1">{value}</span>
             <div className="flex flex-col justify-center items-center w-full">
                 {originalPrice || offerPrice ? (
-                    <div className="mt-1 flex justify-center items-center gap-2">
+                    <div className="mt-1 flex flex-col-reverse justify-center items-center">
                         {offerPrice ? (
                             <span className={`text-lg font-semibold ${isSoldOut ? 'text-gray-400' : 'text-gray-800'}`}>
                                 {offerPrefix}{offerPrice}
                             </span>
                         ) : (
-                            <span className={`text-lg font-semibold ${isSoldOut ? 'text-gray-400' : 'text-gray-800'}`}>
+                            <span className={`text-lg ${isSoldOut ? 'text-gray-300' : 'text-gray-800'}`}>
                                 {originalPrefix}{originalPrice}
                             </span>
                         )}
 
                         {originalPrice && offerPrice && parseFloat(originalPrice) > parseFloat(offerPrice) && (
-                            <span className={`text-sm line-through ${isSoldOut ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <span className={`text-xs line-through ${isSoldOut ? 'text-gray-400' : 'text-gray-400'}`}>
                                 {originalPrefix}{originalPrice}
                             </span>
                         )}
@@ -79,7 +81,7 @@ const Card: React.FC<CardProps> = ({
                 ) : null}
 
                 {discountText && (
-                    <p className={` text-sm font-bold mt-1 ${isSoldOut ? 'text-red-300' : 'text-red-600'}`}>
+                    <p className={` text-xs mt-1 ${isSoldOut ? 'text-red-300' : 'text-red-600'}`}>
                         {discountText}
                     </p>
                 )}
