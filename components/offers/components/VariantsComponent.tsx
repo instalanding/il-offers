@@ -99,7 +99,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         if (value.variant === "quantity") {
             return (
                 <div className="mb-4">
-                    <div className="flex flex-wrap justify-center gap-2">
+                    <div className="grid grid-cols-3 gap-2">
                         {sortedVariants.map((variant) => (
                             <Card
                                 key={variant.variant_id}
