@@ -34,6 +34,8 @@ const Card: React.FC<CardProps> = ({
         discountText = discount > 0 ? `${Math.round(discount)}% Off` : "";
     }
 
+    
+
     return (
         <button
             onClick={onClick}
