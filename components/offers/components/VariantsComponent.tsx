@@ -8,6 +8,7 @@ interface VariantOption {
         title?: string;
         option1?: string;
         option2?: string;
+        option3?: string;
         [key: string]: string | undefined;
     };
     price: {
@@ -20,21 +21,38 @@ interface VariantOption {
 
 interface VariantsComponentProps {
     value: {
-        variant: "size" | "quantity";
-        collections: {
-            variants: Array<VariantOption>;
+        options: {
+            option1: {
+                enabled: boolean;
+                label: string;
+                displayStyle: 'card' | 'capsule';
+            };
+            option2: {
+                enabled: boolean;
+                label: string;
+                displayStyle: 'card' | 'capsule';
+            };
+            option3: {
+                enabled: boolean;
+                label: string;
+                displayStyle: 'card' | 'capsule';
+            };
         };
     };
     style?: React.CSSProperties;
+    collections: {
+        variants: Array<VariantOption>;
+    };
 }
 
-const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) => {
+const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, collections }) => {
+
+    console.log(value)
     const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
     const [currentVariant, setCurrentVariant] = useState<string | null>(null);
     const [productHandle, setProductHandle] = useState<string | null>(null);
 
-    // Sort variants by price (if both offerPrice and originalPrice exist)
-    const sortedVariants = [...value.collections.variants].sort((a, b) => {
+    const sortedVariants = [...collections.variants].sort((a, b) => {
         const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
         const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
         return priceA - priceB;
@@ -65,7 +83,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         };
 
         initializeVariants();
-    }, [value.collections.variants]);
+    }, [collections.variants]);
 
     const updateURL = (variantId: string | null, handle: string | undefined) => {
         if (variantId && handle) {
@@ -89,6 +107,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         if (matchingVariant) {
             setSelectedOptions(newSelections);
             setCurrentVariant(matchingVariant.variant_id || null);
+            setProductHandle(matchingVariant.product_handle || null);
             updateURL(matchingVariant.variant_id, matchingVariant.product_handle);
         }
     };
@@ -96,31 +115,6 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
     if (!sortedVariants.length) return null;
 
     const renderVariantOptions = () => {
-        if (value.variant === "quantity") {
-            return (
-                <div className="mb-4">
-                    <div className="grid grid-cols-3 gap-2">
-                        {sortedVariants.map((variant) => (
-                            <Card
-                                key={variant.variant_id}
-                                label="Quantity"
-                                value={variant.variant_options.option1 || ""}
-                                isSelected={currentVariant === variant.variant_id}
-                                onClick={() => {
-                                    if (variant.inventory !== 0) {
-                                        setCurrentVariant(variant.variant_id);
-                                        updateURL(variant.variant_id, variant.product_handle);
-                                    }
-                                }}
-                                priceDetails={variant.price}
-                                inventory={variant.inventory}
-                            />
-                        ))}
-                    </div>
-                </div>
-            );
-        }
-
         const optionGroups = sortedVariants.reduce((acc, variant) => {
             Object.entries(variant.variant_options).forEach(([key, val]) => {
                 if (key.startsWith("option") && val) {
@@ -134,6 +128,9 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
         return Object.entries(optionGroups)
             .sort()
             .map(([optionKey, values]) => {
+                const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
+                if (!optionConfig?.enabled) return null;
+
                 const getInventoryForOption = (optionValue: string) => {
                     const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
                     return variant?.inventory;
@@ -141,22 +138,32 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) =
 
                 return (
                     <div key={optionKey} className="mb-4">
-                        <div className="flex flex-wrap justify-center gap-2">
-                            {Array.from(values).map((optionValue) => (
-                                <Capsule
-                                    key={optionValue}
-                                    label={optionKey}
-                                    value={optionValue}
-                                    isSelected={selectedOptions[optionKey] === optionValue}
-                                    onClick={() => {
-                                        const inventory = getInventoryForOption(optionValue);
-                                        if (inventory !== 0) {
-                                            handleOptionSelect(optionKey, optionValue);
-                                        }
-                                    }}
-                                    inventory={getInventoryForOption(optionValue)}
-                                />
-                            ))}
+                        <h3 className="text-sm font-medium mb-2">{optionConfig.label}</h3>
+                        <div className={`
+                            flex justify-center flex-wrap gap-2 
+                            ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
+                        `}>
+                            {Array.from(values).map((optionValue) => {
+                                const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
+                                const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
+
+                                return (
+                                    <Component
+                                        key={optionValue}
+                                        label={optionValue}
+                                        value={optionValue}
+                                        isSelected={selectedOptions[optionKey] === optionValue}
+                                        onClick={() => {
+                                            const inventory = getInventoryForOption(optionValue);
+                                            if (inventory !== 0) {
+                                                handleOptionSelect(optionKey, optionValue);
+                                            }
+                                        }}
+                                        priceDetails={variant?.price}
+                                        inventory={getInventoryForOption(optionValue)}
+                                    />
+                                );
+                            })}
                         </div>
                     </div>
                 );
