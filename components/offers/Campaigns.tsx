@@ -15,6 +15,8 @@ import createGradient from "../../lib/createGradient";
 
 interface CampaignData {
     _id: string,
+    campaign_title: string,
+    product_handle: string,
     offer_id: string,
     variant_id: string,
     coupon_code: string;
@@ -41,7 +43,22 @@ interface CampaignData {
     };
     reviews: [];
     collections: {
-        variants: VariantOption[];
+        variants: Array<{
+            variant_id: string;
+            variant_options: {
+                title?: string;
+                option1?: string;
+                option2?: string;
+                option3?: string;
+                [key: string]: string | undefined;
+            };
+            price: {
+                offerPrice?: { value: string; prefix: string };
+                originalPrice?: { value: string; prefix: string };
+            };
+            product_handle?: string;
+            inventory: number;
+        }>;
     };
     inventory: number,
     advertiser: {
@@ -200,6 +217,29 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
     return (
         <>
+            {checkoutData.pixel_id && (
+                <>
+                    <img
+                        height={1}
+                        width={1}
+                        style={{ display: "none" }}
+                        src={`https://www.facebook.com/tr?id=${checkoutData.pixel_id}&ev=PageView&noscript=1`}
+                        alt="Facebook Pixel"
+                    />
+                    {checkoutData.variant_id && (
+                        <img
+                            height="1"
+                            width="1"
+                            style={{ display: "none" }}
+                            src={`https://www.facebook.com/tr?id=${checkoutData.pixel_id}&ev=ViewContent&noscript=1&cd[content_name]=${campaign.campaign_title || "Offer"
+                                }&cd[content_category]=Offer&cd[content_ids]=${checkoutData.variant_id || "none"
+                                }&cd[content_type]=${campaign.product_handle || "none"}&cd[value]=${price.offerPrice.value || 0
+                                }&cd[currency]=INR`}
+                            alt="Facebook Pixel ViewContent"
+                        />
+                    )}
+                </>
+            )}
             <RecordImpressions
                 checkoutData={checkoutData}
                 userIp={userIp}
@@ -214,6 +254,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                 }}
             >
                 <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none md:rounded-lg overflow-auto mx-auto rounded-none">
+
                     <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
@@ -265,11 +306,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
                                     <VariantsComponent
                                         key={block.id}
                                         value={{
-                                            ...block.value,
-                                            variant: block.variantType as 'size' | 'color' | 'quantity' || 'quantity',
-                                            collections: campaignData.collections
+                                            options: block.value?.options || {
+                                                option1: { enabled: true, label: 'Select an option', displayStyle: 'capsule' },
+                                                option2: { enabled: true, label: 'Choose a variant', displayStyle: 'capsule' },
+                                                option3: { enabled: true, label: 'Pick one', displayStyle: 'capsule' }
+                                            }
                                         }}
                                         style={block.style}
+                                        collections={campaignData.collections}
                                     />
                                 );
                             case 'multiple-cta':

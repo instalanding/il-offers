@@ -19,7 +19,7 @@ const Redirect = ({ data }: any) => {
       const fp = await FingerprintJS.load();
       const result = await fp.get();
       console.log(result.visitorId);
-      await hit(result.visitorId);
+      hit(result.visitorId);
     } catch (error) {
       console.error("Error getting visitor identifier:", error);
       return null;
@@ -59,9 +59,8 @@ const Redirect = ({ data }: any) => {
   }
 
   useEffect(() => {
-    getVisitorId().then(() => {
-      redirectToExternal(redirectUrl);
-    });
+    getVisitorId();
+    redirectToExternal(redirectUrl);
   }, []);
 
   return <>redirecting...</>;

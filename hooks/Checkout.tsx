@@ -8,18 +8,19 @@ declare const shiprocketCheckoutEvents: any;
 export default function useCheckout() {
   const [loaded, setLoaded] = useState(false);
 
-  const searchParams = useSearchParams()
- 
-  const utm_medium = searchParams.get('utm_medium');
-  const utm_source = searchParams.get('utm_source');
-  const utm_campaign = searchParams.get('utm_campaign');
+  const searchParams = useSearchParams();
+
+  const utm_medium = searchParams.get("utm_medium");
+  const utm_source = searchParams.get("utm_source");
+  const utm_campaign = searchParams.get("utm_campaign");
 
   const loadScripts = () => {
     // console.log("Fastrr Script loaded");
     if (loaded) return; // Prevent loading if already loaded
 
     const script = document.createElement("script");
-    script.src = "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
+    script.src =
+      "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
     script.defer = true;
     script.onload = () => setLoaded(true);
     document.body.appendChild(script);
@@ -34,8 +35,8 @@ export default function useCheckout() {
   //   const timer = setTimeout(() => {
   //     loadScripts();
   //   }, 3000);
-  
-    // Cleanup function to clear the timeout if the component unmounts
+
+  // Cleanup function to clear the timeout if the component unmounts
   //   return () => clearTimeout(timer);
   // }, []);
 
@@ -43,18 +44,20 @@ export default function useCheckout() {
     const handleInteraction = () => {
       loadScripts();
       // Remove the event listeners after loading scripts
-      document.removeEventListener('mousemove', handleInteraction);
-      document.removeEventListener('touchstart', handleInteraction);
+      // document.removeEventListener("mousemove", handleInteraction);
+      // document.removeEventListener("touchstart", handleInteraction);
     };
-  
-    document.addEventListener('mousemove', handleInteraction);
-    document.addEventListener('touchstart', handleInteraction);
-  
+
+    loadScripts();
+
+    // document.addEventListener("mousemove", handleInteraction);
+    // document.addEventListener("touchstart", handleInteraction);
+
     // Cleanup function to remove the event listeners
-    return () => {
-      document.removeEventListener('mousemove', handleInteraction);
-      document.removeEventListener('touchstart', handleInteraction);
-    };
+    // return () => {
+    //   document.removeEventListener("mousemove", handleInteraction);
+    //   document.removeEventListener("touchstart", handleInteraction);
+    // };
   }, []);
 
   const handleCheckout = async (
@@ -62,9 +65,10 @@ export default function useCheckout() {
     variant_id: string,
     offer_id: string,
     couponCode: string,
-    utm_params:any
+    utm_params: any
   ) => {
     e.preventDefault();
+    console.log("checkout clicked", loaded);
 
     if (loaded) {
       const res = await shiprocketCheckoutEvents.buyDirect({
@@ -76,7 +80,9 @@ export default function useCheckout() {
           },
         ],
         couponCode: couponCode,
-        utmParams: `utm_source=${utm_source || "instalanding"}&utm_medium=${utm_medium || "campaign_instalanding"}&utm_campaign=${utm_campaign || offer_id}`,
+        utmParams: `utm_source=${utm_source || "instalanding"}&utm_medium=${
+          utm_medium || "campaign_instalanding"
+        }&utm_campaign=${utm_campaign || offer_id}`,
       });
       console.log("______checkout_enabled", res);
     }
