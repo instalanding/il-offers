@@ -34,8 +34,6 @@ const Card: React.FC<CardProps> = ({
         discountText = discount > 0 ? `${Math.round(discount)}% Off` : "";
     }
 
-    
-
     return (
         <button
             onClick={onClick}
@@ -58,7 +56,10 @@ const Card: React.FC<CardProps> = ({
                     Sold Out
                 </span>
             )}
-            <span className="w-full text-center text-xs line-clamp-1">{value}</span>
+            <span className="w-full text-center text-xs whitespace-pre-line">
+                {value.split('|').join('\n')}
+            </span>
+            {/* <span className="w-full text-center text-xs line-clamp-1">{value}</span> */}
             <div className="flex flex-col justify-center items-center w-full">
                 {originalPrice || offerPrice ? (
                     <div className="mt-1 flex flex-col-reverse justify-center items-center">
