@@ -22,7 +22,6 @@ const Card: React.FC<CardProps> = ({
     inventory = null,
 }) => {
     const isSoldOut = inventory === 0;
-
     const originalPrice = priceDetails?.originalPrice?.value;
     const offerPrice = priceDetails?.offerPrice?.value;
     const originalPrefix = priceDetails?.originalPrice?.prefix || "";
@@ -57,9 +56,9 @@ const Card: React.FC<CardProps> = ({
                 </span>
             )}
             <span className="w-full text-center text-xs whitespace-pre-line">
-                {value.split('|').join('\n')}
+                {value === "Default Title" ? "" : value.split('|').join('\n')}
+
             </span>
-            {/* <span className="w-full text-center text-xs line-clamp-1">{value}</span> */}
             <div className="flex flex-col justify-center items-center w-full">
                 {originalPrice || offerPrice ? (
                     <div className="mt-1 flex flex-col-reverse justify-center items-center">
