@@ -47,7 +47,6 @@ interface VariantsComponentProps {
 
 const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, collections }) => {
 
-    console.log(value)
     const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
     const [currentVariant, setCurrentVariant] = useState<string | null>(null);
     const [productHandle, setProductHandle] = useState<string | null>(null);
@@ -140,7 +139,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                     <div key={optionKey} className="mb-4">
                         <h3 className="text-sm font-medium mb-2">{optionConfig.label}</h3>
                         <div className={`
-                            flex justify-center flex-wrap gap-2 
+                            flex justify-start flex-wrap gap-2 
                             ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
                         `}>
                             {Array.from(values).map((optionValue) => {
