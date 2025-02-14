@@ -105,7 +105,7 @@ const Footer: React.FC<{ config: Config, price: Price, checkoutData: Checkout }>
                 <div className="flex flex-col">
                     <div
                         style={{
-                            backgroundColor: config?.primaryColor + "6a",
+                            backgroundColor: config?.primaryColor + "9a",
                             color: config.secondaryColor || "#000000",
                         }}
                         className="p-1 bg-opacity-25 flex justify-center items-center gap-2"
