@@ -17,7 +17,8 @@ const Header: React.FC<{ config: { primaryColor: string; secondaryColor: string;
                 </p>)}
                 {logo && (
                     <Link
-                        href={`https://${storeUrl}/?utm_source=${utm_params.utm_source || "instalanding"}&utm_medium=${utm_params.utm_medium || "landing_page"}&utm_campaign=${offerId}`}
+                        target='_blank'
+                        href={`https://${storeUrl}/?utm_source=${utm_params.utm_source || "instalanding"}&utm_medium=${utm_params.utm_medium || "campaign_instalanding"}&utm_campaign=${offerId}`}
                     >
                         <div className="flex flex-col items-center justify-center py-2 bg-white -z-50">
                             <Image
