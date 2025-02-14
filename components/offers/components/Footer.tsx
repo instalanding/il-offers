@@ -113,7 +113,7 @@ const Footer: React.FC<{
         <div className="flex flex-col">
           {config.footerText && (<div
             style={{
-              backgroundColor: config?.primaryColor + "6a",
+              backgroundColor: config?.primaryColor + "9a",
               color: config.secondaryColor || "#000000",
             }}
             className="p-1 flex justify-center items-center gap-2"
