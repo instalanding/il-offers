@@ -79,7 +79,8 @@ interface CampaignData {
 interface V2Props {
     campaignData: CampaignData;
     userIp: string;
-    utm_params: Object;
+    utm_params: Record<string, string>;
+    preserveParams?: boolean;
 }
 
 interface Block {
@@ -110,7 +111,7 @@ interface VariantOption {
     product_handle?: string;
 }
 
-const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
+const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preserveParams = false }) => {
     // console.log('campaignData', campaignData);
 
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
@@ -136,27 +137,31 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
         }
     };
 
+    const updateUrlWithParams = (variantId: string | null) => {
+        if (!preserveParams) return;
+
+        const currentUrl = new URL(window.location.href);
+        const params = new URLSearchParams(currentUrl.search);
+
+        // Update variant
+        if (variantId) {
+            params.set('variant', variantId);
+        }
+
+        // Ensure UTM parameters are present
+        Object.entries(utm_params).forEach(([key, value]) => {
+            if (value && !params.has(key)) {
+                params.set(key, value);
+            }
+        });
+
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.replaceState({}, '', newUrl);
+    };
+
     // Initial campaign setup
     useEffect(() => {
         setCampaign(campaignData);
-    }, [campaignData]);
-
-    // Listen for URL changes
-    useEffect(() => {
-        const handleUrlChange = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const variantId = urlParams.get('variant');
-            if (campaignData.collections && campaignData.collections.variants) {
-                updateCampaignVariant(campaignData.collections.variants, variantId);
-            }
-        };
-
-        window.addEventListener('popstate', handleUrlChange);
-        handleUrlChange();
-
-        return () => {
-            window.removeEventListener('popstate', handleUrlChange);
-        };
     }, [campaignData]);
 
     // Listen for variant changes
@@ -164,6 +169,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
         const handleVariantChange = (event: CustomEvent) => {
             const variantId = event.detail.variantId;
             if (campaignData.collections?.variants) {
+                updateUrlWithParams(variantId);
                 updateCampaignVariant(campaignData.collections.variants, variantId);
             }
         };
@@ -172,7 +178,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
         return () => {
             window.removeEventListener('variantChanged', handleVariantChange as EventListener);
         };
-    }, [campaignData]);
+    }, [campaignData, utm_params]);
+
+    // Initial URL handling
+    useEffect(() => {
+        const currentUrl = new URL(window.location.href);
+        const params = new URLSearchParams(currentUrl.search);
+        const variantId = params.get('variant');
+
+        if (preserveParams) {
+            updateUrlWithParams(variantId);
+        }
+
+        if (campaignData.collections?.variants) {
+            updateCampaignVariant(campaignData.collections.variants, variantId);
+        }
+    }, [campaignData, utm_params]);
 
     if (error) return <div>Error: {error}</div>;
     if (!campaign) return <></>;
@@ -255,7 +276,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params }) => {
             >
                 <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none md:rounded-lg overflow-auto mx-auto rounded-none">
 
-                    <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} />
+                    <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
                             case 'carousel':
