@@ -65,7 +65,7 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
 
     const handleCardClick = (variant: typeof data.variants[0]) => {
         if (variant.product_handle) {
-            router.push(`/products/${variant.product_handle}?variant_id=${variant.variant_id}`);
+            router.push(`/products/${variant.product_handle}?variant=${variant.variant_id}`);
         } else if (variant.offer_id) {
             router.push(`/${variant.offer_id}`);
         }

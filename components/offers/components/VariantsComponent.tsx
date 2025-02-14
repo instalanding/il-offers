@@ -1,80 +1,176 @@
-import React, { useState, useCallback } from 'react';
-import Size from './Variants/Size';
-import Quantity from './Variants/Quantity';
-import Color from './Variants/Color';
+import React, { useState, useEffect } from "react";
+import Card from "./Variants/Card";
+import Capsule from "./Variants/Capsule";
+
+interface VariantOption {
+    variant_id: string;
+    variant_options: {
+        title?: string;
+        option1?: string;
+        option2?: string;
+        option3?: string;
+        [key: string]: string | undefined;
+    };
+    price: {
+        offerPrice?: { value: string; prefix: string };
+        originalPrice?: { value: string; prefix: string };
+    };
+    product_handle?: string;
+    inventory: number;
+}
 
 interface VariantsComponentProps {
     value: {
-        variant: string;
-        collections: {
-            variants: Array<{
-                _id: string;
-                campaign_title: string;
-                price: {
-                    offerPrice: { value: string; prefix: string };
-                    originalPrice: { value: string; prefix: string };
-                    discount: string;
-                };
-                variant_id?: string;
-                product_handle?: string;
-                offer_id?: string;
-                size: string;
-                color: string;
-            }>;
+        options: {
+            option1: {
+                enabled: boolean;
+                label: string;
+                displayStyle: 'card' | 'capsule';
+            };
+            option2: {
+                enabled: boolean;
+                label: string;
+                displayStyle: 'card' | 'capsule';
+            };
+            option3: {
+                enabled: boolean;
+                label: string;
+                displayStyle: 'card' | 'capsule';
+            };
         };
     };
     style?: React.CSSProperties;
+    collections: {
+        variants: Array<VariantOption>;
+    };
 }
 
-const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style }) => {
-    const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, collections }) => {
 
-    const variantData = value.collections?.variants?.map(item => ({
-        label: item.campaign_title,
-        price: parseFloat(item.price.offerPrice.value),
-        originalPrice: parseFloat(item.price.originalPrice.value),
-        discount: item.price.discount,
-        variant_id: item.variant_id,
-        product_handle: item.product_handle,
-        offer_id: item.offer_id,
-        size: item.size,
-        color: item.color,
-    })) || [];
+    console.log(value)
+    const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
+    const [currentVariant, setCurrentVariant] = useState<string | null>(null);
+    const [productHandle, setProductHandle] = useState<string | null>(null);
 
-    const handleVariantClick = useCallback((variant: string) => {
-        setSelectedVariant(variant);
-    }, []);
+    const sortedVariants = [...collections.variants].sort((a, b) => {
+        const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
+        const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
+        return priceA - priceB;
+    });
 
-    const renderVariantComponent = () => {
-        switch (value.variant) {
-            case 'size':
-                return (
-                    <Size
-                        selectedVariant={selectedVariant}
-                        onVariantSelect={handleVariantClick}
-                        variants={variantData}
-                    />
-                );
-            case 'color':
-                return (
-                    <Color
-                        selectedVariant={selectedVariant}
-                        onVariantSelect={handleVariantClick}
-                        variants={variantData}
-                    />
-                );
-            case 'quantity':
-                return <Quantity variants={variantData} />;
-            default:
-                return null;
+    useEffect(() => {
+        const initializeVariants = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const variantId = urlParams.get("variant");
+
+            const defaultVariant = variantId
+                ? sortedVariants.find((v) => v.variant_id === variantId)
+                : sortedVariants[0];
+
+            if (defaultVariant) {
+                const initialOptions: { [key: string]: string } = {};
+                Object.entries(defaultVariant.variant_options)
+                    .filter(([key, val]) => key.startsWith("option") && val)
+                    .forEach(([key, val]) => {
+                        initialOptions[key] = val!;
+                    });
+
+                setSelectedOptions(initialOptions);
+                setCurrentVariant(defaultVariant.variant_id || null);
+                setProductHandle(defaultVariant.product_handle || null);
+                updateURL(defaultVariant.variant_id, defaultVariant.product_handle);
+            }
+        };
+
+        initializeVariants();
+    }, [collections.variants]);
+
+    const updateURL = (variantId: string | null, handle: string | undefined) => {
+        if (variantId && handle) {
+            const newUrl = `/products/${handle}?variant=${variantId}`;
+            window.history.pushState({}, "", newUrl);
+            window.dispatchEvent(
+                new CustomEvent("variantChanged", {
+                    detail: { variantId },
+                })
+            );
         }
     };
 
-    return (
-        <div style={style} className="flex flex-col p-4">
-            {renderVariantComponent()}
-        </div>
-    );
+    const handleOptionSelect = (optionKey: string, optionValue: string) => {
+        const newSelections = { ...selectedOptions, [optionKey]: optionValue };
+
+        const matchingVariant = sortedVariants.find((variant) =>
+            Object.entries(newSelections).every(([key, val]) => variant.variant_options[key] === val)
+        );
+
+        if (matchingVariant) {
+            setSelectedOptions(newSelections);
+            setCurrentVariant(matchingVariant.variant_id || null);
+            setProductHandle(matchingVariant.product_handle || null);
+            updateURL(matchingVariant.variant_id, matchingVariant.product_handle);
+        }
+    };
+
+    if (!sortedVariants.length) return null;
+
+    const renderVariantOptions = () => {
+        const optionGroups = sortedVariants.reduce((acc, variant) => {
+            Object.entries(variant.variant_options).forEach(([key, val]) => {
+                if (key.startsWith("option") && val) {
+                    if (!acc[key]) acc[key] = new Set();
+                    acc[key].add(val);
+                }
+            });
+            return acc;
+        }, {} as { [key: string]: Set<string> });
+
+        return Object.entries(optionGroups)
+            .sort()
+            .map(([optionKey, values]) => {
+                const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
+                if (!optionConfig?.enabled) return null;
+
+                const getInventoryForOption = (optionValue: string) => {
+                    const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
+                    return variant?.inventory;
+                };
+
+                return (
+                    <div key={optionKey} className="mb-4">
+                        <h3 className="text-sm font-medium mb-2">{optionConfig.label}</h3>
+                        <div className={`
+                            flex justify-center flex-wrap gap-2 
+                            ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
+                        `}>
+                            {Array.from(values).map((optionValue) => {
+                                const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
+                                const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
+
+                                return (
+                                    <Component
+                                        key={optionValue}
+                                        label={optionValue}
+                                        value={optionValue}
+                                        isSelected={selectedOptions[optionKey] === optionValue}
+                                        onClick={() => {
+                                            const inventory = getInventoryForOption(optionValue);
+                                            if (inventory !== 0) {
+                                                handleOptionSelect(optionKey, optionValue);
+                                            }
+                                        }}
+                                        priceDetails={variant?.price}
+                                        inventory={getInventoryForOption(optionValue)}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </div>
+                );
+            });
+    };
+
+    return <div style={style} className="p-4">{renderVariantOptions()}</div>;
 };
 
 export default React.memo(VariantsComponent);
