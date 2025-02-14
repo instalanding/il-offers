@@ -5,7 +5,7 @@ const Header: React.FC<{ config: { primaryColor: string; secondaryColor: string;
     return (
         <>
             <link rel="preload" href={logo} as="image" />
-            <div className="sticky top-0 h-auto z-50">
+            <div className="h-auto z-50">
                 {config.headerText && (<p
                     style={{
                         backgroundColor: config.primaryColor,

@@ -109,21 +109,21 @@ const Footer: React.FC<{
   return (
     <>
       <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
-      <div className="sticky bottom-0 bg-white">
-        <div className="flex flex-col">
-          {config.footerText && (<div
+      <div className="sticky bottom-0 bg-gray-100">
+        <div className="flex flex-col ">
+          <div
             style={{
               backgroundColor: config?.primaryColor + "9a",
               color: config.secondaryColor || "#000000",
             }}
-            className="p-1 flex justify-center items-center gap-2"
+            className="p-[1px] shadow-md flex justify-center items-center gap-2"
           >
             <p className="text-sm text-center">{config.footerText}</p>
           </div>
-          )}
+
 
           {/* Price and Button Section */}
-          <div className="flex items-center justify-between text-black p-1 rounded-lg gap-2">
+          <div className="flex items-center justify-between text-black p-[10px] rounded-lg gap-2">
             <div className="flex items-center justify-center shrink-0">
               {price?.offerPrice?.value ? (
                 <div className="flex flex-col gap-1 px-2">
@@ -187,7 +187,7 @@ const Footer: React.FC<{
             <Button
               onClick={handleCheckoutButtonClick}
               disabled={isSoldOut}
-              className={`flex items-center justify-center text-[20px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
+              className={`flex items-center justify-center text-[20px] gap-2 px-8 py-1 h-full flex-1 rounded-lg transition-colors
                 ${isSoldOut ? 'cursor-not-allowed' : ''}`}
               style={{
                 backgroundColor: config.primaryColor,
