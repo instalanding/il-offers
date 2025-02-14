@@ -84,7 +84,18 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   const { slug } = params;
   const variant_id = searchParams.variant_id;
   const userIp = searchParams.user_ip ?? "";
-  const utm_params = searchParams;
+
+  const utm_params = Object.fromEntries(
+    Object.entries(searchParams).filter(([key]) =>
+      key.startsWith('utm_') ||
+      ['source', 'medium', 'campaign', 'term', 'content'].includes(key)
+    )
+  );
+
+  // Add variant_id to utm_params if it exists
+  if (variant_id) {
+    utm_params.variant = variant_id;
+  }
 
   const data = await getCampaign(slug, variant_id);
   const blocks = Array.isArray(data?.blocks) ? data.blocks : JSON.parse(data?.blocks || '[]');
@@ -106,7 +117,7 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
         <MdErrorOutline className="text-red-600 text-6xl mb-4" />
         <h1 className="font-bold text-red-600 text-lg mb-2">Campaign Not Found</h1>
         <p className="text-gray-600 text-sm text-center">
-          The campaign you’re looking for doesn’t exist or may have been removed.
+          The campaign you&apos;re looking for doesn&apos;t exist or may have been removed.
         </p>
       </div>)
   }
@@ -116,7 +127,12 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
-      <Campaigns campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }} utm_params={utm_params} userIp={userIp} />
+      <Campaigns
+        campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }}
+        utm_params={utm_params}
+        userIp={userIp}
+        preserveParams={true}
+      />
     </>
   );
 };
