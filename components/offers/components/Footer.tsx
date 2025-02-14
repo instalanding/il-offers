@@ -94,21 +94,6 @@ const Footer: React.FC<{
     }
   };
 
-
-    return (
-        <><input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
-            <div className="sticky bottom-0 bg-white">
-                <div className="flex flex-col">
-                    <div
-                        style={{
-                            backgroundColor: config?.primaryColor + "9a",
-                            color: config.secondaryColor || "#000000",
-                        }}
-                        className="p-1 bg-opacity-25 flex justify-center items-center gap-2"
-                    >
-                        <p className="text-sm text-center">{config.footerText}</p>
-                    </div>
-
   async function recordClicks() {
     try {
       const visitorId = await getVisitorId();
@@ -128,7 +113,7 @@ const Footer: React.FC<{
         <div className="flex flex-col">
           {config.footerText && (<div
             style={{
-              backgroundColor: config?.primaryColor + "6a",
+              backgroundColor: config?.primaryColor + "9a",
               color: config.secondaryColor || "#000000",
             }}
             className="p-1 flex justify-center items-center gap-2"
