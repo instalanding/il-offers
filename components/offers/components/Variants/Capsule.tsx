@@ -25,14 +25,14 @@ const Capsule: React.FC<CapsuleProps> = ({
         onClick={onClick}
         disabled={isDisabled || isSoldOut}
         className={`
-        px-4 py-2 m-1 rounded-xl border transition-all relative text-sm
+        px-4 py-2 m-1 rounded-lg shadow-lg hover:shadow-xl transition-shadow  border relative text-sm
         ${isSelected
-            ? 'bg-gray-900 text-white'
+            ? 'border-1 bg-white border-gray-900 text-black hover:bg-gray-100'
             : isSoldOut
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : isDisabled
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-white text-black hover:bg-gray-100'
           }
       `}
       >
