@@ -123,14 +123,15 @@ const Footer: React.FC<{
           )}
 
           {/* Price and Button Section */}
-          <div className="flex items-center justify-between text-black p-3 rounded-lg gap-5">
-            <div className="flex items-center justify-center">
+          <div className="flex items-center justify-between text-black p-1 rounded-lg gap-2">
+            <div className="flex items-center justify-center shrink-0">
               {price?.offerPrice?.value ? (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 px-2">
                   {price?.originalPrice?.value &&
                     parseFloat(price.offerPrice.value) <
                     parseFloat(price.originalPrice.value) ? (
-                    <div className="flex flex-col justify-center items-center">
+                    <div className="flex flex-col justify-center items-start">
+                      {/* Offer Price on top */}
                       <p
                         style={{ color: config?.primaryColor }}
                         className="font-bold text-[20px] text-center"
@@ -140,19 +141,22 @@ const Footer: React.FC<{
                           price.offerPrice.prefix
                         )}
                       </p>
-                      <p className="text-[11px] text-gray-600 line-through">
-                        {formatPrice(
-                          parseFloat(price.originalPrice.value),
-                          price.originalPrice.prefix
-                        )}
-                      </p>
-                      <p className="text-[11px] text-red-600">
-                        {calculatePercentageOff(
-                          parseFloat(price.originalPrice.value),
-                          parseFloat(price.offerPrice.value)
-                        )}
-                        % off
-                      </p>
+                      {/* Original Price and Discount in same row below */}
+                      <div className="flex items-center gap-2">
+                        <p className="text-[11px] text-gray-600 line-through">
+                          {formatPrice(
+                            parseFloat(price.originalPrice.value),
+                            price.originalPrice.prefix
+                          )}
+                        </p>
+                        <p className="text-[11px] text-red-600">
+                          {calculatePercentageOff(
+                            parseFloat(price.originalPrice.value),
+                            parseFloat(price.offerPrice.value)
+                          )}
+                          % off
+                        </p>
+                      </div>
                     </div>
                   ) : (
                     <p
@@ -183,17 +187,13 @@ const Footer: React.FC<{
             <Button
               onClick={handleCheckoutButtonClick}
               disabled={isSoldOut}
-              className={`flex items-center justify-center gap-2 px-8 py-2 w-full rounded-lg transition-colors
-                ${isSoldOut
-                  ? 'cursor-not-allowed'
-                  : ''
-                }`}
+              className={`flex items-center justify-center text-[20px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
+                ${isSoldOut ? 'cursor-not-allowed' : ''}`}
               style={{
                 backgroundColor: config.primaryColor,
                 color: config.secondaryColor,
               }}
             >
-
               {isSoldOut ? 'Sold Out' : <> <TbShoppingBagPlus size={20} /> {config.buttonText}</>}
             </Button>
           </div>
