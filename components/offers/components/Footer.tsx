@@ -189,7 +189,7 @@ const Footer: React.FC<{
               onClick={handleCheckoutButtonClick}
               disabled={isSoldOut}
               className={`flex items-center justify-center text-[20px] gap-2 px-8 py-1 h-full flex-1 rounded-lg transition-colors
-                ${isSoldOut ? 'cursor-not-allowed' : ''}`}
+                ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{
                 backgroundColor: config.primaryColor,
                 color: config.secondaryColor,

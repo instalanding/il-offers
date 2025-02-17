@@ -221,6 +221,17 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     };
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
+
+    const getCurrentVariantInventory = () => {
+        if (campaign?.collections?.variants) {
+            const currentVariant = campaign.collections.variants.find(
+                v => v.variant_id === campaign.variant_id
+            );
+            return currentVariant?.inventory ?? 0;
+        }
+        return campaign?.inventory ?? 0;
+    };
+
     return (
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
@@ -315,10 +326,15 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                 return null;
                         }
                     })}
-                    {!hasMultipleCta && <Footer config={campaignConfig} price={price} checkoutData={{
-                        ...checkoutData,
-                        variant_id: campaign.variant_id
-                    }} />}
+                    {!hasMultipleCta && <Footer 
+                        config={campaignConfig} 
+                        price={price} 
+                        checkoutData={{
+                            ...checkoutData,
+                            variant_id: campaign.variant_id,
+                            inventory: getCurrentVariantInventory()
+                        }} 
+                    />}
                 </div>
             </main>
         </>
