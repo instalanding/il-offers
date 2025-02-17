@@ -4,7 +4,7 @@ import Link from 'next/link';
 const Header: React.FC<{ config: { primaryColor: string; secondaryColor: string; headerText: string; }, logo: string; offerId: string; storeUrl: string; utm_params: any; }> = ({ config, logo, offerId, storeUrl, utm_params }) => {
     return (
         <>
-            <link rel="preload" href={logo} as="image" />
+            {logo && <link rel="preload" href={logo} as="image" />}
             <div className="h-auto z-50">
                 {config.headerText && (<p
                     style={{

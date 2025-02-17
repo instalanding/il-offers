@@ -162,9 +162,9 @@ export async function generateMetadata(
   return {
     title: title,
     description: description,
-    icons: data?.advertiser?.store_logo
-      ? [{ rel: "icon", url: data.advertiser.store_logo.url.toString() }]
-      : [],
+    icons: data?.advertiser?.store_logo?.url
+      ? [{ rel: "icon", url: data.advertiser.store_logo.url }]
+      : [{ rel: "icon", url: "/favicon.ico" }],
     openGraph: {
       title,
       description,

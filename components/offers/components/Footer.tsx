@@ -33,7 +33,7 @@ interface Checkout {
   store_url: string;
   checkout_name: string;
   userIp: string;
-  pixel_id: string;
+  pixel: [];
   advertiser_id: string;
   coupon_code: string;
   utm_params: Object;
@@ -78,16 +78,18 @@ const Footer: React.FC<{
       }
 
       recordClicks();
-      if (checkoutData.pixel_id) {
-        const noscript = document.createElement("noscript");
-        const img = document.createElement("img");
-        img.height = 1;
-        img.width = 1;
-        img.style.display = "none";
-        img.src = `https://www.facebook.com/tr?id=${checkoutData.pixel_id}&ev=Checkout&noscript=1`;
-        img.alt = "Facebook Pixel";
-        noscript.appendChild(img);
-        document.body.appendChild(noscript);
+      if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
+        checkoutData.pixel.forEach((pixelId) => {
+          const noscript = document.createElement("noscript");
+          const img = document.createElement("img");
+          img.height = 1;
+          img.width = 1;
+          img.style.display = "none";
+          img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
+          img.alt = "Facebook Pixel";
+          noscript.appendChild(img);
+          document.body.appendChild(noscript);
+        });
       }
     } catch (error) {
       console.error("Error during checkout:", error);
@@ -120,7 +122,6 @@ const Footer: React.FC<{
           >
             <p className="text-sm text-center">{config.footerText}</p>
           </div>
-
 
           {/* Price and Button Section */}
           <div className="flex items-center justify-between text-black p-[10px] rounded-lg gap-2">
