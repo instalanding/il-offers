@@ -5,6 +5,8 @@ import Campaigns from "@/components/offers/Campaigns";
 import FontLoader from "@/components/offers/components/FontLoader";
 import { MdErrorOutline } from "react-icons/md";
 import { formatDate } from "@/lib/formatUtils";
+import { headers } from 'next/headers';
+import { isValidDomain } from '@/utils/domainUtils';
 
 const getCampaign = async (params: { offer_id?: string }) => {
   try {
@@ -71,7 +73,38 @@ type SearchParams = {
 };
 
 const Campaign = async ({ params, searchParams }: { params: { offer_id?: string }; searchParams: SearchParams; }) => {
-  const { offer_id } = params;
+  const headersList = headers();
+  const domain = headersList.get('host') || '';
+  
+  const data = await getCampaign({ offer_id: params.offer_id });
+  
+  // Return not found if no campaign data
+  if (!data) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-6 rounded-md shadow-md">
+        <MdErrorOutline className="text-red-600 text-6xl mb-4" />
+        <h1 className="font-bold text-red-600 text-lg mb-2">Campaign Not Found</h1>
+        <p className="text-gray-600 text-sm text-center">
+          The campaign you&apos;re looking for doesn&apos;t exist or may have been removed.
+        </p>
+      </div>
+    );
+  }
+
+  // Check if current domain is allowed
+  const isAllowedDomain = isValidDomain(domain, data.advertiser?.domains || []);
+  if (!isAllowedDomain) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-6 rounded-md shadow-md">
+        <MdErrorOutline className="text-red-600 text-6xl mb-4" />
+        <h1 className="font-bold text-red-600 text-lg mb-2">Access Denied</h1>
+        <p className="text-gray-600 text-sm text-center">
+          This campaign is not available on this domain.
+        </p>
+      </div>
+    );
+  }
+
   const userIp = searchParams.user_ip ?? "";
 
   const utm_params = Object.fromEntries(
@@ -80,8 +113,6 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
       ['source', 'medium', 'campaign', 'term', 'content'].includes(key)
     )
   );
-
-  const data = await getCampaign({ offer_id });
 
   const blocks = JSON.parse(data?.blocks || '[]');
   const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
@@ -95,18 +126,6 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
     rating: review.review_rating,
     date: formatDate(review.review_date)
   }));
-
-  if (!data) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-6 rounded-md shadow-md">
-        <MdErrorOutline className="text-red-600 text-6xl mb-4" />
-        <h1 className="font-bold text-red-600 text-lg mb-2">Campaign Not Found</h1>
-        <p className="text-gray-600 text-sm text-center">
-          The campaign you&apos;re looking for doesn&apos;t exist or may have been removed.
-        </p>
-      </div>
-    );
-  }
 
   const fontFamily = data?.config?.font_family || "Inter";
 
