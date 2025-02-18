@@ -63,7 +63,7 @@ const Footer: React.FC<{
 
   const handleCheckoutButtonClick = async (e: React.MouseEvent) => {
     try {
-      if (checkoutData.checkout_name === "shiprocket") {
+      if (checkoutData.checkout_name === "shiprocket" || checkoutData.checkout_name === "fastr" || checkoutData.checkout_name === "fastrr") {
         handleCheckout(
           e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
           checkoutData.variant_id,
@@ -72,6 +72,10 @@ const Footer: React.FC<{
           checkoutData.utm_params
         );
       } else if (checkoutData.checkout_name === "shopify") {
+        router.push(
+          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:1?discount=${checkoutData.coupon_code}`
+        );
+      } else {
         router.push(
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:1?discount=${checkoutData.coupon_code}`
         );

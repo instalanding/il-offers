@@ -2,6 +2,8 @@ export const isValidDomain = (currentDomain: string, allowedDomains: string[]) =
     // Allowing localhost and development domains
     if (
         currentDomain === 'localhost' ||
+        currentDomain === 'preprod-il-offers.vercel.app' ||
+        currentDomain === 'staging-il-offers.vercel.app' ||
         currentDomain.startsWith('localhost:') ||
         currentDomain.endsWith('.local') ||
         currentDomain.endsWith('.test') ||
