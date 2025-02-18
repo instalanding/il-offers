@@ -12,6 +12,7 @@ import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
 import RecordImpressions from '../recordImpressions/page';
 import createGradient from "../../lib/createGradient";
+import { firePixels } from "../../utils/firePixels";
 
 interface CampaignData {
     _id: string,
@@ -71,7 +72,7 @@ interface CampaignData {
             checkout_name: string;
         }
         pixel: {
-            id: string;
+            ids: []
         }
     }
 }
@@ -93,22 +94,6 @@ interface Block {
     price?: number;
     discount?: number;
     variantType?: string;
-}
-
-interface VariantOption {
-    variant_id: string;
-    variant_options: {
-        title?: string;
-        option1?: string;
-        option2?: string;
-        [key: string]: string | undefined;
-    };
-    price: {
-        offerPrice: { value: string; prefix: string };
-        originalPrice: { value: string; prefix: string };
-        discount: string;
-    };
-    product_handle?: string;
 }
 
 const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preserveParams = false }) => {
@@ -228,7 +213,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         checkout_name: campaign.advertiser?.checkout?.checkout_name,
         userIp: userIp,
         utm_params: utm_params,
-        pixel_id: campaign.advertiser.pixel?.id ?? "",
+        pixel: campaign.advertiser.pixel?.ids ?? [],
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.coupon_code ?? "",
         inventory: campaign.inventory,
@@ -236,31 +221,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     };
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
+
+    const getCurrentVariantInventory = () => {
+        if (campaign?.collections?.variants) {
+            const currentVariant = campaign.collections.variants.find(
+                v => v.variant_id === campaign.variant_id
+            );
+            return currentVariant?.inventory ?? 0;
+        }
+        return campaign?.inventory ?? 0;
+    };
+
     return (
         <>
-            {checkoutData.pixel_id && (
-                <>
-                    <img
-                        height={1}
-                        width={1}
-                        style={{ display: "none" }}
-                        src={`https://www.facebook.com/tr?id=${checkoutData.pixel_id}&ev=PageView&noscript=1`}
-                        alt="Facebook Pixel"
-                    />
-                    {checkoutData.variant_id && (
-                        <img
-                            height="1"
-                            width="1"
-                            style={{ display: "none" }}
-                            src={`https://www.facebook.com/tr?id=${checkoutData.pixel_id}&ev=ViewContent&noscript=1&cd[content_name]=${campaign.campaign_title || "Offer"
-                                }&cd[content_category]=Offer&cd[content_ids]=${checkoutData.variant_id || "none"
-                                }&cd[content_type]=${campaign.product_handle || "none"}&cd[value]=${price.offerPrice.value || 0
-                                }&cd[currency]=INR`}
-                            alt="Facebook Pixel ViewContent"
-                        />
-                    )}
-                </>
-            )}
+            {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
+                firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
+
             <RecordImpressions
                 checkoutData={checkoutData}
                 userIp={userIp}
@@ -350,10 +326,15 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                 return null;
                         }
                     })}
-                    {!hasMultipleCta && <Footer config={campaignConfig} price={price} checkoutData={{
-                        ...checkoutData,
-                        variant_id: campaign.variant_id
-                    }} />}
+                    {!hasMultipleCta && <Footer 
+                        config={campaignConfig} 
+                        price={price} 
+                        checkoutData={{
+                            ...checkoutData,
+                            variant_id: campaign.variant_id,
+                            inventory: getCurrentVariantInventory()
+                        }} 
+                    />}
                 </div>
             </main>
         </>

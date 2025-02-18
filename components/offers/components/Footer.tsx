@@ -33,7 +33,7 @@ interface Checkout {
   store_url: string;
   checkout_name: string;
   userIp: string;
-  pixel_id: string;
+  pixel: [];
   advertiser_id: string;
   coupon_code: string;
   utm_params: Object;
@@ -63,7 +63,7 @@ const Footer: React.FC<{
 
   const handleCheckoutButtonClick = async (e: React.MouseEvent) => {
     try {
-      if (checkoutData.checkout_name === "shiprocket") {
+      if (checkoutData.checkout_name === "shiprocket" || checkoutData.checkout_name === "fastr" || checkoutData.checkout_name === "fastrr") {
         handleCheckout(
           e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
           checkoutData.variant_id,
@@ -75,19 +75,25 @@ const Footer: React.FC<{
         router.push(
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:1?discount=${checkoutData.coupon_code}`
         );
+      } else {
+        router.push(
+          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:1?discount=${checkoutData.coupon_code}`
+        );
       }
 
       recordClicks();
-      if (checkoutData.pixel_id) {
-        const noscript = document.createElement("noscript");
-        const img = document.createElement("img");
-        img.height = 1;
-        img.width = 1;
-        img.style.display = "none";
-        img.src = `https://www.facebook.com/tr?id=${checkoutData.pixel_id}&ev=Checkout&noscript=1`;
-        img.alt = "Facebook Pixel";
-        noscript.appendChild(img);
-        document.body.appendChild(noscript);
+      if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
+        checkoutData.pixel.forEach((pixelId) => {
+          const noscript = document.createElement("noscript");
+          const img = document.createElement("img");
+          img.height = 1;
+          img.width = 1;
+          img.style.display = "none";
+          img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
+          img.alt = "Facebook Pixel";
+          noscript.appendChild(img);
+          document.body.appendChild(noscript);
+        });
       }
     } catch (error) {
       console.error("Error during checkout:", error);
@@ -120,7 +126,6 @@ const Footer: React.FC<{
           >
             <p className="text-sm text-center">{config.footerText}</p>
           </div>
-
 
           {/* Price and Button Section */}
           <div className="flex items-center justify-between text-black p-[10px] rounded-lg gap-2">
@@ -188,7 +193,7 @@ const Footer: React.FC<{
               onClick={handleCheckoutButtonClick}
               disabled={isSoldOut}
               className={`flex items-center justify-center text-[20px] gap-2 px-8 py-1 h-full flex-1 rounded-lg transition-colors
-                ${isSoldOut ? 'cursor-not-allowed' : ''}`}
+                ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{
                 backgroundColor: config.primaryColor,
                 color: config.secondaryColor,

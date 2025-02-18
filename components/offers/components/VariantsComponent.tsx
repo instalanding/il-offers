@@ -61,10 +61,16 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
         const initializeVariants = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const variantId = urlParams.get("variant");
+            const firstInStockVariant = sortedVariants.find(v => v.inventory > 0);
 
-            const defaultVariant = variantId
+            // If there's a variant ID in the URL, check if it's in stock
+            const requestedVariant = variantId
                 ? sortedVariants.find((v) => v.variant_id === variantId)
-                : sortedVariants[0];
+                : null;
+            // Use the requested variant if it's in stock, otherwise use first in-stock variant
+            const defaultVariant = (requestedVariant && requestedVariant.inventory > 0)
+                ? requestedVariant
+                : firstInStockVariant;
 
             if (defaultVariant) {
                 const initialOptions: { [key: string]: string } = {};

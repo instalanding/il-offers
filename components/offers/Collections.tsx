@@ -77,12 +77,11 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
             variant.description.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        // Sort by size if present
         filtered.sort((a, b) => {
-            const sizeOrder = ['xxs','s', 'm', 'l', 'xl', 'xxl', '2xl', '3xl', '4xl', '5xl']; // Define the size order
-            const sizeA = a.size ? sizeOrder.indexOf(a.size.toLowerCase()) : Infinity; // Use Infinity if size is not present
-            const sizeB = b.size ? sizeOrder.indexOf(b.size.toLowerCase()) : Infinity; // Use Infinity if size is not present
-            return sizeA - sizeB; // Sort by size order
+            const sizeOrder = ['xxs', 's', 'm', 'l', 'xl', 'xxl', '2xl', '3xl', '4xl', '5xl'];
+            const sizeA = a.size ? sizeOrder.indexOf(a.size.toLowerCase()) : Infinity;
+            const sizeB = b.size ? sizeOrder.indexOf(b.size.toLowerCase()) : Infinity;
+            return sizeA - sizeB;
         });
 
         if (sortOrder !== 'none') {
@@ -135,12 +134,12 @@ const Collections: React.FC<CollectionsProps> = ({ data }) => {
                 </div>
             </div>
 
-            {/* to be implemented later (hero banner image) currently static img */}
-            <Image src={"https://saptamveda.com/cdn/shop/files/Group-02_70c7f1fa-78c4-4612-a668-c831e60a8221.jpg?v=1642836797"}
+            <Image
+                src={data.meta_description?.image?.url || `https://placehold.co/1500x450.webp?text=Banner+Image`}
                 alt="hero banner image"
                 width={1500}
-                height={1000}
-                className='w-full'
+                height={450}
+                className="w-full"
             />
             <main className="flex-grow p-6 mb-4">
                 <div className="mt-2 mb-6 text-gray-700 text-center">
