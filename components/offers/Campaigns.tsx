@@ -72,7 +72,8 @@ interface CampaignData {
             checkout_name: string;
         }
         pixel: {
-            ids: []
+            id: "";
+            ids: [""];
         }
     }
 }
@@ -213,7 +214,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         checkout_name: campaign.advertiser?.checkout?.checkout_name,
         userIp: userIp,
         utm_params: utm_params,
-        pixel: campaign.advertiser.pixel?.ids ?? [],
+        pixel: (campaign.advertiser.pixel?.ids[0] || campaign.advertiser.pixel?.id) ?? [""],
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.coupon_code ?? "",
         inventory: campaign.inventory,
@@ -235,7 +236,34 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     return (
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
-                firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
+                <div key={campaign.advertiser.pixel.ids[0]}>
+                    {/* Facebook PageView Pixel */}
+                    <img
+                        height={1}
+                        width={1}
+                        style={{ display: 'none' }}
+                        src={`https://www.facebook.com/tr?id=${campaign.advertiser.pixel.ids[0]}&ev=PageView&noscript=1`}
+                        alt='Facebook Pixel'
+                    />
+
+                    {/* Facebook ViewContent Pixel */}
+                    {checkoutData.variant_id && (
+                        <img
+                            height='1'
+                            width='1'
+                            style={{ display: 'none' }}
+                            src={`https://www.facebook.com/tr?id=${campaign.advertiser.pixel.ids[0]}&ev=ViewContent&noscript=1&cd[content_name]=${campaign.campaign_title || 'Offer'
+                                }
+                                  &cd[content_category]=Offer
+                                  &cd[content_ids]=${checkoutData.variant_id || 'none'}
+                                  &cd[content_type]=${campaign.product_handle || 'none'}
+                                  &cd[value]=${price.offerPrice.value || 0}
+                                  &cd[currency]=INR`}
+                            alt='Facebook Pixel ViewContent'
+                        />
+                    )}
+                </div>
+            }
 
             <RecordImpressions
                 checkoutData={checkoutData}
@@ -326,14 +354,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                 return null;
                         }
                     })}
-                    {!hasMultipleCta && <Footer 
-                        config={campaignConfig} 
-                        price={price} 
+                    {!hasMultipleCta && <Footer
+                        config={campaignConfig}
+                        price={price}
                         checkoutData={{
                             ...checkoutData,
                             variant_id: campaign.variant_id,
                             inventory: getCurrentVariantInventory()
-                        }} 
+                        }}
                     />}
                 </div>
             </main>

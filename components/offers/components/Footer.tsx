@@ -33,7 +33,7 @@ interface Checkout {
   store_url: string;
   checkout_name: string;
   userIp: string;
-  pixel: [""];
+  pixel: string | string[];
   advertiser_id: string;
   coupon_code: string;
   utm_params: Object;
