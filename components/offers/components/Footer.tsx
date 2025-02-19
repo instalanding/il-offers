@@ -80,7 +80,7 @@ const Footer: React.FC<{
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:1?discount=${checkoutData.coupon_code}`
         );
       }
-      //test
+
       recordClicks();
       if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
         checkoutData.pixel.forEach((pixelId) => {

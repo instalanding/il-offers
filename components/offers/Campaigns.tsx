@@ -236,7 +236,6 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
                 firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
-
             <RecordImpressions
                 checkoutData={checkoutData}
                 userIp={userIp}
@@ -326,14 +325,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                 return null;
                         }
                     })}
-                    {!hasMultipleCta && <Footer 
-                        config={campaignConfig} 
-                        price={price} 
+                    {!hasMultipleCta && <Footer
+                        config={campaignConfig}
+                        price={price}
                         checkoutData={{
                             ...checkoutData,
                             variant_id: campaign.variant_id,
                             inventory: getCurrentVariantInventory()
-                        }} 
+                        }}
                     />}
                 </div>
             </main>
