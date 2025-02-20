@@ -61,10 +61,11 @@ interface CampaignData {
             inventory: number;
         }>;
     };
-    inventory: number,
+    inventory?: number,
     advertiser: {
         _id: string;
         store_url: string;
+        coupon: string;
         store_logo: {
             url: string;
         };
@@ -215,7 +216,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         utm_params: utm_params,
         pixel: campaign.advertiser.pixel?.ids ?? [],
         advertiser_id: campaign.advertiser?._id,
-        coupon_code: campaign.coupon_code ?? "",
+        coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
         tags: [],
     };
@@ -227,16 +228,15 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
             const currentVariant = campaign.collections.variants.find(
                 v => v.variant_id === campaign.variant_id
             );
-            return currentVariant?.inventory ?? 0;
+            return currentVariant?.inventory;
         }
-        return campaign?.inventory ?? 0;
+        return campaign?.inventory;
     };
 
     return (
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
                 firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
-
             <RecordImpressions
                 checkoutData={checkoutData}
                 userIp={userIp}
@@ -326,14 +326,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                 return null;
                         }
                     })}
-                    {!hasMultipleCta && <Footer 
-                        config={campaignConfig} 
-                        price={price} 
+                    {!hasMultipleCta && <Footer
+                        config={campaignConfig}
+                        price={price}
                         checkoutData={{
                             ...checkoutData,
                             variant_id: campaign.variant_id,
                             inventory: getCurrentVariantInventory()
-                        }} 
+                        }}
                     />}
                 </div>
             </main>
