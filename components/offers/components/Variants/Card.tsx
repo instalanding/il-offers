@@ -21,7 +21,8 @@ const Card: React.FC<CardProps> = ({
     priceDetails,
     inventory = null,
 }) => {
-    const isSoldOut = inventory === 0;
+
+    const isSoldOut = inventory !== null && inventory === 0;
     const originalPrice = priceDetails?.originalPrice?.value;
     const offerPrice = priceDetails?.offerPrice?.value;
     const originalPrefix = priceDetails?.originalPrice?.prefix || "";
@@ -38,7 +39,7 @@ const Card: React.FC<CardProps> = ({
             onClick={onClick}
             disabled={isDisabled || isSoldOut}
             className={`
-                flex flex-col h-auto relative bg-none text-wrap text-sm justify-center
+                flex flex-col h-auto relative bg-none  text-sm justify-center
                 snap-start flex-shrink-0 border rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow cursor-pointer
                 ${isSelected
                     ? "border-1 bg-white border-gray-900 text-black hover:bg-gray-100"
@@ -55,9 +56,8 @@ const Card: React.FC<CardProps> = ({
                     Sold Out
                 </span>
             )}
-            <span className="w-full text-center text-xs whitespace-pre-line">
+            <span className="w-full text-center text-xs whitespace-pre-line break-words">
                 {value === "Default Title" ? "" : value.split('|').join('\n')}
-
             </span>
             <div className="flex flex-col justify-center items-center w-full">
                 {originalPrice || offerPrice ? (

@@ -61,10 +61,11 @@ interface CampaignData {
             inventory: number;
         }>;
     };
-    inventory: number,
+    inventory?: number,
     advertiser: {
         _id: string;
         store_url: string;
+        coupon: string;
         store_logo: {
             url: string;
         };
@@ -216,7 +217,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         utm_params: utm_params,
         pixel: (campaign.advertiser.pixel?.ids[0] || campaign.advertiser.pixel?.id) ?? [""],
         advertiser_id: campaign.advertiser?._id,
-        coupon_code: campaign.coupon_code ?? "",
+        coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
         tags: [],
     };
@@ -228,42 +229,15 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
             const currentVariant = campaign.collections.variants.find(
                 v => v.variant_id === campaign.variant_id
             );
-            return currentVariant?.inventory ?? 0;
+            return currentVariant?.inventory;
         }
-        return campaign?.inventory ?? 0;
+        return campaign?.inventory;
     };
 
     return (
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
-                <div key={campaign.advertiser.pixel.ids[0]}>
-                    {/* Facebook PageView Pixel */}
-                    <img
-                        height={1}
-                        width={1}
-                        style={{ display: 'none' }}
-                        src={`https://www.facebook.com/tr?id=${campaign.advertiser.pixel.ids[0]}&ev=PageView&noscript=1`}
-                        alt='Facebook Pixel'
-                    />
-
-                    {/* Facebook ViewContent Pixel */}
-                    {checkoutData.variant_id && (
-                        <img
-                            height='1'
-                            width='1'
-                            style={{ display: 'none' }}
-                            src={`https://www.facebook.com/tr?id=${campaign.advertiser.pixel.ids[0]}&ev=ViewContent&noscript=1&cd[content_name]=${campaign.campaign_title || 'Offer'
-                                }
-                                  &cd[content_category]=Offer
-                                  &cd[content_ids]=${checkoutData.variant_id || 'none'}
-                                  &cd[content_type]=${campaign.product_handle || 'none'}
-                                  &cd[value]=${price.offerPrice.value || 0}
-                                  &cd[currency]=INR`}
-                            alt='Facebook Pixel ViewContent'
-                        />
-                    )}
-                </div>
-            }
+                firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
 
             <RecordImpressions
                 checkoutData={checkoutData}
