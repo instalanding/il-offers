@@ -61,16 +61,21 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
         const initializeVariants = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const variantId = urlParams.get("variant");
-            const firstInStockVariant = sortedVariants.find(v => v.inventory > 0);
 
-            // If there's a variant ID in the URL, check if it's in stock
+            // Modified to handle missing inventory
+            const firstAvailableVariant = sortedVariants.find(v =>
+                v.inventory === undefined || v.inventory > 0
+            );
+
+            // If there's a variant ID in the URL, check if it's available
             const requestedVariant = variantId
                 ? sortedVariants.find((v) => v.variant_id === variantId)
                 : null;
-            // Use the requested variant if it's in stock, otherwise use first in-stock variant
-            const defaultVariant = (requestedVariant && requestedVariant.inventory > 0)
+
+            // Use the requested variant if it's available, otherwise use first available variant
+            const defaultVariant = (requestedVariant && (requestedVariant.inventory === undefined || requestedVariant.inventory > 0))
                 ? requestedVariant
-                : firstInStockVariant;
+                : firstAvailableVariant;
 
             if (defaultVariant) {
                 const initialOptions: { [key: string]: string } = {};
@@ -103,14 +108,15 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
     };
 
     const handleOptionSelect = (optionKey: string, optionValue: string) => {
+        // Immediately update the selected options
         const newSelections = { ...selectedOptions, [optionKey]: optionValue };
+        setSelectedOptions(newSelections);
 
         const matchingVariant = sortedVariants.find((variant) =>
             Object.entries(newSelections).every(([key, val]) => variant.variant_options[key] === val)
         );
 
         if (matchingVariant) {
-            setSelectedOptions(newSelections);
             setCurrentVariant(matchingVariant.variant_id || null);
             setProductHandle(matchingVariant.product_handle || null);
             updateURL(matchingVariant.variant_id, matchingVariant.product_handle);
@@ -136,11 +142,6 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                 const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
                 if (!optionConfig?.enabled) return null;
 
-                const getInventoryForOption = (optionValue: string) => {
-                    const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
-                    return variant?.inventory;
-                };
-
                 return (
                     <div key={optionKey} className="mb-4">
                         <h3 className="text-sm font-medium mb-2">{optionConfig.label}</h3>
@@ -158,14 +159,9 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                         label={optionValue}
                                         value={optionValue}
                                         isSelected={selectedOptions[optionKey] === optionValue}
-                                        onClick={() => {
-                                            const inventory = getInventoryForOption(optionValue);
-                                            if (inventory !== 0) {
-                                                handleOptionSelect(optionKey, optionValue);
-                                            }
-                                        }}
+                                        onClick={() => handleOptionSelect(optionKey, optionValue)}
                                         priceDetails={variant?.price}
-                                        inventory={getInventoryForOption(optionValue)}
+                                        inventory={variant?.inventory !== undefined ? variant.inventory : null}
                                     />
                                 );
                             })}

@@ -61,10 +61,11 @@ interface CampaignData {
             inventory: number;
         }>;
     };
-    inventory: number,
+    inventory?: number,
     advertiser: {
         _id: string;
         store_url: string;
+        coupon: string;
         store_logo: {
             url: string;
         };
@@ -215,7 +216,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         utm_params: utm_params,
         pixel: campaign.advertiser.pixel?.ids ?? [],
         advertiser_id: campaign.advertiser?._id,
-        coupon_code: campaign.coupon_code ?? "",
+        coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
         tags: [],
     };
@@ -227,9 +228,9 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
             const currentVariant = campaign.collections.variants.find(
                 v => v.variant_id === campaign.variant_id
             );
-            return currentVariant?.inventory ?? 0;
+            return currentVariant?.inventory;
         }
-        return campaign?.inventory ?? 0;
+        return campaign?.inventory;
     };
 
     return (

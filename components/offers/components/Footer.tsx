@@ -110,7 +110,7 @@ const Footer: React.FC<{
     } catch (error) { }
   }
 
-  const isSoldOut = checkoutData.inventory === 0;
+  const isSoldOut = checkoutData.inventory !== undefined && checkoutData.inventory === 0;
 
   return (
     <>
