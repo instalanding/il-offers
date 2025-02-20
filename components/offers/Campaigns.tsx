@@ -73,7 +73,8 @@ interface CampaignData {
             checkout_name: string;
         }
         pixel: {
-            ids: []
+            id: "";
+            ids: [""];
         }
     }
 }
@@ -214,7 +215,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         checkout_name: campaign.advertiser?.checkout?.checkout_name,
         userIp: userIp,
         utm_params: utm_params,
-        pixel: campaign.advertiser.pixel?.ids ?? [],
+        pixel: (campaign.advertiser.pixel?.ids[0] || campaign.advertiser.pixel?.id) ?? [""],
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
@@ -237,6 +238,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
                 firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
+
             <RecordImpressions
                 checkoutData={checkoutData}
                 userIp={userIp}
