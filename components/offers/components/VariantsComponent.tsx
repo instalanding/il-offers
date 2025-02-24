@@ -46,22 +46,26 @@ interface VariantsComponentProps {
 }
 
 const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, collections }) => {
-
     const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
     const [currentVariant, setCurrentVariant] = useState<string | null>(null);
     const [productHandle, setProductHandle] = useState<string | null>(null);
 
-    if (!collections?.variants || collections.variants.length === 0) {
-        return;
-    }
-    const sortedVariants = [...collections.variants].sort((a, b) => {
-        const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
-        const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
-        return priceA - priceB;
-    });
+    // Move sortedVariants inside useEffect or memoize it
+    const sortedVariants = React.useMemo(() => {
+        if (!collections?.variants || collections.variants.length === 0) {
+            return [];
+        }
+        return [...collections.variants].sort((a, b) => {
+            const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
+            const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
+            return priceA - priceB;
+        });
+    }, [collections?.variants]);
 
     useEffect(() => {
         const initializeVariants = () => {
+            if (sortedVariants.length === 0) return;
+
             const urlParams = new URLSearchParams(window.location.search);
             const variantId = urlParams.get("variant");
 
@@ -96,7 +100,10 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
         };
 
         initializeVariants();
-    }, [collections.variants]);
+    }, [sortedVariants]);
+
+    // Early return after hooks
+    if (sortedVariants.length === 0) return null;
 
     const updateURL = (variantId: string | null, handle: string | undefined) => {
         if (variantId && handle) {
@@ -125,8 +132,6 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             updateURL(matchingVariant.variant_id, matchingVariant.product_handle);
         }
     };
-
-    if (!sortedVariants.length) return null;
 
     const renderVariantOptions = () => {
         const optionGroups = sortedVariants.reduce((acc, variant) => {
