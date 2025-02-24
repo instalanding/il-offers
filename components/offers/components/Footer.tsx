@@ -1,5 +1,4 @@
-import React from "react";
-import { TbShoppingBagPlus } from "react-icons/tb";
+import React, { useState } from "react";
 import { calculatePercentageOff } from "@/lib/calculateDiscount";
 import { formatPrice } from "@/lib/formatUtils";
 import useCheckout from "@/hooks/Checkout";
@@ -7,6 +6,8 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { IoIosAdd, IoIosRemove } from "react-icons/io";
+// import { TbShoppingBagPlus } from "react-icons/tb";
 
 interface Config {
   primaryColor: string;
@@ -24,6 +25,7 @@ interface Price {
     prefix: string;
     value: string;
   };
+  quantity: boolean;
 }
 
 interface Checkout {
@@ -47,6 +49,17 @@ const Footer: React.FC<{
 }> = ({ config, price, checkoutData }) => {
   const { handleCheckout } = useCheckout();
   const router = useRouter();
+  const [quantity, setQuantity] = useState(1);
+
+  const handleIncrease = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
 
   const getVisitorId = async () => {
     if (typeof window === "undefined") return;
@@ -69,15 +82,16 @@ const Footer: React.FC<{
           checkoutData.variant_id,
           checkoutData.offer_id,
           checkoutData.coupon_code,
-          checkoutData.utm_params
+          checkoutData.utm_params,
+          quantity
         );
       } else if (checkoutData.checkout_name === "shopify") {
         router.push(
-          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:1?discount=${checkoutData.coupon_code}`
+          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
         );
       } else {
         router.push(
-          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:1?discount=${checkoutData.coupon_code}`
+          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
         );
       }
 
@@ -116,7 +130,7 @@ const Footer: React.FC<{
     <>
       <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
       <div className="sticky bottom-0 bg-gray-100">
-        <div className="flex flex-col ">
+        <div className="flex flex-col">
           <div
             style={{
               backgroundColor: config?.primaryColor + "9a",
@@ -128,8 +142,8 @@ const Footer: React.FC<{
           </div>
 
           {/* Price and Button Section */}
-          <div className="flex items-center justify-between text-black p-[10px] rounded-lg gap-2">
-            <div className="flex items-center justify-center shrink-0">
+          <div className="flex items-center justify-between text-black p-[10px] rounded-lg gap-2 w-full">
+            <div className="flex items-center justify-center shrink-0 w-auto">
               {price?.offerPrice?.value ? (
                 <div className="flex flex-col gap-1 px-2">
                   {price?.originalPrice?.value &&
@@ -183,25 +197,41 @@ const Footer: React.FC<{
                   )}
                 </p>
               ) : (
-                <p className="text-[15px] text-center text-gray-600">
-                  Price not available
-                </p>
+                ''
               )}
             </div>
-
-            <Button
-              onClick={handleCheckoutButtonClick}
-              disabled={isSoldOut}
-              className={`flex items-center justify-center text-[20px] gap-2 px-8 py-1 h-full flex-1 rounded-lg transition-colors
+            <div className="flex gap-2">
+              {/* Quantity Selector */}
+              {price.quantity === true && (
+                <div className="flex items-center gap-2 border rounded-lg py-2 px-1 w-auto">
+                  <button
+                    onClick={handleDecrease}
+                    disabled={quantity === 1}
+                    className="disabled:opacity-50"
+                  >
+                    <IoIosRemove size={18} />
+                  </button>
+                  <span className="text-lg font-semibold">{quantity}</span>
+                  <button onClick={handleIncrease} >
+                    <IoIosAdd size={18} />
+                  </button>
+                </div>
+              )}
+              <Button
+                onClick={handleCheckoutButtonClick}
+                disabled={isSoldOut}
+                className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
                 ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
-              style={{
-                backgroundColor: config.primaryColor,
-                color: config.secondaryColor,
-              }}
-            >
-              {isSoldOut ? 'Sold Out' : <> <TbShoppingBagPlus size={20} /> {config.buttonText}</>}
-            </Button>
+                style={{
+                  backgroundColor: config.primaryColor,
+                  color: config.secondaryColor,
+                }}
+              >
+                {isSoldOut ? 'Sold Out' : <>{config.buttonText}</>}
+              </Button>
+            </div>
           </div>
+
         </div>
       </div>
     </>

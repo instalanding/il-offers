@@ -18,7 +18,6 @@ const Redirect = ({ data }: any) => {
     try {
       const fp = await FingerprintJS.load();
       const result = await fp.get();
-      console.log(result.visitorId);
       hit(result.visitorId);
     } catch (error) {
       console.error("Error getting visitor identifier:", error);
@@ -27,8 +26,6 @@ const Redirect = ({ data }: any) => {
   };
 
   const hit = async (fp: string) => {
-    console.log(new_backend_url);
-
     await fetch(
       `${new_backend_url}record-redirect/?fp=${fp}&offer_id=${data.offer_id}&advertiser=${data.advertiser}`,
       {

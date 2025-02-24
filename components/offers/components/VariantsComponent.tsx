@@ -40,8 +40,8 @@ interface VariantsComponentProps {
         };
     };
     style?: React.CSSProperties;
-    collections: {
-        variants: Array<VariantOption>;
+    collections?: {
+        variants?: Array<VariantOption>;
     };
 }
 
@@ -51,6 +51,9 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
     const [currentVariant, setCurrentVariant] = useState<string | null>(null);
     const [productHandle, setProductHandle] = useState<string | null>(null);
 
+    if (!collections?.variants || collections.variants.length === 0) {
+        return;
+    }
     const sortedVariants = [...collections.variants].sort((a, b) => {
         const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
         const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;

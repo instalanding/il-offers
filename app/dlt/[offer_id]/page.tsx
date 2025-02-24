@@ -13,8 +13,6 @@ interface PageProps {
 
 const getDeeplink = async (offer_id: string) => {
   try {
-    console.log(`${new_backend_url}deeplink/${offer_id}`);
-
     const response = await fetch(`${new_backend_url}deeplink/${offer_id}`, {
       cache: "no-store",
     });
@@ -23,7 +21,6 @@ const getDeeplink = async (offer_id: string) => {
       throw new Error("Failed to fetch campaign");
     }
     const data = await response.json(); // Process the JSON body
-    // console.log(data, "response data"); // Log the actual response data
     return data; // Return the parsed data
   } catch (error) {
     console.log(error);

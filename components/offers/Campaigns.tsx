@@ -40,7 +40,8 @@ interface CampaignData {
         originalPrice: {
             prefix: string;
             value: string;
-        }
+        },
+        quantity: boolean
     };
     reviews: [];
     collections: {
@@ -204,7 +205,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         originalPrice: {
             prefix: campaign.price.originalPrice.prefix,
             value: campaign.price.originalPrice.value,
-        }
+        },
+        quantity: campaign.price.quantity
     }
 
     const checkoutData = {
@@ -219,7 +221,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
-        tags: [],
+        tags: []
     };
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
@@ -241,8 +243,6 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
             <RecordImpressions
                 checkoutData={checkoutData}
-                userIp={userIp}
-                utm_params={utm_params}
             />
             <main
                 className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 "
