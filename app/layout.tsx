@@ -3,7 +3,7 @@ import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { GoogleTagManager } from "@next/third-parties/google";
-import { SpeedInsights } from "@Vercel/speed-insights/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
