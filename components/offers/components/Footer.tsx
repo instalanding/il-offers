@@ -46,20 +46,12 @@ const Footer: React.FC<{
   config: Config;
   price: Price;
   checkoutData: Checkout;
-}> = ({ config, price, checkoutData }) => {
+  quantity: number;
+  handleIncrease: any;
+  handleDecrease: any;
+}> = ({ config, price, quantity, handleIncrease, handleDecrease, checkoutData }) => {
   const { handleCheckout } = useCheckout();
   const router = useRouter();
-  const [quantity, setQuantity] = useState(1);
-
-  const handleIncrease = () => {
-    setQuantity((prev) => prev + 1);
-  };
-
-  const handleDecrease = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
 
   const getVisitorId = async () => {
     if (typeof window === "undefined") return;
