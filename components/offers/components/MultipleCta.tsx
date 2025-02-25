@@ -137,7 +137,10 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
                         </div>
                         {/* <Link href={cta.url} target="_blank" rel="noopener noreferrer"> */}
                             <Button
-                                onClick={() => redirect(cta.url, cta.type)}
+                                onClick={() => {
+                                    recordClicks(cta.type)
+                                    redirect(cta.url, cta.type)
+                                }}
                                 style={{
                                     background: cta.color,
                                     color: cta.textColor,
