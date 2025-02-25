@@ -11,6 +11,7 @@ import MultipleCta from './components/MultipleCta';
 import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
 import Checkout from './components/Checkout';
+import Ticker from './components/Ticker'
 import RecordImpressions from '../recordImpressions/page';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
@@ -352,6 +353,13 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         handleIncrease={handleIncrease}
                                         handleDecrease={handleDecrease}
                                     />
+                                );
+                            case 'ticker':
+                                return (
+                                    <Ticker
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style} />
                                 );
                             default:
                                 return null;
