@@ -13,11 +13,12 @@ export default function useCheckout() {
   const utm_medium = searchParams.get("utm_medium");
   const utm_source = searchParams.get("utm_source");
   const utm_campaign = searchParams.get("utm_campaign");
+  const utm_term = searchParams.get("utm_term")
+  const utm_id = searchParams.get("utm_id")
+  const utm_content = searchParams.get("utm_content")
 
   const loadScripts = () => {
-    // console.log("Fastrr Script loaded");
-    if (loaded) return; // Prevent loading if already loaded
-
+    if (loaded) return;
     const script = document.createElement("script");
     script.src =
       "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
@@ -30,15 +31,6 @@ export default function useCheckout() {
     link.href = "https://fastrr-boost-ui.pickrr.com/assets/styles/shopify.css";
     document.head.appendChild(link);
   };
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     loadScripts();
-  //   }, 3000);
-
-  // Cleanup function to clear the timeout if the component unmounts
-  //   return () => clearTimeout(timer);
-  // }, []);
 
   useEffect(() => {
     const handleInteraction = () => {
@@ -65,28 +57,27 @@ export default function useCheckout() {
     variant_id: string,
     offer_id: string,
     couponCode: string,
-    utm_params: any
+    utm_params?: any,
+    quantity: number = 1
   ) => {
     e.preventDefault();
-    console.log("checkout clicked", loaded);
-
     if (loaded) {
-      const res = await shiprocketCheckoutEvents.buyDirect({
+      await shiprocketCheckoutEvents.buyDirect({
         type: "cart",
         products: [
           {
             variantId: variant_id || "36289636303004",
-            quantity: 1,
+            quantity,
           },
         ],
         couponCode: couponCode,
-        utmParams: `utm_source=${utm_source || "instalanding"}&utm_medium=${
-          utm_medium || "campaign_instalanding"
-        }&utm_campaign=${utm_campaign || offer_id}`,
+        utmParams: `utm_source=${utm_source || "instalanding"}&utm_medium=${utm_medium || "campaign_instalanding"
+          }&utm_campaign=${utm_campaign || offer_id}${utm_term ? `&utm_term=${utm_term}` : ""}${utm_id ? `&utm_id=${utm_id}` : ""
+          }${utm_content ? `&utm_content=${utm_content}` : ""}`,
       });
-      console.log("______checkout_enabled", res);
     }
   };
 
   return { handleCheckout };
 }
+

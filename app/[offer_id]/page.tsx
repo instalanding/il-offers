@@ -1,7 +1,7 @@
 "use server";
 import React from "react";
-import { Metadata, ResolvingMetadata } from "next";
 import Campaigns from "@/components/offers/Campaigns";
+import { Metadata, ResolvingMetadata } from "next";
 import FontLoader from "@/components/offers/components/FontLoader";
 import { MdErrorOutline } from "react-icons/md";
 import { formatDate } from "@/lib/formatUtils";
@@ -75,9 +75,9 @@ type SearchParams = {
 const Campaign = async ({ params, searchParams }: { params: { offer_id?: string }; searchParams: SearchParams; }) => {
   const headersList = headers();
   const domain = headersList.get('host') || '';
-  
+
   const data = await getCampaign({ offer_id: params.offer_id });
-  
+
   // Return not found if no campaign data
   if (!data) {
     return (
@@ -110,7 +110,7 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
   const utm_params = Object.fromEntries(
     Object.entries(searchParams).filter(([key]) =>
       key.startsWith('utm_') ||
-      ['source', 'medium', 'campaign', 'term', 'content'].includes(key)
+      ['source', 'medium', 'campaign', 'id', 'term', 'content'].includes(key)
     )
   );
 
@@ -118,7 +118,7 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
   const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
   const apiReviews = hasReviewsBlock && data ? await getReviews(data.product_handle) : [];
   const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
-  const collections = hasVariantsBlock && data ? await getVariantCollection(data.product_handle, data.variant_id) : [];
+  const collections = hasVariantsBlock && data.product_handle ? await getVariantCollection(data.product_handle, data.variant_id) : [];
 
   const reviews = apiReviews?.map((review: any) => ({
     userName: review.reviewer_name,
@@ -158,10 +158,10 @@ export async function generateMetadata(
   return {
     title,
     description,
-    icons: data?.advertiser?.store_logo?.url
-      ? [{ rel: "icon", url: data.advertiser.store_logo.url.toString() }]
+    icons: data?.advertiser?.store_favicon?.url
+      ? [{ rel: "icon", url: data.advertiser.store_favicon.url.toString() }]
       : [],
-    // icons: [{ rel: "icon", url: data.advertiser.store_logo || "/favicon.ico" }],
+    // icons: [{ rel: "icon", url: data.advertiser.store_favicon || "/favicon.ico" }],
     openGraph: {
       title,
       description,

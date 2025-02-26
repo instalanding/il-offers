@@ -5,11 +5,9 @@ import axios from 'axios';
 
 type ImpressionsProp = {
     checkoutData: any,
-    utm_params?: any,
-    userIp: string,
 };
 
-const RecordImpressions = ({ checkoutData, userIp, utm_params }: ImpressionsProp) => {
+const RecordImpressions = ({ checkoutData }: ImpressionsProp) => {
 
     const [visitorId, setVisitorId] = useState<string>();
 
@@ -28,7 +26,7 @@ const RecordImpressions = ({ checkoutData, userIp, utm_params }: ImpressionsProp
 
     const impressions = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}analytics/impressions/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${userIp}&product_url=${checkoutData.store_url}&tags=${checkoutData.tags}&visitor_id=${visitorId}&utm_source=${utm_params?.utm_source}&utm_medium=${utm_params?.utm_medium}&utm_campaign=${utm_params?.utm_campaign}&campaign_id=${checkoutData.campaign_id}`);
+            await axios.get(`${process.env.NEXT_PUBLIC_API_URL}analytics/impressions/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&tags=${checkoutData.tags}&visitor_id=${visitorId}&utm_source=${checkoutData.utm_params?.utm_source}&utm_medium=${checkoutData.utm_params?.utm_medium}&utm_campaign=${checkoutData.utm_params?.utm_campaign}&campaign_id=${checkoutData.campaign_id}`);
         } catch (error) {
             console.error("Error recording impressions:", error);
         }

@@ -180,8 +180,8 @@ export async function generateMetadata(
   return {
     title: title,
     description: description,
-    icons: data?.advertiser?.store_logo?.url
-      ? [{ rel: "icon", url: data.advertiser.store_logo.url }]
+    icons: data?.advertiser?.store_favicon?.url
+      ? [{ rel: "icon", url: data.advertiser.store_favicon.url }]
       : [{ rel: "icon", url: "/favicon.ico" }],
     openGraph: {
       title,

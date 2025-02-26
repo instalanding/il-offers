@@ -10,6 +10,7 @@ import RatingsComponent from './components/RatingsComponent';
 import MultipleCta from './components/MultipleCta';
 import VariantsComponent from './components/VariantsComponent'
 import ReviewsComponent from './components/ReviewsComponent';
+import Checkout from './components/Checkout';
 import RecordImpressions from '../recordImpressions/page';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
@@ -40,7 +41,8 @@ interface CampaignData {
         originalPrice: {
             prefix: string;
             value: string;
-        }
+        },
+        quantity: boolean
     };
     reviews: [];
     collections: {
@@ -103,7 +105,17 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [quantity, setQuantity] = useState(1);
 
+    const handleIncrease = () => {
+        setQuantity((prev) => prev + 1);
+    };
+
+    const handleDecrease = () => {
+        if (quantity > 1) {
+            setQuantity((prev) => prev - 1);
+        }
+    };
     // Function to find and set the correct campaign variant
     const updateCampaignVariant = (variants: any[], variantId: string | null) => {
         if (!variantId) {
@@ -204,7 +216,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         originalPrice: {
             prefix: campaign.price.originalPrice.prefix,
             value: campaign.price.originalPrice.value,
-        }
+        },
+        quantity: campaign.price.quantity
     }
 
     const checkoutData = {
@@ -219,7 +232,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
-        tags: [],
+        tags: []
     };
 
     const hasMultipleCta = blocks.some(block => block.type === 'multiple-cta');
@@ -234,6 +247,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         return campaign?.inventory;
     };
 
+
+
     return (
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
@@ -241,8 +256,6 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
             <RecordImpressions
                 checkoutData={checkoutData}
-                userIp={userIp}
-                utm_params={utm_params}
             />
             <main
                 className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 "
@@ -324,6 +337,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style}
                                     />
                                 );
+                            case 'checkout':
+                                return (
+                                    <Checkout
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style}
+                                        checkoutData={{
+                                            ...checkoutData,
+                                            variant_id: campaign.variant_id,
+                                            inventory: getCurrentVariantInventory()
+                                        }}
+                                        quantity={quantity}
+                                        handleIncrease={handleIncrease}
+                                        handleDecrease={handleDecrease}
+                                    />
+                                );
                             default:
                                 return null;
                         }
@@ -331,6 +360,9 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                     {!hasMultipleCta && <Footer
                         config={campaignConfig}
                         price={price}
+                        quantity={quantity}
+                        handleIncrease={handleIncrease}
+                        handleDecrease={handleDecrease}
                         checkoutData={{
                             ...checkoutData,
                             variant_id: campaign.variant_id,
