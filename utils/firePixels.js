@@ -12,7 +12,6 @@ export const firePixels = (pixelIds, campaign, checkoutData, price) => {
         src={`https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1`}
         alt='Facebook Pixel'
       />
-      {console.log(pixelId, 'pixels array inside mapping')}
       {/* Facebook ViewContent Pixel */}
       {checkoutData.variant_id && (
         <img
