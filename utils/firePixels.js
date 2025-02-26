@@ -2,7 +2,6 @@ import React from 'react';
 
 export const firePixels = (pixelIds, campaign, checkoutData, price) => {
   if (!pixelIds || pixelIds.length === 0) return null;
-  console.log(pixelIds, 'pixels array');
   return pixelIds.map((pixelId) => (
     <React.Fragment key={pixelId}>
       {/* Facebook PageView Pixel */}
