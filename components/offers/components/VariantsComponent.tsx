@@ -144,9 +144,23 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             return acc;
         }, {} as { [key: string]: Set<string> });
 
+        // Determine the maximum discount variant
+        const maxDiscountVariant = sortedVariants.reduce<{ variant: VariantOption | null; discount: number }>((max, variant) => {
+            const currentDiscount = parseFloat(variant.price.originalPrice?.value || "0") - parseFloat(variant.price.offerPrice?.value || "0");
+            if (!max.variant || currentDiscount > max.discount) {
+                return { variant, discount: currentDiscount };
+            }
+            return max;
+        }, { variant: null, discount: 0 });
+
+        const isUniqueMaxDiscount = sortedVariants.filter(variant => {
+            const currentDiscount = parseFloat(variant.price.originalPrice?.value || "0") - parseFloat(variant.price.offerPrice?.value || "0");
+            return currentDiscount === maxDiscountVariant.discount;
+        }).length === 1;
+
         return Object.entries(optionGroups)
             .sort()
-            .map(([optionKey, values]) => {
+            .map(([optionKey, values], index) => {
                 const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
                 if (!optionConfig?.enabled) return null;
 
@@ -157,9 +171,12 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                             flex justify-start flex-wrap gap-2 
                             ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
                         `}>
-                            {Array.from(values).map((optionValue) => {
+                            {Array.from(values).map((optionValue, valueIndex) => {
                                 const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
                                 const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
+
+                                const isMostLoved = valueIndex === 0;
+                                const isGreatDeal = isUniqueMaxDiscount && variant === maxDiscountVariant.variant && !isMostLoved;
 
                                 return (
                                     <Component
@@ -170,6 +187,8 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                         onClick={() => handleOptionSelect(optionKey, optionValue)}
                                         priceDetails={variant?.price}
                                         inventory={variant?.inventory !== undefined ? variant.inventory : null}
+                                        greatDeal={isGreatDeal}
+                                        mostLoved={isMostLoved}
                                     />
                                 );
                             })}

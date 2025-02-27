@@ -1,5 +1,6 @@
 import React from 'react';
-import { BsStarFill, BsStarHalf, BsStar } from "react-icons/bs";
+import { BsStarFill } from "react-icons/bs";
+import { MdVerified } from 'react-icons/md';
 
 interface RatingsComponentProps {
     value: {
@@ -12,39 +13,28 @@ interface RatingsComponentProps {
 }
 
 const RatingsComponent: React.FC<RatingsComponentProps> = ({ value, style }) => {
-    const totalStars = 5;
-    const fullStars = Math.floor(value.rating);
-    const hasHalfStar = value.rating % 1 >= 0.5;
 
     return (
-        <div style={style} className="flex flex-col">
-            <h3 className="text-lg font-medium">{value.title}</h3>
-            <p className="text-sm font-light mb-2">{value.subtitle}</p>
-            <div className="flex items-center">
-                {[...Array(totalStars)].map((_, index) => (
-                    <Star
-                        key={index}
-                        filled={index < fullStars}
-                        half={index === fullStars && hasHalfStar}
-                    />
-                ))}
-                <span className="ml-2 text-sm">
-                    {value.rating} ({value.totalReviews} reviews)
-                </span>
+        <div style={style} className='flex flex-col'>
+            <h3 className='text-lg font-medium'>{value.title}</h3>
+            <p className='text-sm font-light'>{value.subtitle}</p>
+            <div className='flex items-center'>
+                <div className='flex gap-2 items-center mr-2 w-auto bg-green-600 rounded-md py-[2px] px-2 text-white'>
+                    <BsStarFill />
+                    {value.rating ? value.rating : ''}
+                </div>
+                {value.totalReviews ? (
+                    <div className='flex justify-start items-center gap-1'>
+                        |
+                        <MdVerified size={18} className='text-blue-600' />
+                        {`${value.totalReviews} Verified Reviews`}
+                    </div>
+                ) : (
+                    ''
+                )}
             </div>
         </div>
     );
 };
-
-interface StarProps {
-    filled: boolean;
-    half: boolean;
-}
-
-const Star: React.FC<StarProps> = ({ filled, half }) => (
-    <span className="text-xl text-yellow-500">
-        {filled ? <BsStarFill /> : half ? <BsStarHalf /> : <BsStar />}
-    </span>
-);
 
 export default RatingsComponent;
