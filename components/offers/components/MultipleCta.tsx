@@ -12,6 +12,7 @@ import Image from "next/image";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { userAgent } from "next/server";
 
 const MultiCta = ({ value, style, checkoutData }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
@@ -42,6 +43,29 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             console.error("Error recording click:", error);
         }
     }
+
+    const redirectToExternal = (url: string, cta_type: string) => {
+        let redirectUrl = url;
+        let href = url;
+        const buttonType: string = cta_type;
+
+        if (buttonType === "amazon") {
+            redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
+        } else {
+            if (/android/i.test(userAgent.toString())) {
+                redirectUrl = `intent:${href.replace(
+                    /^https?:\/\//,
+                    ""
+                )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+            } else if (
+                /iPad|iPhone|iPod/.test(userAgent.toString()) &&
+                !/windows/i.test(userAgent.toString())
+            ) {
+                redirectUrl = href.startsWith("http") ? href : `https://${href}`;
+            }
+        }
+        window.location.replace(redirectUrl);
+    };
 
     return (
         <Accordion
@@ -104,18 +128,21 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
                                 <p className="text-xs text-left">{cta.subtitle}</p>
                             </div>
                         </div>
-                        <Link href={cta.url} target="_blank" rel="noopener noreferrer">
-                            <Button
-                                onClick={() => recordClicks(cta.type)}
-                                style={{
-                                    background: cta.color,
-                                    color: cta.textColor,
-                                }}
-                                className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap"
-                            >
-                                Buy Now
-                            </Button>
-                        </Link>
+                        {/* <Link href={cta.url} target="_blank" rel="noopener noreferrer"> */}
+                        <Button
+                            onClick={() => {
+                                recordClicks(cta.type)
+                                redirectToExternal(cta.url, cta.cta_type)
+                            }}
+                            style={{
+                                background: cta.color,
+                                color: cta.textColor,
+                            }}
+                            className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap"
+                        >
+                            Buy Now
+                        </Button>
+                        {/* </Link> */}
                     </AccordionContent>
                 </AccordionItem>
             ))}
