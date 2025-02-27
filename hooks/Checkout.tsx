@@ -33,7 +33,23 @@ export default function useCheckout() {
   };
 
   useEffect(() => {
-    loadScripts();
+    const handleInteraction = () => {
+      loadScripts();
+      // Remove the event listeners after loading scripts
+      document.removeEventListener("mousemove", handleInteraction);
+      document.removeEventListener("touchstart", handleInteraction);
+    };
+
+    // loadScripts();
+
+    document.addEventListener("mousemove", handleInteraction);
+    document.addEventListener("touchstart", handleInteraction);
+
+    // Cleanup function to remove the event listeners
+    return () => {
+      document.removeEventListener("mousemove", handleInteraction);
+      document.removeEventListener("touchstart", handleInteraction);
+    };
   }, []);
 
   const handleCheckout = async (
