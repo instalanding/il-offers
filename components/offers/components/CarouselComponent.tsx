@@ -11,6 +11,19 @@ const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) 
 
     const finalImages = (images && images.length > 0) ? images : placeholderImages;
 
+    const getOptimizedImageUrl = (url: string, width: number, quality: number = 75) => {
+        if (!url) return ""; // Prevent errors if URL is undefined
+
+        const cloudinaryBaseUrl = "https://res.cloudinary.com/";
+
+        if (url.startsWith(cloudinaryBaseUrl)) {
+            // Cloudinary Optimized Parameters
+            return `${url.replace("/upload/", `/upload/c_scale,w_${width},q_auto:good,f_auto/`)}`;
+        }
+
+        return url; // Return original URL if not from Cloudinary
+    };
+
     return (
         <div>
             <Carousel>
@@ -18,16 +31,15 @@ const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) 
                     {finalImages.map((image, key) => (
                         <CarouselItem key={key}>
                             <Image
-                                alt={"Main Image"}
-                                src={image?.url}
+                                alt="Main Image"
+                                src={getOptimizedImageUrl(image?.url, 480)}
                                 width={480}
                                 height={480}
                                 className="w-full"
-                                priority={key === 0}
-                                loading={key !== 0 ? "lazy" : "eager"}
+                                priority={key === 0} // First image loads eagerly
+                                loading={key !== 0 ? "lazy" : "eager"} // Others lazy-load
                                 placeholder="blur"
-                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
-                            // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..." // Base64 Placeholder
                             />
                         </CarouselItem>
                     ))}
