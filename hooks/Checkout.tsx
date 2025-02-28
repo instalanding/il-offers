@@ -9,46 +9,52 @@ export default function useCheckout() {
   const [loaded, setLoaded] = useState(false);
 
   const searchParams = useSearchParams();
-
   const utm_medium = searchParams.get("utm_medium");
   const utm_source = searchParams.get("utm_source");
   const utm_campaign = searchParams.get("utm_campaign");
-  const utm_term = searchParams.get("utm_term")
-  const utm_id = searchParams.get("utm_id")
-  const utm_content = searchParams.get("utm_content")
+  const utm_term = searchParams.get("utm_term");
+  const utm_id = searchParams.get("utm_id");
+  const utm_content = searchParams.get("utm_content");
 
   const loadScripts = () => {
     if (loaded) return;
+
+    // Load script asynchronously
     const script = document.createElement("script");
-    script.src =
-      "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
+    script.src = "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
+    script.async = true;
     script.defer = true;
     script.onload = () => setLoaded(true);
     document.body.appendChild(script);
 
+    // Load stylesheet asynchronously
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "https://fastrr-boost-ui.pickrr.com/assets/styles/shopify.css";
+    link.onload = () => console.log("Stylesheet loaded");
     document.head.appendChild(link);
   };
 
   useEffect(() => {
-    const handleInteraction = () => {
-      loadScripts();
-      // Remove the event listeners after loading scripts
-      document.removeEventListener("mousemove", handleInteraction);
-      document.removeEventListener("touchstart", handleInteraction);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadScripts();
+          observer.disconnect(); // Stop observing once loaded
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-    // loadScripts();
+    const checkoutButton = document.getElementById("checkoutButton");
+    if (checkoutButton) {
+      observer.observe(checkoutButton);
+    }
 
-    document.addEventListener("mousemove", handleInteraction);
-    document.addEventListener("touchstart", handleInteraction);
-
-    // Cleanup function to remove the event listeners
     return () => {
-      document.removeEventListener("mousemove", handleInteraction);
-      document.removeEventListener("touchstart", handleInteraction);
+      if (checkoutButton) {
+        observer.unobserve(checkoutButton);
+      }
     };
   }, []);
 
@@ -80,4 +86,3 @@ export default function useCheckout() {
 
   return { handleCheckout };
 }
-

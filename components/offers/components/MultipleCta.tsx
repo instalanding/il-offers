@@ -74,28 +74,28 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
         }
     }
 
-    const redirectToExternal = (url: string, cta_type: string) => {
-        let redirectUrl = url;
-        let href = url;
-        const buttonType: string = cta_type;
+    // const redirectToExternal = (url: string, cta_type: string) => {
+    //     let redirectUrl = url;
+    //     let href = url;
+    //     const buttonType: string = cta_type;
 
-        if (buttonType === "amazon") {
-            redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
-        } else {
-            if (/android/i.test(userAgent.toString())) {
-                redirectUrl = `intent:${href.replace(
-                    /^https?:\/\//,
-                    ""
-                )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
-            } else if (
-                /iPad|iPhone|iPod/.test(userAgent.toString()) &&
-                !/windows/i.test(userAgent.toString())
-            ) {
-                redirectUrl = href.startsWith("http") ? href : `https://${href}`;
-            }
-        }
-        window.location.replace(redirectUrl);
-    };
+    //     if (buttonType === "amazon") {
+    //         redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
+    //     } else {
+    //         if (/android/i.test(userAgent.toString())) {
+    //             redirectUrl = `intent:${href.replace(
+    //                 /^https?:\/\//,
+    //                 ""
+    //             )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+    //         } else if (
+    //             /iPad|iPhone|iPod/.test(userAgent.toString()) &&
+    //             !/windows/i.test(userAgent.toString())
+    //         ) {
+    //             redirectUrl = href.startsWith("http") ? href : `https://${href}`;
+    //         }
+    //     }
+    //     window.location.replace(redirectUrl);
+    // };
 
     return (
         <Accordion
