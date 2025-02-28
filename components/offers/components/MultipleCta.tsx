@@ -72,7 +72,6 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             console.error("Error recording click:", error);
         }
     }
-
     return (
         <Accordion
             type="single"
