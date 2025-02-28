@@ -121,7 +121,7 @@ const Footer: React.FC<{
   return (
     <>
       <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
-      <div className="sticky bottom-0 bg-gray-100">
+      <div className="sticky bottom-0 bg-gray-100" onTouchStart={handleTouchStart}>
         <div className="flex flex-col">
           <div
             style={{
