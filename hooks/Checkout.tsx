@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 declare const shiprocketCheckoutEvents: any;
 
@@ -46,6 +46,12 @@ export default function useCheckout() {
     }
   };
 
+  const handleTouchStart = () => {
+    if (!loaded) {
+      loadScripts();
+    }
+  };
+
   const handleCheckout = async (
     e: React.MouseEvent<HTMLButtonElement>,
     variant_id: string,
@@ -80,5 +86,5 @@ export default function useCheckout() {
     });
   };
 
-  return { handleCheckout, handleMouseEnter };
+  return { handleCheckout, handleMouseEnter, handleTouchStart };
 }
