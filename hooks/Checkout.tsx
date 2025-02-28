@@ -7,8 +7,8 @@ declare const shiprocketCheckoutEvents: any;
 
 export default function useCheckout() {
   const [loaded, setLoaded] = useState(false);
-
   const searchParams = useSearchParams();
+
   const utm_medium = searchParams.get("utm_medium");
   const utm_source = searchParams.get("utm_source");
   const utm_campaign = searchParams.get("utm_campaign");
@@ -17,45 +17,39 @@ export default function useCheckout() {
   const utm_content = searchParams.get("utm_content");
 
   const loadScripts = () => {
-    if (loaded) return;
+    if (typeof window === "undefined") return; // Ensure it's client-side
+    if (loaded) return; // Prevent multiple loads
 
-    // Load script asynchronously
-    const script = document.createElement("script");
-    script.src = "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => setLoaded(true);
-    document.body.appendChild(script);
+    // Check if script already exists
+    if (!document.querySelector('script[src*="shopify.js"]')) {
+      const script = document.createElement("script");
+      script.src = "https://fastrr-boost-ui.pickrr.com/assets/js/channels/shopify.js";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => setLoaded(true);
+      document.body.appendChild(script);
+    }
 
-    // Load stylesheet asynchronously
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://fastrr-boost-ui.pickrr.com/assets/styles/shopify.css";
-    link.onload = () => console.log("Stylesheet loaded");
-    document.head.appendChild(link);
+    // Check if stylesheet already exists
+    if (!document.querySelector('link[href*="shopify.css"]')) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://fastrr-boost-ui.pickrr.com/assets/styles/shopify.css";
+      link.onload = () => console.log("Stylesheet loaded");
+      document.head.appendChild(link);
+    }
   };
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          loadScripts();
-          observer.disconnect(); // Stop observing once loaded
-        }
-      },
-      { threshold: 0.1 }
-    );
+    if (typeof window === "undefined") return; // Ensure it's client-side
 
-    const checkoutButton = document.getElementById("checkoutButton");
-    if (checkoutButton) {
-      observer.observe(checkoutButton);
+    // Use requestIdleCallback to load scripts when the browser is free
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => loadScripts());
+    } else {
+      // Fallback: Load script after a delay if requestIdleCallback is not supported
+      setTimeout(() => loadScripts(), 2000);
     }
-
-    return () => {
-      if (checkoutButton) {
-        observer.unobserve(checkoutButton);
-      }
-    };
   }, []);
 
   const handleCheckout = async (
