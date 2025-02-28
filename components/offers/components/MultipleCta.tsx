@@ -12,6 +12,7 @@ import Image from "next/image";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { userAgent } from "next/server";
 
 const MultiCta = ({ value, style, checkoutData }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
@@ -29,6 +30,35 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
         }
     };
 
+    const redirectToExternal = (url: string) => {
+        // Set the external URL you want to redirect to
+        window.location.replace(url);
+      };
+
+    async function redirect(redirect_url: string, cta_type: string) {
+        let redirectUrl = redirect_url;
+        let href = redirect_url;
+        const buttonType: string = cta_type;
+
+        if (buttonType === "amazon") {
+            redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
+        } else {
+            if (/android/i.test(userAgent.toString())) {
+              redirectUrl = `intent:${href.replace(
+                /^https?:\/\//,
+                ""
+              )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+            } else if (
+              /iPad|iPhone|iPod/.test(userAgent.toString()) &&
+              !/windows/i.test(userAgent.toString())
+            ) {
+              redirectUrl = href.startsWith("http") ? href : `https://${href}`;
+            }
+        }
+
+        redirectToExternal(redirectUrl);
+    }
+
     async function recordClicks(
         ctaType: string
     ) {
@@ -42,7 +72,6 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             console.error("Error recording click:", error);
         }
     }
-
     return (
         <Accordion
             type="single"
@@ -104,9 +133,12 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
                                 <p className="text-xs text-left">{cta.subtitle}</p>
                             </div>
                         </div>
-                        <Link href={cta.url} target="_blank" rel="noopener noreferrer">
+                        {/* <Link href={cta.url} target="_blank" rel="noopener noreferrer"> */}
                             <Button
-                                onClick={() => recordClicks(cta.type)}
+                                onClick={() => {
+                                    recordClicks(cta.type)
+                                    redirect(cta.url, cta.type)
+                                }}
                                 style={{
                                     background: cta.color,
                                     color: cta.textColor,
@@ -115,7 +147,7 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
                             >
                                 Buy Now
                             </Button>
-                        </Link>
+                        {/* </Link> */}
                     </AccordionContent>
                 </AccordionItem>
             ))}

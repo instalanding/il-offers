@@ -11,6 +11,8 @@ interface CardProps {
         offerPrice?: { value: string; prefix?: string };
     };
     inventory?: number | null;
+    greatDeal: boolean;
+    mostLoved: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -20,6 +22,8 @@ const Card: React.FC<CardProps> = ({
     onClick,
     priceDetails,
     inventory = null,
+    greatDeal,
+    mostLoved
 }) => {
 
     const isSoldOut = inventory !== null && inventory === 0;
@@ -35,58 +39,71 @@ const Card: React.FC<CardProps> = ({
     }
 
     return (
-        <button
-            onClick={onClick}
-            disabled={isDisabled || isSoldOut}
-            className={`
+        <div className="flex flex-col gap-1">
+            <button
+                onClick={onClick}
+                disabled={isDisabled || isSoldOut}
+                className={`
                 flex flex-col h-auto relative bg-none  text-sm justify-center
                 snap-start flex-shrink-0 border rounded-lg p-3 shadow-lg hover:shadow-xl transition-shadow cursor-pointer
                 ${isSelected
-                    ? "border-1 bg-white border-gray-900 text-black hover:bg-gray-100"
-                    : isSoldOut
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : isDisabled
-                            ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
-                            : "bg-white text-black hover:bg-gray-100"
-                }
+                        ? "border-1 bg-white border-gray-900 text-black hover:bg-gray-100"
+                        : isSoldOut
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : isDisabled
+                                ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : "bg-white text-black hover:bg-gray-100"
+                    }
             `}
-        >
-            {isSoldOut && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                    Sold Out
-                </span>
-            )}
-            <span className="w-full text-center text-xs whitespace-pre-line break-words">
-                {value === "Default Title" ? "" : value.split('|').join('\n')}
-            </span>
-            <div className="flex flex-col justify-center items-center w-full">
-                {originalPrice || offerPrice ? (
-                    <div className="mt-1 flex flex-col-reverse justify-center items-center">
-                        {offerPrice ? (
-                            <span className={`text-lg font-semibold ${isSoldOut ? 'text-gray-400' : 'text-gray-800'}`}>
-                                {offerPrefix}{offerPrice}
-                            </span>
-                        ) : (
-                            <span className={`text-lg ${isSoldOut ? 'text-gray-300' : 'text-gray-800'}`}>
-                                {originalPrefix}{originalPrice}
-                            </span>
-                        )}
-
-                        {originalPrice && offerPrice && parseFloat(originalPrice) > parseFloat(offerPrice) && (
-                            <span className={`text-xs line-through ${isSoldOut ? 'text-gray-400' : 'text-gray-400'}`}>
-                                {originalPrefix}{originalPrice}
-                            </span>
-                        )}
-                    </div>
-                ) : null}
-
-                {discountText && (
-                    <p className={` text-xs mt-1 ${isSoldOut ? 'text-red-300' : 'text-red-600'}`}>
-                        {discountText}
-                    </p>
+            >
+                {isSoldOut && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        Sold Out
+                    </span>
                 )}
-            </div>
-        </button>
+                <span className="w-full text-center text-xs whitespace-pre-line break-words">
+                    {value === "Default Title" ? "" : value.split('|').join('\n')}
+                </span>
+                <div className="flex flex-col justify-center items-center w-full">
+                    {originalPrice || offerPrice ? (
+                        <div className="mt-1 flex flex-col-reverse justify-center items-center">
+                            {offerPrice ? (
+                                <span className={`text-lg font-semibold ${isSoldOut ? 'text-gray-400' : 'text-gray-800'}`}>
+                                    {offerPrefix}{offerPrice}
+                                </span>
+                            ) : (
+                                <span className={`text-lg ${isSoldOut ? 'text-gray-300' : 'text-gray-800'}`}>
+                                    {originalPrefix}{originalPrice}
+                                </span>
+                            )}
+
+                            {originalPrice && offerPrice && parseFloat(originalPrice) > parseFloat(offerPrice) && (
+                                <span className={`text-xs line-through ${isSoldOut ? 'text-gray-400' : 'text-gray-400'}`}>
+                                    {originalPrefix}{originalPrice}
+                                </span>
+                            )}
+                        </div>
+                    ) : null}
+
+                    {discountText && (
+                        <p className={` text-xs mt-1 ${isSoldOut ? 'text-red-300' : 'text-red-600'}`}>
+                            {discountText}
+                        </p>
+                    )}
+                </div>
+            </button>
+            {/* comment lines below in case we want to hide the highlighted tags */}
+            {mostLoved && (
+                <div className="flex items-center justify-center w-full transform  bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-sm shadow-lg animate-pulse">
+                    ❤️ Most Loved
+                </div>
+            )}
+            {greatDeal && (
+                <div className="flex items-center justify-center w-full transform bg-gradient-to-r from-blue-500 to-green-500 text-white text-xs font-bold px-3 py-1 rounded-sm shadow-lg ">
+                    🔥 Great Deal
+                </div>
+            )}
+        </div >
     );
 };
 

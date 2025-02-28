@@ -40,25 +40,32 @@ interface VariantsComponentProps {
         };
     };
     style?: React.CSSProperties;
-    collections: {
-        variants: Array<VariantOption>;
+    collections?: {
+        variants?: Array<VariantOption>;
     };
 }
 
 const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, collections }) => {
-
     const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
     const [currentVariant, setCurrentVariant] = useState<string | null>(null);
     const [productHandle, setProductHandle] = useState<string | null>(null);
 
-    const sortedVariants = [...collections.variants].sort((a, b) => {
-        const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
-        const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
-        return priceA - priceB;
-    });
+    // Move sortedVariants inside useEffect or memoize it
+    const sortedVariants = React.useMemo(() => {
+        if (!collections?.variants || collections.variants.length === 0) {
+            return [];
+        }
+        return [...collections.variants].sort((a, b) => {
+            const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
+            const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
+            return priceA - priceB;
+        });
+    }, [collections?.variants]);
 
     useEffect(() => {
         const initializeVariants = () => {
+            if (sortedVariants.length === 0) return;
+
             const urlParams = new URLSearchParams(window.location.search);
             const variantId = urlParams.get("variant");
 
@@ -93,7 +100,10 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
         };
 
         initializeVariants();
-    }, [collections.variants]);
+    }, [sortedVariants]);
+
+    // Early return after hooks
+    if (sortedVariants.length === 0) return null;
 
     const updateURL = (variantId: string | null, handle: string | undefined) => {
         if (variantId && handle) {
@@ -123,8 +133,6 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
         }
     };
 
-    if (!sortedVariants.length) return null;
-
     const renderVariantOptions = () => {
         const optionGroups = sortedVariants.reduce((acc, variant) => {
             Object.entries(variant.variant_options).forEach(([key, val]) => {
@@ -136,9 +144,23 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             return acc;
         }, {} as { [key: string]: Set<string> });
 
+        // Determine the maximum discount variant
+        const maxDiscountVariant = sortedVariants.reduce<{ variant: VariantOption | null; discount: number }>((max, variant) => {
+            const currentDiscount = parseFloat(variant.price.originalPrice?.value || "0") - parseFloat(variant.price.offerPrice?.value || "0");
+            if (!max.variant || currentDiscount > max.discount) {
+                return { variant, discount: currentDiscount };
+            }
+            return max;
+        }, { variant: null, discount: 0 });
+
+        const isUniqueMaxDiscount = sortedVariants.filter(variant => {
+            const currentDiscount = parseFloat(variant.price.originalPrice?.value || "0") - parseFloat(variant.price.offerPrice?.value || "0");
+            return currentDiscount === maxDiscountVariant.discount;
+        }).length === 1;
+
         return Object.entries(optionGroups)
             .sort()
-            .map(([optionKey, values]) => {
+            .map(([optionKey, values], index) => {
                 const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
                 if (!optionConfig?.enabled) return null;
 
@@ -149,9 +171,12 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                             flex justify-start flex-wrap gap-2 
                             ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
                         `}>
-                            {Array.from(values).map((optionValue) => {
+                            {Array.from(values).map((optionValue, valueIndex) => {
                                 const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
                                 const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
+
+                                const isMostLoved = valueIndex === 0;
+                                const isGreatDeal = isUniqueMaxDiscount && variant === maxDiscountVariant.variant && !isMostLoved;
 
                                 return (
                                     <Component
@@ -162,6 +187,8 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                         onClick={() => handleOptionSelect(optionKey, optionValue)}
                                         priceDetails={variant?.price}
                                         inventory={variant?.inventory !== undefined ? variant.inventory : null}
+                                        greatDeal={isGreatDeal}
+                                        mostLoved={isMostLoved}
                                     />
                                 );
                             })}
