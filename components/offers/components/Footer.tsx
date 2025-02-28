@@ -50,7 +50,7 @@ const Footer: React.FC<{
   handleIncrease: any;
   handleDecrease: any;
 }> = ({ config, price, quantity, handleIncrease, handleDecrease, checkoutData }) => {
-  const { handleCheckout } = useCheckout();
+  const { handleCheckout, handleMouseEnter } = useCheckout();
   const router = useRouter();
 
   const getVisitorId = async () => {
@@ -211,6 +211,7 @@ const Footer: React.FC<{
               )}
               <Button
                 onClick={handleCheckoutButtonClick}
+                onMouseEnter={handleMouseEnter}
                 disabled={isSoldOut}
                 className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
                 ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
