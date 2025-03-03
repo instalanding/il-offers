@@ -1,13 +1,12 @@
-"use client";
 
 import { useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
 declare const shiprocketCheckoutEvents: any;
 
-export default function useCheckout() {
+export default function useMobileCheckout() {
   const [loaded, setLoaded] = useState(false);
-  const scriptLoaded = useRef(false); // ✅ Track script load state with ref
+  const scriptLoaded = useRef(false);
 
   const searchParams = useSearchParams();
   const utm_medium = searchParams.get("utm_medium");

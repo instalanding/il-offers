@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 // import { TbShoppingBagPlus } from "react-icons/tb";
-
+import { isMobile } from "react-device-detect";
 interface Config {
   primaryColor: string;
   secondaryColor: string;
@@ -51,6 +51,7 @@ const Footer: React.FC<{
   handleDecrease: any;
 }> = ({ config, price, quantity, handleIncrease, handleDecrease, checkoutData }) => {
   const { handleCheckout, handleMouseEnter, handleTouchStart } = useCheckout();
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const getVisitorId = async () => {
@@ -66,17 +67,27 @@ const Footer: React.FC<{
     }
   };
 
-  const handleCheckoutButtonClick = async (e: React.MouseEvent) => {
+  const handleCheckoutButtonClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    setLoading(true)
     try {
-      if (checkoutData.checkout_name === "shiprocket" || checkoutData.checkout_name === "fastr" || checkoutData.checkout_name === "fastrr") {
-        handleCheckout(
-          e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
-          checkoutData.variant_id,
-          checkoutData.offer_id,
-          checkoutData.coupon_code,
-          checkoutData.utm_params,
-          quantity
-        );
+      if (isMobile) {
+        handleTouchStart();
+      }
+      if (
+        checkoutData.checkout_name === "shiprocket" ||
+        checkoutData.checkout_name === "fastr" ||
+        checkoutData.checkout_name === "fastrr"
+      ) {
+        setTimeout(() => {
+          handleCheckout(
+            e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
+            checkoutData.variant_id,
+            checkoutData.offer_id,
+            checkoutData.coupon_code,
+            checkoutData.utm_params,
+            quantity
+          );
+        }, 1000);
       } else if (checkoutData.checkout_name === "shopify") {
         router.push(
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
@@ -86,7 +97,6 @@ const Footer: React.FC<{
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
         );
       }
-
       recordClicks();
       if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
         checkoutData.pixel.forEach((pixelId) => {
@@ -103,6 +113,8 @@ const Footer: React.FC<{
       }
     } catch (error) {
       console.error("Error during checkout:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -209,23 +221,32 @@ const Footer: React.FC<{
                   </button>
                 </div>
               )}
-              <Button
-                onClick={handleCheckoutButtonClick}
-                onMouseEnter={handleMouseEnter}
-                onTouchStart={handleTouchStart}
-                disabled={isSoldOut}
-                className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
+              {
+                loading ?
+                  <Button
+                    className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg`}
+                    disabled={loading}
+                    style={{
+                      backgroundColor: config.primaryColor,
+                      color: config.secondaryColor,
+                    }}
+                  >Loading...</Button> : <Button
+                    onClick={handleCheckoutButtonClick}
+                    onMouseEnter={handleMouseEnter}
+                    onTouchStart={handleTouchStart}
+                    disabled={isSoldOut}
+                    className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
                 ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
-                style={{
-                  backgroundColor: config.primaryColor,
-                  color: config.secondaryColor,
-                }}
-              >
-                {isSoldOut ? 'Sold Out' : <>{config.buttonText}</>}
-              </Button>
+                    style={{
+                      backgroundColor: config.primaryColor,
+                      color: config.secondaryColor,
+                    }}
+                  >
+                    {isSoldOut ? 'Sold Out' : <>{config.buttonText}</>}
+                  </Button>
+              }
             </div>
           </div>
-
         </div>
       </div>
     </>
