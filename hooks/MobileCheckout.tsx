@@ -1,13 +1,12 @@
-"use client";
 
 import { useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
 declare const shiprocketCheckoutEvents: any;
 
-export default function useCheckout() {
+export default function useMobileCheckout() {
   const [loaded, setLoaded] = useState(false);
-  const scriptLoaded = useRef(false); // ✅ Track script load state with ref
+  const scriptLoaded = useRef(false);
 
   const searchParams = useSearchParams();
   const utm_medium = searchParams.get("utm_medium");
@@ -41,18 +40,6 @@ export default function useCheckout() {
     link.href = "https://fastrr-boost-ui.pickrr.com/assets/styles/shopify.css";
     document.head.appendChild(link);
   };
-
-  const isMobileDevice = () => {
-    if (typeof window === "undefined") return false;
-    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  };
-
-  useEffect(() => {
-    if (isMobileDevice()) {
-      console.log("User is on a mobile device, loading scripts...");
-      loadScripts();
-    }
-  }, []);
 
   const handleMouseEnter = () => {
     if (!loaded) {

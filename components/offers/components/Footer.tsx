@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 // import { TbShoppingBagPlus } from "react-icons/tb";
+import { isMobile } from "react-device-detect";
+import { FaSpinner } from "react-icons/fa";
 
 interface Config {
   primaryColor: string;
@@ -49,8 +51,16 @@ const Footer: React.FC<{
   quantity: number;
   handleIncrease: any;
   handleDecrease: any;
-}> = ({ config, price, quantity, handleIncrease, handleDecrease, checkoutData }) => {
+}> = ({
+  config,
+  price,
+  quantity,
+  handleIncrease,
+  handleDecrease,
+  checkoutData,
+}) => {
   const { handleCheckout, handleMouseEnter, handleTouchStart } = useCheckout();
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const getVisitorId = async () => {
@@ -66,17 +76,30 @@ const Footer: React.FC<{
     }
   };
 
-  const handleCheckoutButtonClick = async (e: React.MouseEvent) => {
+  const handleCheckoutButtonClick = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    // setLoading(true);
     try {
-      if (checkoutData.checkout_name === "shiprocket" || checkoutData.checkout_name === "fastr" || checkoutData.checkout_name === "fastrr") {
-        handleCheckout(
-          e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
-          checkoutData.variant_id,
-          checkoutData.offer_id,
-          checkoutData.coupon_code,
-          checkoutData.utm_params,
-          quantity
-        );
+      if (isMobile) {
+        handleTouchStart();
+      }
+      if (
+        checkoutData.checkout_name === "shiprocket" ||
+        checkoutData.checkout_name === "fastr" ||
+        checkoutData.checkout_name === "fastrr"
+      ) {
+        setTimeout(() => {
+          console.log("checkout called");
+          handleCheckout(
+            e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
+            checkoutData.variant_id,
+            checkoutData.offer_id,
+            checkoutData.coupon_code,
+            checkoutData.utm_params,
+            quantity
+          );
+        }, 3000);
       } else if (checkoutData.checkout_name === "shopify") {
         router.push(
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
@@ -86,7 +109,6 @@ const Footer: React.FC<{
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
         );
       }
-
       recordClicks();
       if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
         checkoutData.pixel.forEach((pixelId) => {
@@ -103,6 +125,10 @@ const Footer: React.FC<{
       }
     } catch (error) {
       console.error("Error during checkout:", error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 6000);
     }
   };
 
@@ -113,15 +139,21 @@ const Footer: React.FC<{
         `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&visitor_id=${visitorId}&campaign_id=${checkoutData.campaign_id}`,
         {}
       );
-    } catch (error) { }
+    } catch (error) {}
   }
 
-  const isSoldOut = checkoutData.inventory !== undefined && checkoutData.inventory === 0;
+  const isSoldOut =
+    checkoutData.inventory !== undefined && checkoutData.inventory === 0;
+
+  console.log(loading);
 
   return (
     <>
       <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
-      <div className="sticky bottom-0 bg-gray-100" onTouchStart={handleTouchStart}>
+      <div
+        className="sticky bottom-0 bg-gray-100"
+        onTouchStart={handleTouchStart}
+      >
         <div className="flex flex-col">
           <div
             style={{
@@ -139,7 +171,7 @@ const Footer: React.FC<{
               {price?.offerPrice?.value ? (
                 <div className="flex flex-col gap-1 px-2">
                   {price?.originalPrice?.value &&
-                    parseFloat(price.offerPrice.value) <
+                  parseFloat(price.offerPrice.value) <
                     parseFloat(price.originalPrice.value) ? (
                     <div className="flex flex-col justify-center items-start">
                       {/* Offer Price on top */}
@@ -189,7 +221,7 @@ const Footer: React.FC<{
                   )}
                 </p>
               ) : (
-                ''
+                ""
               )}
             </div>
             <div className="flex gap-2">
@@ -204,28 +236,43 @@ const Footer: React.FC<{
                     <IoIosRemove size={18} />
                   </button>
                   <span className="text-lg font-semibold">{quantity}</span>
-                  <button onClick={handleIncrease} >
+                  <button onClick={handleIncrease}>
                     <IoIosAdd size={18} />
                   </button>
                 </div>
               )}
-              <Button
-                onClick={handleCheckoutButtonClick}
-                onMouseEnter={handleMouseEnter}
-                onTouchStart={handleTouchStart}
-                disabled={isSoldOut}
-                className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
-                ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
-                style={{
-                  backgroundColor: config.primaryColor,
-                  color: config.secondaryColor,
-                }}
-              >
-                {isSoldOut ? 'Sold Out' : <>{config.buttonText}</>}
-              </Button>
+              {loading ? (
+                <Button
+                  className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg`}
+                  disabled={loading}
+                  style={{
+                    backgroundColor: config.primaryColor,
+                    color: config.secondaryColor,
+                  }}
+                >
+                  <FaSpinner className="animate-spin" /> Processing...
+                </Button>
+              ) : (
+                <Button
+                  onClick={(e) => {
+                    setLoading(true);
+                    handleCheckoutButtonClick(e);
+                  }}
+                  onMouseEnter={handleMouseEnter}
+                  onTouchStart={handleTouchStart}
+                  disabled={isSoldOut}
+                  className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
+                ${isSoldOut ? "opacity-50 cursor-not-allowed" : ""}`}
+                  style={{
+                    backgroundColor: config.primaryColor,
+                    color: config.secondaryColor,
+                  }}
+                >
+                  {isSoldOut ? "Sold Out" : <>{config.buttonText}</>}
+                </Button>
+              )}
             </div>
           </div>
-
         </div>
       </div>
     </>
