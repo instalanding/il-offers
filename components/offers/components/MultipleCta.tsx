@@ -33,7 +33,7 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
     const redirectToExternal = (url: string) => {
         // Set the external URL you want to redirect to
         window.location.replace(url);
-      };
+    };
 
     async function redirect(redirect_url: string, cta_type: string) {
         let redirectUrl = redirect_url;
@@ -44,15 +44,15 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
         } else {
             if (/android/i.test(userAgent.toString())) {
-              redirectUrl = `intent:${href.replace(
-                /^https?:\/\//,
-                ""
-              )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
+                redirectUrl = `intent:${href.replace(
+                    /^https?:\/\//,
+                    ""
+                )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
             } else if (
-              /iPad|iPhone|iPod/.test(userAgent.toString()) &&
-              !/windows/i.test(userAgent.toString())
+                /iPad|iPhone|iPod/.test(userAgent.toString()) &&
+                !/windows/i.test(userAgent.toString())
             ) {
-              redirectUrl = href.startsWith("http") ? href : `https://${href}`;
+                redirectUrl = href.startsWith("http") ? href : `https://${href}`;
             }
         }
 
@@ -77,7 +77,7 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             type="single"
             collapsible
             onValueChange={(value) => setOpenAccordion(value)}
-            className="flex flex-col gap-3"
+            className="flex flex-col gap-2"
             style={style}
         >
             {value.map((cta: any) => (
@@ -134,19 +134,19 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
                             </div>
                         </div>
                         {/* <Link href={cta.url} target="_blank" rel="noopener noreferrer"> */}
-                            <Button
-                                onClick={() => {
-                                    recordClicks(cta.type)
-                                    redirect(cta.url, cta.type)
-                                }}
-                                style={{
-                                    background: cta.color,
-                                    color: cta.textColor,
-                                }}
-                                className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap"
-                            >
-                                Buy Now
-                            </Button>
+                        <Button
+                            onClick={() => {
+                                recordClicks(cta.type)
+                                redirect(cta.url, cta.type)
+                            }}
+                            style={{
+                                background: cta.color,
+                                color: cta.textColor,
+                            }}
+                            className="min-h-10 cursor-pointer rounded-md px-6 py-[2px] font-medium flex items-center whitespace-nowrap"
+                        >
+                            Buy Now
+                        </Button>
                         {/* </Link> */}
                     </AccordionContent>
                 </AccordionItem>
