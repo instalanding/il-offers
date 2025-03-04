@@ -116,7 +116,6 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             );
         }
     };
-
     const handleOptionSelect = (optionKey: string, optionValue: string) => {
         // Immediately update the selected options
         const newSelections = { ...selectedOptions, [optionKey]: optionValue };
@@ -157,6 +156,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             const currentDiscount = parseFloat(variant.price.originalPrice?.value || "0") - parseFloat(variant.price.offerPrice?.value || "0");
             return currentDiscount === maxDiscountVariant.discount;
         }).length === 1;
+    
 
         return Object.entries(optionGroups)
             .sort()
@@ -176,8 +176,10 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                 const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
 
                                 const isMostLoved = valueIndex === 0;
-                                const isGreatDeal = isUniqueMaxDiscount && variant === maxDiscountVariant.variant && !isMostLoved;
-
+                                // const isGreatDeal = isUniqueMaxDiscount && variant === maxDiscountVariant.variant && !isMostLoved
+                                const isGreatDeal =maxDiscountVariant.variant && !isMostLoved &&  maxDiscountVariant.variant 
+                                ? parseFloat(variant?.price.originalPrice?.value || "0") - parseFloat(variant?.price.offerPrice?.value || "0") === maxDiscountVariant.discount 
+                                : false;
                                 return (
                                     <Component
                                         key={optionValue}

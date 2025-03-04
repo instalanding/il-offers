@@ -102,12 +102,12 @@ const Card: React.FC<CardProps> = ({
                 </div>
                 <>
                     {greatDeal && !noTags && (
-                        <div className="flex gap-1 items-center justify-center w-full bg-[#546327] text-white text-xs font-normal px-2 py-[2px] rounded-b-sm shadow-md ">
+                        <div className="flex gap-1 items-center justify-center w-full bg-[#546327] text-white text-xs font-normal px-2 py-[2px] rounded-b-lg shadow-md ">
                             <RiMoneyRupeeCircleFill size={14} color="#EC8A1A" /> Best Deal
                         </div>
                     )}
                     {recommended && (
-                        <div className="flex gap-1 items-center justify-center w-full bg-[#546327] text-white text-xs font-normal px-2 py-[2px] rounded-b-sm shadow-md">
+                        <div className="flex gap-1 items-center justify-center w-full bg-[#546327] text-white text-xs font-normal px-2 py-[2px] rounded-b-lg shadow-md">
                             <FaStar color="#EC8A1A" /> Recommended
                         </div>
                     )}
