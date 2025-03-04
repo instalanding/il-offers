@@ -103,17 +103,17 @@ const Card: React.FC<CardProps> = ({
                 // <div className="flex gap-1 items-center justify-center w-full bg-red-600 text-white text-xs font-normal px-2 py-0.5 rounded-sm shadow-md">
                 //     <IoHeartCircle size={14} /> Most Loved
                 // </div>
-                <div className="flex gap-1 items-center justify-center w-full bg-[#F7D1DB] text-[#FD4D77] text-xs font-normal px-2 py-0.5 rounded-sm shadow-md">
+                <div className="flex gap-1 items-center justify-center w-full bg-[#F7D1DB] text-[#FD4D77] text-xs font-normal px-2 py-0.5 rounded-lg shadow-md">
                     <IoHeartCircle size={16} color="#FD4D77" /> Most Loved
                 </div>
             )}
             {greatDeal && !noTags && (
-                <div className="flex gap-1 items-center justify-center w-full bg-[#D4ECF5] text-[#25A0CE] text-xs font-normal px-2 py-0.5 rounded-sm shadow-md ">
+                <div className="flex gap-1 items-center justify-center w-full bg-[#D4ECF5] text-[#25A0CE] text-xs font-normal px-2 py-0.5 rounded-lg shadow-md ">
                     <FaFireAlt color="#25A0CE" /> Great Deal
                 </div>
             )}
             {recommended && (
-                <div className="flex gap-1 items-center justify-center w-full bg-[#546327] text-white text-xs font-normal px-2 py-0.5 rounded-sm shadow-md">
+                <div className="flex gap-1 items-center justify-center w-full bg-[#546327] text-white text-xs font-normal px-2 py-0.5 rounded-lg shadow-md">
                     <FaStar color="#EC8A1A" /> Recommended
                 </div>
             )}
