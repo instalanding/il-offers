@@ -79,6 +79,7 @@ const Footer: React.FC<{
         checkoutData.checkout_name === "fastrr"
       ) {
         setTimeout(() => {
+          console.log("checkout called")
           handleCheckout(
             e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
             checkoutData.variant_id,
@@ -87,7 +88,7 @@ const Footer: React.FC<{
             checkoutData.utm_params,
             quantity
           );
-        }, 1000);
+        }, 2000);
       } else if (checkoutData.checkout_name === "shopify") {
         router.push(
           `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
