@@ -29,9 +29,9 @@ const ReviewsComponent: React.FC<RatingsComponentProps> = ({ value, style }) => 
     const totalStars = 5;
 
     return (
-        <div style={{ ...style, overflow: "visible" }} className="flex flex-col">
+        <div style={{ ...style, overflow: "visible" }} className="flex flex-col gap-1">
             <h3 className="text-lg text-center font-medium">{value.title}</h3>
-            <p className="text-sm text-center font-light mb-2">{value.subtitle}</p>
+            <p className="text-sm text-center font-light">{value.subtitle}</p>
 
             {value.reviewType === "slider" ? (
                 <Slider reviews={reviews} totalStars={totalStars} Star={Star} />
