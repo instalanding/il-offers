@@ -42,6 +42,18 @@ export default function useCheckout() {
     document.head.appendChild(link);
   };
 
+  const isMobileDevice = () => {
+    if (typeof window === "undefined") return false;
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  };
+
+  useEffect(() => {
+    if (isMobileDevice()) {
+      console.log("User is on a mobile device, loading scripts...");
+      loadScripts();
+    }
+  }, []);
+
   const handleMouseEnter = () => {
     if (!loaded) {
       loadScripts();

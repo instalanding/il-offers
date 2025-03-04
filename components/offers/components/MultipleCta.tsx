@@ -35,7 +35,7 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
         window.location.replace(url);
       };
 
-    async function  redirect(redirect_url: string, cta_type:string) {
+    async function redirect(redirect_url: string, cta_type: string) {
         let redirectUrl = redirect_url;
         let href = redirect_url;
         const buttonType: string = cta_type;
@@ -56,8 +56,7 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             }
         }
 
-        redirectToExternal(redirectUrl)
-
+        redirectToExternal(redirectUrl);
     }
 
     async function recordClicks(
@@ -73,30 +72,6 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             console.error("Error recording click:", error);
         }
     }
-
-    // const redirectToExternal = (url: string, cta_type: string) => {
-    //     let redirectUrl = url;
-    //     let href = url;
-    //     const buttonType: string = cta_type;
-
-    //     if (buttonType === "amazon") {
-    //         redirectUrl = `${process.env.NEXT_PUBLIC_REDIRECT_SCRIPT_URL}amazon-redirect/?redirect_url=${href}&ctatype=${buttonType}`;
-    //     } else {
-    //         if (/android/i.test(userAgent.toString())) {
-    //             redirectUrl = `intent:${href.replace(
-    //                 /^https?:\/\//,
-    //                 ""
-    //             )}#Intent;package=com.android.chrome;scheme=https;action=android.intent.action.VIEW;end;`;
-    //         } else if (
-    //             /iPad|iPhone|iPod/.test(userAgent.toString()) &&
-    //             !/windows/i.test(userAgent.toString())
-    //         ) {
-    //             redirectUrl = href.startsWith("http") ? href : `https://${href}`;
-    //         }
-    //     }
-    //     window.location.replace(redirectUrl);
-    // };
-
     return (
         <Accordion
             type="single"
