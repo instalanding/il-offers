@@ -34,6 +34,7 @@ interface CampaignData {
         header_text: string;
         footer_text: string;
         button_text: string;
+        cloudinary_params: string;
     };
     price: {
         offerPrice: {
@@ -273,7 +274,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                     {blocks.map((block: Block) => {
                         switch (block.type) {
                             case 'carousel':
-                                return <CarouselComponent key={block.id} images={block.images || []} />;
+                                return <CarouselComponent prefix={campaign.config.cloudinary_params} key={block.id} images={block.images || []} />;
                             case 'text':
                                 return (
                                     <TextComponent

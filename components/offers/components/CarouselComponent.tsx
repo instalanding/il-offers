@@ -2,7 +2,7 @@ import React from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Image from 'next/image';
 
-const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) => {
+const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }> = ({ images, prefix }) => {
     const placeholderImages = [
         { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" },
         { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" },
@@ -10,16 +10,16 @@ const CarouselComponent: React.FC<{ images: { url: string }[] }> = ({ images }) 
     ];
 
     const finalImages = (images && images.length > 0) ? images : placeholderImages;
-
     return (
         <div>
             <Carousel>
                 <CarouselContent>
                     {finalImages.map((image, key) => (
+                        console.log("Image URL: ", prefix + image?.url),
                         <CarouselItem key={key}>
                             <Image
                                 alt={"Main Image"}
-                                src={image?.url}
+                                src={prefix + image?.url}
                                 width={480}
                                 height={480}
                                 className="w-full"
