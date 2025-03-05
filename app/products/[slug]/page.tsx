@@ -9,7 +9,7 @@ import { headers } from 'next/headers';
 import { isValidDomain } from '@/utils/domainUtils';
 
 // Cache time in seconds (10 minutes)
-const REVALIDATE_TIME = 600;
+const REVALIDATE_TIME = 1;
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
@@ -21,7 +21,7 @@ const getCampaign = async (slug: string, variant_id?: string) => {
 
     const response = await fetch(
       `${process.env.API_URL_V2}campaign?${query.toString()}`,
-      { 
+      {
         next: { revalidate: REVALIDATE_TIME }
       }
     );
@@ -99,10 +99,10 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
       </div>
     );
   }
-  
+
   // Parse blocks efficiently
-  const blocks = typeof data.blocks === 'string' 
-    ? JSON.parse(data.blocks || '[]') 
+  const blocks = typeof data.blocks === 'string'
+    ? JSON.parse(data.blocks || '[]')
     : (Array.isArray(data.blocks) ? data.blocks : []);
 
   // Format reviews if they exist
@@ -114,7 +114,7 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   })) || [];
 
   const fontFamily = data?.config?.font_family || "Inter";
-  
+
   // Prepare campaign data with collections and reviews
   const campaignData = {
     ...data,
