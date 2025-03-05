@@ -1,21 +1,26 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import CarouselComponent from './components/CarouselComponent';
-import AccordionComponent from './components/AccordionComponent';
-import HtmlComponent from './components/HtmlComponent';
 import TextComponent from './components/TextComponent';
-import RatingsComponent from './components/RatingsComponent';
-import MultipleCta from './components/MultipleCta';
-import VariantsComponent from './components/VariantsComponent'
-import ReviewsComponent from './components/ReviewsComponent';
-import Checkout from './components/Checkout';
-import Ticker from './components/Ticker'
-import Tags from './components/Tags';
-import RecordImpressions from '../recordImpressions/page';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
+
+// Dynamically import heavy components
+const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), { 
+  loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div> 
+});
+const AccordionComponent = dynamic(() => import('./components/AccordionComponent'));
+const HtmlComponent = dynamic(() => import('./components/HtmlComponent'));
+const RatingsComponent = dynamic(() => import('./components/RatingsComponent'));
+const MultipleCta = dynamic(() => import('./components/MultipleCta'));
+const VariantsComponent = dynamic(() => import('./components/VariantsComponent'));
+const ReviewsComponent = dynamic(() => import('./components/ReviewsComponent'));
+const Checkout = dynamic(() => import('./components/Checkout'));
+const Ticker = dynamic(() => import('./components/Ticker'));
+const Tags = dynamic(() => import('./components/Tags'));
+const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
 
 interface CampaignData {
     _id: string,
