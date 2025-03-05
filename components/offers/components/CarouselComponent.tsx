@@ -15,7 +15,6 @@ const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }>
             <Carousel>
                 <CarouselContent>
                     {finalImages.map((image, key) => (
-                        console.log("Image URL: ", prefix + image?.url),
                         <CarouselItem key={key}>
                             <Image
                                 alt={"Main Image"}
