@@ -41,43 +41,6 @@ const getCampaign = async (slug: string, variant_id?: string) => {
   }
 };
 
-const getVariantCollection = async (slug: string, variant_id: string) => {
-  try {
-    const response = await fetch(
-      `${process.env.API_URL_V2}collection?slug=${slug}&variant_id=${variant_id}`, {
-      next: { revalidate: REVALIDATE_TIME }
-    });
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      console.error("Error fetching collections:", errorResponse);
-      throw new Error("Failed to fetch collections");
-    }
-    const data = await response.json();
-    return data.data;
-  } catch (error) {
-    console.log(error);
-    return [];
-  }
-}
-
-const getReviews = async (product_handle: string) => {
-  try {
-    const response = await fetch(`${process.env.API_URL_V2}/reviews?slug=${product_handle}`, {
-      next: { revalidate: REVALIDATE_TIME }
-    });
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      console.error("Error fetching reviews:", errorResponse);
-      throw new Error("Failed to fetch reviews");
-    }
-    const data = await response.json();
-    return data.statusCode.data;
-  } catch (error) {
-    console.log(error);
-    return [];
-  }
-};
-
 type SearchParams = {
   os?: string;
   cpu?: string;
@@ -109,7 +72,7 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
     utm_params.variant = variant_id;
   }
 
-  // Fetch initial campaign data
+  // Fetch campaign data (now includes collections and reviews)
   const data = await getCampaign(slug, variant_id);
 
   if (!data) {
@@ -136,24 +99,14 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
       </div>
     );
   }
-
-  // Parse blocks only once and efficiently
+  
+  // Parse blocks efficiently
   const blocks = typeof data.blocks === 'string' 
     ? JSON.parse(data.blocks || '[]') 
     : (Array.isArray(data.blocks) ? data.blocks : []);
 
-  // Check for specific block types to determine if we need to fetch additional data
-  const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
-  const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
-
-  // Fetch additional data in parallel if needed
-  const [reviews, collections] = await Promise.all([
-    hasReviewsBlock ? getReviews(data.product_handle) : Promise.resolve([]),
-    hasVariantsBlock ? getVariantCollection(data.product_handle, data.variant_id) : Promise.resolve([])
-  ]);
-
-  // Format reviews data only if we have reviews
-  const formattedReviews = reviews?.map((review: any) => ({
+  // Format reviews if they exist
+  const formattedReviews = data.reviews?.map((review: any) => ({
     userName: review.reviewer_name,
     comment: review.review_body_text,
     rating: review.review_rating,
@@ -161,17 +114,20 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   })) || [];
 
   const fontFamily = data?.config?.font_family || "Inter";
+  
+  // Prepare campaign data with collections and reviews
+  const campaignData = {
+    ...data,
+    config: { ...data.config, font_family: fontFamily },
+    reviews: formattedReviews,
+    collections: data.collections || {}
+  };
 
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
       <Campaigns
-        campaignData={{ 
-          ...data, 
-          config: { ...data.config, font_family: fontFamily }, 
-          reviews: formattedReviews, 
-          collections 
-        }}
+        campaignData={campaignData}
         utm_params={utm_params}
         userIp={userIp}
         preserveParams={true}
