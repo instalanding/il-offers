@@ -40,8 +40,8 @@ const Card: React.FC<CardProps> = ({
     }
 
     // hardcoded: for cureveda we have to show recommended tag for results pack and disable other tags
-    const recommended = value.toLowerCase().includes("results pack");
-    const noTags = value.toLowerCase().includes("results pack") || value.toLowerCase().includes("starter pack") || value.toLowerCase().includes("value pack");
+    const recommended = value.toLowerCase().includes("results pack") || value.toLowerCase().includes("result pack");
+    const noTags = value.toLowerCase().includes("results pack") || value.toLowerCase().includes("starter pack") || value.toLowerCase().includes("value pack") || value.toLowerCase().includes("progress pack") || value.toLowerCase().includes("result pack");
 
     return (
         <div className="flex flex-col gap-1">
