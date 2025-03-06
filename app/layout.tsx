@@ -29,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <SpeedInsights/>
+      {/* <SpeedInsights/> */}
         {/* <GoogleTagManager gtmId="GTM-P6D6G8DC" /> */}
         <body className={openSans.className}>
           <Toaster />
