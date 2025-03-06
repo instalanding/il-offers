@@ -23,7 +23,6 @@ interface CampaignData {
     product_handle: string,
     offer_id: string,
     variant_id: string,
-    coupon_code: string;
     color?: string;
     size?: string;
     blocks: string;
@@ -109,6 +108,13 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     const [error, setError] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
 
+    // cureveda strawberry variant IDs that should have default quantity of 2 for bogo coupon
+    const specialVariantIds = [
+        '41056148652078',
+        '41056148684846',
+        '41056148717614'
+    ];
+
     const handleIncrease = () => {
         setQuantity((prev) => prev + 1);
     };
@@ -133,7 +139,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                 price: newVariant.price,
                 variant_options: newVariant.variant_options,
                 blocks: newVariant.blocks,
-                config: newVariant.config
+                config: newVariant.config,
+                advertiser: newVariant.advertiser,
             }));
         }
     };
@@ -165,10 +172,38 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         setCampaign(campaignData);
     }, [campaignData]);
 
+    // Initial URL handling
+    useEffect(() => {
+        const currentUrl = new URL(window.location.href);
+        const params = new URLSearchParams(currentUrl.search);
+        const variantId = params.get('variant');
+
+        // Set quantity to 2 for special variant IDs
+        if (variantId && specialVariantIds.includes(variantId)) {
+            setQuantity(2);
+        }
+
+        if (preserveParams) {
+            updateUrlWithParams(variantId);
+        }
+
+        if (campaignData.collections?.variants) {
+            updateCampaignVariant(campaignData.collections.variants, variantId);
+        }
+    }, [campaignData, utm_params]);
+
     // Listen for variant changes
     useEffect(() => {
         const handleVariantChange = (event: CustomEvent) => {
             const variantId = event.detail.variantId;
+
+            // Set quantity to 2 for special variant IDs
+            if (variantId && specialVariantIds.includes(variantId)) {
+                setQuantity(2);
+            } else {
+                setQuantity(1); // Reset to 1 for other variants
+            }
+
             if (campaignData.collections?.variants) {
                 updateUrlWithParams(variantId);
                 updateCampaignVariant(campaignData.collections.variants, variantId);
@@ -179,21 +214,6 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         return () => {
             window.removeEventListener('variantChanged', handleVariantChange as EventListener);
         };
-    }, [campaignData, utm_params]);
-
-    // Initial URL handling
-    useEffect(() => {
-        const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
-        const variantId = params.get('variant');
-
-        if (preserveParams) {
-            updateUrlWithParams(variantId);
-        }
-
-        if (campaignData.collections?.variants) {
-            updateCampaignVariant(campaignData.collections.variants, variantId);
-        }
     }, [campaignData, utm_params]);
 
     if (error) return <div>Error: {error}</div>;
