@@ -47,14 +47,11 @@ const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }>
                 <CarouselContent>
                     {finalImages.map((image, key) => (
                         <CarouselItem key={key}>
-                            {key === 0 ? (
-                                // First image - critical for LCP
                                 <img
                                     src={getOptimizedUrl(image?.url)}
                                     alt="Product Image"
                                     width="480"
                                     height="480"
-                                    className="w-full"
                                     loading="eager"
                                     fetchPriority="high"
                                     decoding="sync"
@@ -64,23 +61,6 @@ const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }>
                                         backgroundColor: '#f5f5f5'
                                     }}
                                 />
-                            ) : (
-                                // Non-LCP images
-                                <img
-                                    src={getOptimizedUrl(image?.url)}
-                                    alt="Product Image"
-                                    width="480"
-                                    height="480"
-                                    className="w-full"
-                                    loading="lazy"
-                                    decoding="async"
-                                    style={{
-                                        objectFit: 'contain',
-                                        aspectRatio: '1/1',
-                                        backgroundColor: '#f5f5f5'
-                                    }}
-                                />
-                            )}
                         </CarouselItem>
                     ))}
                 </CarouselContent>
