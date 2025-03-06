@@ -127,18 +127,18 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   }
 
   // Check if current domain is allowed
-  const isAllowedDomain = isValidDomain(domain, data.advertiser?.domains || []);
-  if (!isAllowedDomain) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-6 rounded-md shadow-md">
-        <MdErrorOutline className="text-red-600 text-6xl mb-4" />
-        <h1 className="font-bold text-red-600 text-lg mb-2">Access Denied</h1>
-        <p className="text-gray-600 text-sm text-center">
-          This campaign is not available on this domain.
-        </p>
-      </div>
-    );
-  }
+  // const isAllowedDomain = isValidDomain(domain, data.advertiser?.domains || []);
+  // if (!isAllowedDomain) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center h-screen bg-gray-50 p-6 rounded-md shadow-md">
+  //       <MdErrorOutline className="text-red-600 text-6xl mb-4" />
+  //       <h1 className="font-bold text-red-600 text-lg mb-2">Access Denied</h1>
+  //       <p className="text-gray-600 text-sm text-center">
+  //         This campaign is not available on this domain.
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   const fontFamily = data?.config?.font_family || "Inter";
 
