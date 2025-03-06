@@ -16,7 +16,7 @@ const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }>
                 <CarouselContent>
                     {finalImages.map((image, key) => (
                         <CarouselItem key={key}>
-                            <Image
+                            {/* <Image
                                 alt={"Main Image"}
                                 src={prefix + image?.url}
                                 width={480}
@@ -26,6 +26,26 @@ const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }>
                                 loading={key !== 0 ? "lazy" : "eager"}
                                 placeholder="blur"
                                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+                            /> */}
+                            <Image
+                                alt={"Product Image"}
+                                src={`${prefix}${image?.url}`}
+                                width={480}
+                                height={480}
+                                className="w-full"
+                                priority={key === 0}
+                                loading={key !== 0 ? "lazy" : "eager"}
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                quality={80}
+                                fetchPriority={key === 0 ? "high" : "auto"}
+                                onLoad={key === 0 ? () => {
+                                // Optional: Add performance marking for LCP image
+                                if (typeof window !== 'undefined') {
+                                    window.performance.mark('lcp-image-loaded');
+                                }
+                                } : undefined}
                             />
                         </CarouselItem>
                     ))}
