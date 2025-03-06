@@ -23,8 +23,7 @@ const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }>
                                 height={480}
                                 priority={key === 0}
                                 loading={key !== 0 ? "lazy" : "eager"}
-                                placeholder="blur"
-                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+                                fetchPriority={key === 0 ? "high" : "auto"}
                             />
                         </CarouselItem>
                     ))}
