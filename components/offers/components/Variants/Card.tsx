@@ -33,6 +33,9 @@ const Card: React.FC<CardProps> = ({
     const originalPrefix = priceDetails?.originalPrice?.prefix || "";
     const offerPrefix = priceDetails?.offerPrice?.prefix || "";
 
+    // Round off the offer price to nearest integer
+    const roundedOfferPrice = offerPrice ? Math.round(parseFloat(offerPrice)).toString() : undefined;
+
     let discountText = "";
     if (originalPrice && offerPrice && parseFloat(originalPrice) > parseFloat(offerPrice)) {
         const discount = ((parseFloat(originalPrice) - parseFloat(offerPrice)) / parseFloat(originalPrice)) * 100;
@@ -78,7 +81,7 @@ const Card: React.FC<CardProps> = ({
                         <div className="mt-1 flex flex-col-reverse justify-center items-center">
                             {offerPrice ? (
                                 <span className={`text-lg font-semibold ${isSoldOut ? 'text-gray-400' : 'text-gray-800'}`}>
-                                    {offerPrefix}{offerPrice}
+                                    {offerPrefix}{roundedOfferPrice}
                                 </span>
                             ) : (
                                 <span className={`text-lg ${isSoldOut ? 'text-gray-300' : 'text-gray-800'}`}>
