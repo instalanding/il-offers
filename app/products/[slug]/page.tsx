@@ -9,7 +9,7 @@ import { headers } from 'next/headers';
 import { isValidDomain } from '@/utils/domainUtils';
 
 // Cache time in seconds (10 minutes)
-const REVALIDATE_TIME = 600;
+const REVALIDATE_TIME = 10;
 
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
@@ -21,7 +21,7 @@ const getCampaign = async (slug: string, variant_id?: string) => {
 
     const response = await fetch(
       `${process.env.API_URL_V2}campaign?${query.toString()}`,
-      { 
+      {
         next: { revalidate: REVALIDATE_TIME }
       }
     );
@@ -138,8 +138,8 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   }
 
   // Parse blocks only once and efficiently
-  const blocks = typeof data.blocks === 'string' 
-    ? JSON.parse(data.blocks || '[]') 
+  const blocks = typeof data.blocks === 'string'
+    ? JSON.parse(data.blocks || '[]')
     : (Array.isArray(data.blocks) ? data.blocks : []);
 
   // Check for specific block types to determine if we need to fetch additional data
@@ -166,11 +166,11 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
     <>
       <FontLoader fontFamily={fontFamily} />
       <Campaigns
-        campaignData={{ 
-          ...data, 
-          config: { ...data.config, font_family: fontFamily }, 
-          reviews: formattedReviews, 
-          collections 
+        campaignData={{
+          ...data,
+          config: { ...data.config, font_family: fontFamily },
+          reviews: formattedReviews,
+          collections
         }}
         utm_params={utm_params}
         userIp={userIp}
