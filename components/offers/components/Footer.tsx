@@ -145,6 +145,11 @@ const Footer: React.FC<{
   const isSoldOut =
     checkoutData.inventory !== undefined && checkoutData.inventory === 0;
 
+  // Round off the offer price for display
+  const roundedOfferPrice = price?.offerPrice?.value 
+    ? Math.round(parseFloat(price.offerPrice.value)) 
+    : 0;
+
   console.log(loading);
 
   return (
@@ -180,7 +185,7 @@ const Footer: React.FC<{
                         className="font-bold text-[20px] text-center"
                       >
                         {formatPrice(
-                          parseFloat(price.offerPrice.value),
+                          roundedOfferPrice,
                           price.offerPrice.prefix
                         )}
                       </p>
@@ -207,7 +212,7 @@ const Footer: React.FC<{
                       className="text-[20px] font-bold"
                     >
                       {formatPrice(
-                        parseFloat(price.offerPrice.value),
+                        roundedOfferPrice,
                         price.offerPrice.prefix
                       )}
                     </p>
