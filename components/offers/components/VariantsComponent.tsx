@@ -156,7 +156,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             const currentDiscount = parseFloat(variant.price.originalPrice?.value || "0") - parseFloat(variant.price.offerPrice?.value || "0");
             return currentDiscount === maxDiscountVariant.discount;
         }).length === 1;
-    
+
 
         return Object.entries(optionGroups)
             .sort()
@@ -172,14 +172,20 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                             ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
                         `}>
                             {Array.from(values).map((optionValue, valueIndex) => {
-                                const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
+                                const matchingVariant = sortedVariants.find((v) => {
+                                    const optionsToMatch = { ...selectedOptions, [optionKey]: optionValue };
+                                    return Object.entries(optionsToMatch).every(
+                                        ([key, val]) => v.variant_options[key] === val
+                                    );
+                                });
+
                                 const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
 
                                 const isMostLoved = valueIndex === 0;
-                                // const isGreatDeal = isUniqueMaxDiscount && variant === maxDiscountVariant.variant && !isMostLoved
-                                const isGreatDeal =maxDiscountVariant.variant && !isMostLoved &&  maxDiscountVariant.variant 
-                                ? parseFloat(variant?.price.originalPrice?.value || "0") - parseFloat(variant?.price.offerPrice?.value || "0") === maxDiscountVariant.discount 
-                                : false;
+                                const isGreatDeal = maxDiscountVariant.variant && !isMostLoved && maxDiscountVariant.variant
+                                    ? parseFloat(matchingVariant?.price.originalPrice?.value || "0") - parseFloat(matchingVariant?.price.offerPrice?.value || "0") === maxDiscountVariant.discount
+                                    : false;
+
                                 return (
                                     <Component
                                         key={optionValue}
@@ -187,8 +193,8 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                         value={optionValue}
                                         isSelected={selectedOptions[optionKey] === optionValue}
                                         onClick={() => handleOptionSelect(optionKey, optionValue)}
-                                        priceDetails={variant?.price}
-                                        inventory={variant?.inventory !== undefined ? variant.inventory : null}
+                                        priceDetails={matchingVariant?.price}
+                                        inventory={matchingVariant?.inventory !== undefined ? matchingVariant.inventory : null}
                                         greatDeal={isGreatDeal}
                                         mostLoved={isMostLoved}
                                     />
