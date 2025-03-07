@@ -21,9 +21,11 @@ const CarouselComponent: React.FC<{ images: { url: string }[]; prefix: string }>
                                 src={prefix + image?.url}
                                 width={480}
                                 height={480}
+                                className="w-full"
                                 priority={key === 0}
                                 loading={key !== 0 ? "lazy" : "eager"}
-                                fetchPriority={key === 0 ? "high" : "auto"}
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
                             />
                         </CarouselItem>
                     ))}
