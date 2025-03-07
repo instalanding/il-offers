@@ -7,10 +7,7 @@ interface CardProps {
     isSelected: boolean;
     isDisabled?: boolean;
     onClick: () => void;
-    priceDetails?: {
-        originalPrice?: { value: string; prefix?: string };
-        offerPrice?: { value: string; prefix?: string };
-    };
+    priceDetails?: any;
     inventory?: number | null;
     greatDeal: boolean;
     mostLoved: boolean;
@@ -26,7 +23,7 @@ const Card: React.FC<CardProps> = ({
     greatDeal,
     mostLoved
 }) => {
-
+    console.log(priceDetails, "price details")
     const isSoldOut = inventory !== null && inventory === 0;
     const originalPrice = priceDetails?.originalPrice?.value;
     const offerPrice = priceDetails?.offerPrice?.value;

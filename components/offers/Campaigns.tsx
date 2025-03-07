@@ -102,8 +102,7 @@ interface Block {
 }
 
 const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preserveParams = false }) => {
-    // console.log('campaignData', campaignData);
-
+    console.log('campaignData', campaignData.collections);
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
@@ -141,9 +140,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                 blocks: newVariant.blocks,
                 config: newVariant.config,
                 advertiser: newVariant.advertiser,
+                collections: {
+                    ...prev!.collections,
+                    variants: campaignData.collections.variants
+                }
             }));
         }
     };
+
 
     const updateUrlWithParams = (variantId: string | null) => {
         if (!preserveParams) return;
@@ -347,7 +351,10 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                             }
                                         }}
                                         style={block.style}
-                                        collections={campaignData.collections}
+                                        collections={{
+                                            variants: campaign.collections.variants,
+                                            currentVariantId: campaign.variant_id
+                                        }}
                                     />
                                 );
                             case 'multiple-cta':
