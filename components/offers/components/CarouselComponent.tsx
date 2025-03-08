@@ -15,7 +15,7 @@ const CarouselComponent: React.FC<{ images: { url: string }[], variantId: string
     const showBadge = variantId === "41056148652078";
     const badgeUrl = "https://res.cloudinary.com/duslrhgcq/image/upload/v1741422279/b8gtnbw9u7rw5uk0n0pc.png";
 
-    console.log(variantId, "variantId")
+    //console.log(variantId, "variantId")
 
     return (
         <div>

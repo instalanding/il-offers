@@ -19,7 +19,7 @@ const useCashfreePayment = () => {
     const [orderId, setOrderId] = useState<string>("");
     const [cashfree, setCashfree] = useState<any>(null); // State to store cashfree SDK instance
 
-    console.log(orderId, "orderId");
+    //console.log(orderId, "orderId");
 
     // Function to load the Cashfree SDK
     const loadCashfreeSDK = async () => {
@@ -30,9 +30,9 @@ const useCashfreePayment = () => {
     const getSessionId = async (body: RequestBody) => {
         try {
             const res = await axios.post("api/cashfree/payment", body);
-            console.log("API Response:", res.data.data.payment_session_id);
+           // console.log("API Response:", res.data.data.payment_session_id);
             if (res.data.data && res.data.data.payment_session_id) {
-                console.log(res.data.data);
+                //console.log(res.data.data);
                 setOrderId(res.data.data.order_id);
                 return res.data.data.payment_session_id;
             } else {
@@ -62,7 +62,7 @@ const useCashfreePayment = () => {
                 console.error("Failed to retrieve sessionId");
                 return;
             }
-            console.log(sessionId, "sessionId");
+            //console.log(sessionId, "sessionId");
             const checkoutOptions = {
                 paymentSessionId: sessionId,
                 redirectTarget: `${process.env.NEXT_PUBLIC_CLIENT_URL}${offer_id}`,

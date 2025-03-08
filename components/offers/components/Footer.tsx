@@ -90,7 +90,7 @@ const Footer: React.FC<{
           checkoutData.checkout_name === "fastrr"
         ) {
           setTimeout(() => {
-            console.log("checkout called");
+            //console.log("checkout called");
             handleCheckout(
               e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
               checkoutData.variant_id,
@@ -150,7 +150,7 @@ const Footer: React.FC<{
       ? Math.round(parseFloat(price.offerPrice.value))
       : 0;
 
-    console.log(loading);
+    //console.log(loading);
 
     return (
       <>
