@@ -150,12 +150,7 @@ const Footer: React.FC<{
       ? Math.round(parseFloat(price.offerPrice.value))
       : 0;
 
-  // Round off the offer price for display
-  const roundedOfferPrice = price?.offerPrice?.value 
-    ? Math.round(parseFloat(price.offerPrice.value)) 
-    : 0;
-
-  console.log(loading);
+    console.log(loading);
 
     return (
       <>
@@ -243,33 +238,22 @@ const Footer: React.FC<{
                       disabled={quantity === 1}
                       className="disabled:opacity-50"
                     >
-
-                      {formatPrice(
-                        roundedOfferPrice,
-                        price.offerPrice.prefix
-                      )}
-                    </p>
-                  )}
-                </div>
-              ) : price?.originalPrice?.value ? (
-                <p className="text-[15px] font-semibold text-green-600">
-                  {formatPrice(
-                    parseFloat(price.originalPrice.value),
-                    price.originalPrice.prefix
-                  )}
-                </p>
-              ) : (
-                ""
-              )}
-            </div>
-            <div className="flex gap-2">
-              {/* Quantity Selector */}
-              {price.quantity === true && (
-                <div className="flex items-center gap-2 border rounded-lg py-2 px-1 w-auto">
-                  <button
-                    onClick={handleDecrease}
-                    disabled={quantity === 1}
-                    className="disabled:opacity-50"
+                      <IoIosRemove size={18} />
+                    </button>
+                    <span className="text-lg font-semibold">{quantity}</span>
+                    <button onClick={handleIncrease}>
+                      <IoIosAdd size={18} />
+                    </button>
+                  </div>
+                )}
+                {loading ? (
+                  <Button
+                    className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg`}
+                    disabled={loading}
+                    style={{
+                      backgroundColor: config.primaryColor,
+                      color: config.secondaryColor,
+                    }}
                   >
                     <FaSpinner className="animate-spin" /> Processing...
                   </Button>
