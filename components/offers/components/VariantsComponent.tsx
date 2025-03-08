@@ -56,16 +56,17 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             return [];
         }
         return [...collections.variants].sort((a, b) => {
-            // For the same option type, apply specific sorting rules
-            if (a.variant_options.option1 && b.variant_options.option1) {
-                // Sort flavors - Strawberry first for the specific product
-                if (a.product_handle === 'cureveda-pro-vegan-plant-protein') {
-                    if (a.variant_options.option1.toLowerCase() === 'strawberry') return -1;
-                    if (b.variant_options.option1.toLowerCase() === 'strawberry') return 1;
+            if (a.product_handle === 'cureveda-pro-vegan-plant-protein') {
+                if (a.variant_options.option1?.toLowerCase() === 'strawberry' &&
+                    b.variant_options.option1?.toLowerCase() === 'strawberry') {
+                    const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
+                    const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
+                    return priceA - priceB;
                 }
+                if (a.variant_options.option1?.toLowerCase() === 'strawberry') return -1;
+                if (b.variant_options.option1?.toLowerCase() === 'strawberry') return 1;
             }
-            
-            // For packs (option2), sort by price
+
             if (a.variant_options.option2 && b.variant_options.option2) {
                 const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
                 const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
@@ -182,7 +183,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
 
                 // Convert Set to Array and apply specific sorting
                 let sortedValues = Array.from(values);
-                
+
                 if (optionKey === 'option1' && sortedVariants[0]?.product_handle === 'cureveda-pro-vegan-plant-protein') {
                     // Sort flavors with Strawberry first
                     sortedValues.sort((a, b) => {
