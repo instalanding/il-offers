@@ -1,0 +1,20 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NEXT_USE_NETLIFY_EDGE = "true"
+  NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# This makes sure Netlify includes all the necessary files for path aliases
+[build.processing.css]
+  bundle = true
+[build.processing.js]
+  bundle = true
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = true 

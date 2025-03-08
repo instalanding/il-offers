@@ -32,7 +32,7 @@ const Card: React.FC<CardProps> = ({
     const offerPrice = priceDetails?.offerPrice?.value;
     const originalPrefix = priceDetails?.originalPrice?.prefix || "";
     const offerPrefix = priceDetails?.offerPrice?.prefix || "";
-
+    
     // Round off the offer price to nearest integer
     const roundedOfferPrice = offerPrice ? Math.round(parseFloat(offerPrice)).toString() : undefined;
 
