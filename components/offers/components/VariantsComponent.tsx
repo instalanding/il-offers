@@ -56,6 +56,23 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             return [];
         }
         return [...collections.variants].sort((a, b) => {
+            // For the same option type, apply specific sorting rules
+            if (a.variant_options.option1 && b.variant_options.option1) {
+                // Sort flavors - Strawberry first for the specific product
+                if (a.product_handle === 'cureveda-pro-vegan-plant-protein') {
+                    if (a.variant_options.option1.toLowerCase() === 'strawberry') return -1;
+                    if (b.variant_options.option1.toLowerCase() === 'strawberry') return 1;
+                }
+            }
+            
+            // For packs (option2), sort by price
+            if (a.variant_options.option2 && b.variant_options.option2) {
+                const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
+                const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
+                return priceA - priceB;
+            }
+
+            // Default price-based sorting for any other cases
             const priceA = a.price.offerPrice ? parseFloat(a.price.offerPrice.value) : 0;
             const priceB = b.price.offerPrice ? parseFloat(b.price.offerPrice.value) : 0;
             return priceA - priceB;
@@ -156,13 +173,33 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             const currentDiscount = parseFloat(variant.price.originalPrice?.value || "0") - parseFloat(variant.price.offerPrice?.value || "0");
             return currentDiscount === maxDiscountVariant.discount;
         }).length === 1;
-    
 
         return Object.entries(optionGroups)
             .sort()
             .map(([optionKey, values], index) => {
                 const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
                 if (!optionConfig?.enabled) return null;
+
+                // Convert Set to Array and apply specific sorting
+                let sortedValues = Array.from(values);
+                
+                if (optionKey === 'option1' && sortedVariants[0]?.product_handle === 'cureveda-pro-vegan-plant-protein') {
+                    // Sort flavors with Strawberry first
+                    sortedValues.sort((a, b) => {
+                        if (a.toLowerCase() === 'strawberry') return -1;
+                        if (b.toLowerCase() === 'strawberry') return 1;
+                        return 0;
+                    });
+                } else if (optionKey === 'option2') {
+                    // Sort packs by price
+                    sortedValues.sort((a, b) => {
+                        const variantA = sortedVariants.find(v => v.variant_options[optionKey] === a);
+                        const variantB = sortedVariants.find(v => v.variant_options[optionKey] === b);
+                        const priceA = variantA?.price.offerPrice ? parseFloat(variantA.price.offerPrice.value) : 0;
+                        const priceB = variantB?.price.offerPrice ? parseFloat(variantB.price.offerPrice.value) : 0;
+                        return priceA - priceB;
+                    });
+                }
 
                 return (
                     <div key={optionKey} className="mb-4">
@@ -171,15 +208,21 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                             flex justify-start flex-wrap gap-2 
                             ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
                         `}>
-                            {Array.from(values).map((optionValue, valueIndex) => {
-                                const variant = sortedVariants.find((v) => v.variant_options[optionKey] === optionValue);
+                            {sortedValues.map((optionValue, valueIndex) => {
+                                const matchingVariant = sortedVariants.find((v) => {
+                                    const optionsToMatch = { ...selectedOptions, [optionKey]: optionValue };
+                                    return Object.entries(optionsToMatch).every(
+                                        ([key, val]) => v.variant_options[key] === val
+                                    );
+                                });
+
                                 const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
 
                                 const isMostLoved = valueIndex === 0;
-                                // const isGreatDeal = isUniqueMaxDiscount && variant === maxDiscountVariant.variant && !isMostLoved
-                                const isGreatDeal =maxDiscountVariant.variant && !isMostLoved &&  maxDiscountVariant.variant 
-                                ? parseFloat(variant?.price.originalPrice?.value || "0") - parseFloat(variant?.price.offerPrice?.value || "0") === maxDiscountVariant.discount 
-                                : false;
+                                const isGreatDeal = maxDiscountVariant.variant && !isMostLoved && maxDiscountVariant.variant
+                                    ? parseFloat(matchingVariant?.price.originalPrice?.value || "0") - parseFloat(matchingVariant?.price.offerPrice?.value || "0") === maxDiscountVariant.discount
+                                    : false;
+
                                 return (
                                     <Component
                                         key={optionValue}
@@ -187,8 +230,8 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                         value={optionValue}
                                         isSelected={selectedOptions[optionKey] === optionValue}
                                         onClick={() => handleOptionSelect(optionKey, optionValue)}
-                                        priceDetails={variant?.price}
-                                        inventory={variant?.inventory !== undefined ? variant.inventory : null}
+                                        priceDetails={matchingVariant?.price}
+                                        inventory={matchingVariant?.inventory !== undefined ? matchingVariant.inventory : null}
                                         greatDeal={isGreatDeal}
                                         mostLoved={isMostLoved}
                                     />

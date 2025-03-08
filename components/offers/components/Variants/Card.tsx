@@ -36,6 +36,9 @@ const Card: React.FC<CardProps> = ({
     // Round off the offer price to nearest integer
     const roundedOfferPrice = offerPrice ? Math.round(parseFloat(offerPrice)).toString() : undefined;
 
+    // Round off the offer price to nearest integer
+    const roundedOfferPrice = offerPrice ? Math.round(parseFloat(offerPrice)).toString() : undefined;
+
     let discountText = "";
     if (originalPrice && offerPrice && parseFloat(originalPrice) > parseFloat(offerPrice)) {
         const discount = ((parseFloat(originalPrice) - parseFloat(offerPrice)) / parseFloat(originalPrice)) * 100;
