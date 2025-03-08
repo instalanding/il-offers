@@ -35,7 +35,7 @@ export default function RootLayout({
           <Toaster />
           {children}
           {/* {process.env.NODE_ENV === 'pre-production' && <PerformanceMonitor />} */}
-          <PerformanceMonitor />
+          {/* <PerformanceMonitor /> */}
         </body>
     </html>
   );
