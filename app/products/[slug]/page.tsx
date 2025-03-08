@@ -8,6 +8,9 @@ import { formatDate } from "@/lib/formatUtils";
 import { headers } from 'next/headers';
 import { isValidDomain } from '@/utils/domainUtils';
 
+// Cache time in seconds (10 minutes)
+const REVALIDATE_TIME = 10;
+
 const getCampaign = async (slug: string, variant_id?: string) => {
   try {
     const query = new URLSearchParams();
@@ -18,7 +21,9 @@ const getCampaign = async (slug: string, variant_id?: string) => {
 
     const response = await fetch(
       `${process.env.API_URL_V2}campaign?${query.toString()}`,
-      { cache: "no-store" }
+      {
+        next: { revalidate: REVALIDATE_TIME }
+      }
     );
 
     if (!response.ok) {
@@ -32,6 +37,7 @@ const getCampaign = async (slug: string, variant_id?: string) => {
     return campaignData;
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 
@@ -39,7 +45,7 @@ const getVariantCollection = async (slug: string, variant_id: string) => {
   try {
     const response = await fetch(
       `${process.env.API_URL_V2}collection?slug=${slug}&variant_id=${variant_id}`, {
-      cache: "no-store",
+      next: { revalidate: REVALIDATE_TIME }
     });
     if (!response.ok) {
       const errorResponse = await response.json();
@@ -49,14 +55,15 @@ const getVariantCollection = async (slug: string, variant_id: string) => {
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.log(error)
+    console.log(error);
+    return [];
   }
 }
 
 const getReviews = async (product_handle: string) => {
   try {
     const response = await fetch(`${process.env.API_URL_V2}/reviews?slug=${product_handle}`, {
-      cache: "no-store",
+      next: { revalidate: REVALIDATE_TIME }
     });
     if (!response.ok) {
       const errorResponse = await response.json();
@@ -67,6 +74,7 @@ const getReviews = async (product_handle: string) => {
     return data.statusCode.data;
   } catch (error) {
     console.log(error);
+    return [];
   }
 };
 
@@ -101,19 +109,8 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
     utm_params.variant = variant_id;
   }
 
+  // Fetch initial campaign data
   const data = await getCampaign(slug, variant_id);
-  const blocks = Array.isArray(data?.blocks) ? data.blocks : JSON.parse(data?.blocks || '[]');
-  const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
-  const apiReviews = hasReviewsBlock && data ? await getReviews(data.product_handle) : [];
-  const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
-  const collections = hasVariantsBlock && data ? await getVariantCollection(data.product_handle, data.variant_id) : [];
-
-  const reviews = apiReviews?.map((review: any) => ({
-    userName: review.reviewer_name,
-    comment: review.review_body_text,
-    rating: review.review_rating,
-    date: formatDate(review.review_date)
-  }));
 
   if (!data) {
     return (
@@ -140,13 +137,41 @@ const CampaignSlug = async ({ params, searchParams }: { params: { slug: string }
   //   );
   // }
 
+  // Parse blocks only once and efficiently
+  const blocks = typeof data.blocks === 'string'
+    ? JSON.parse(data.blocks || '[]')
+    : (Array.isArray(data.blocks) ? data.blocks : []);
+
+  // Check for specific block types to determine if we need to fetch additional data
+  const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
+  const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
+
+  // Fetch additional data in parallel if needed
+  const [reviews, collections] = await Promise.all([
+    hasReviewsBlock ? getReviews(data.product_handle) : Promise.resolve([]),
+    hasVariantsBlock ? getVariantCollection(data.product_handle, data.variant_id) : Promise.resolve([])
+  ]);
+
+  // Format reviews data only if we have reviews
+  const formattedReviews = reviews?.map((review: any) => ({
+    userName: review.reviewer_name,
+    comment: review.review_body_text,
+    rating: review.review_rating,
+    date: formatDate(review.review_date)
+  })) || [];
+
   const fontFamily = data?.config?.font_family || "Inter";
 
   return (
     <>
       <FontLoader fontFamily={fontFamily} />
       <Campaigns
-        campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }}
+        campaignData={{
+          ...data,
+          config: { ...data.config, font_family: fontFamily },
+          reviews: formattedReviews,
+          collections
+        }}
         utm_params={utm_params}
         userIp={userIp}
         preserveParams={true}
@@ -175,7 +200,6 @@ export async function generateMetadata(
   const title = data?.meta_description?.title || "Instalanding Offers";
   const description = data?.meta_description?.description || "Explore exclusive offers with Instalanding.";
   const imageUrl = data?.meta_description?.image?.url || "/default-meta-image.jpg";
-
 
   return {
     title: title,
