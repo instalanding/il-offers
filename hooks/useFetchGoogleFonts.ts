@@ -1,30 +1,57 @@
-import { useEffect } from 'react';
-import axios from 'axios';
+import { useCallback } from 'react';
 
-interface FontItem {
-    family: string;
-    // Add other properties if needed, e.g., variants, category, etc.
-}
+// Set to track which fonts have already been loaded to prevent duplicates
+const loadedFonts = new Set<string>();
+
+// System font list to skip loading
+const systemFonts = [
+  'system-ui', 
+  'sans-serif', 
+  'serif', 
+  '-apple-system', 
+  'BlinkMacSystemFont', 
+  'Segoe UI', 
+  'Roboto', 
+  'Arial', 
+  'Helvetica'
+];
 
 const useFetchGoogleFonts = () => {
-    const loadFonts = async (fontFamily: string) => {
+    const loadFonts = useCallback(async (fontFamily: string) => {
+        // Skip if font is already loaded, if we're on the server,
+        // or if it's a system font
+        if (
+            loadedFonts.has(fontFamily) || 
+            typeof window === 'undefined' ||
+            systemFonts.some(font => fontFamily.includes(font))
+        ) {
+            return;
+        }
+
         try {
-            const { data } = await axios.get(
-                'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyAotllBCW0WwZ_0RSMLBAbUOH4CWE17h0s&sort=popularity'
-            );
-            if (data.items) {
-                const font = data.items.find((item: FontItem) => item.family === fontFamily);
-                if (font) {
-                    const link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400;500;600;700;800&display=swap`;
-                    document.head.appendChild(link);
-                }
+            // Mark this font as loaded to prevent duplicate loads
+            loadedFonts.add(fontFamily);
+            
+            // Create and append link directly without API call
+            const fontName = fontFamily.replace(/\s+/g, '+');
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400;500;600;700;800&display=swap`;
+            link.setAttribute('data-font', fontFamily);
+            
+            // Add preload to optimize loading
+            link.setAttribute('crossorigin', 'anonymous');
+            
+            document.head.appendChild(link);
+            
+            // For development debugging
+            if (process.env.NODE_ENV !== 'production') {
+                console.log(`Loaded font: ${fontFamily}`);
             }
         } catch (error) {
-            console.error('Error fetching Google Fonts:', error);
+            console.error('Error loading Google Font:', error);
         }
-    };
+    }, []);
 
     return { loadFonts };
 };
