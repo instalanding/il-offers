@@ -2,118 +2,191 @@
 
 import { useEffect, useState } from 'react';
 
-// Add missing type definitions for Web Vitals API
-interface LayoutShift extends PerformanceEntry {
-  value: number;
-  hadRecentInput: boolean;
+interface PerformanceMetrics {
+  lcp: number | null;
+  fid: number | null;
+  cls: number | null;
+  ttfb: number | null;
+  resourceLoad: number | null;
 }
 
-interface FirstInputDelay extends PerformanceEntry {
-  processingStart: number;
-}
-
-export default function PerformanceMonitor() {
-  const [metrics, setMetrics] = useState<{
-    ttfb: number | null;
-    fcp: number | null;
-    lcp: number | null;
-    cls: number | null;
-    fid: number | null;
-  }>({
-    ttfb: null,
-    fcp: null,
+const PerformanceMonitor = () => {
+  const [metrics, setMetrics] = useState<PerformanceMetrics>({
     lcp: null,
-    cls: null,
     fid: null,
+    cls: null,
+    ttfb: null,
+    resourceLoad: null
   });
+  
+  const [showMonitor, setShowMonitor] = useState(false);
 
   useEffect(() => {
-    // Only run in browser
-    if (typeof window === 'undefined') return;
-
-    // Function to get performance entries by type
-    const getPerformanceMetric = (type: string) => {
-      const entries = performance.getEntriesByType(type);
-      return entries.length > 0 ? entries[0] : null;
-    };
-
-    // Calculate TTFB from navigation timing
-    const calculateTTFB = () => {
-      const navEntry = getPerformanceMetric('navigation') as PerformanceNavigationTiming;
-      if (!navEntry) return null;
-      
-      // TTFB = responseStart - requestStart
-      return Math.round(navEntry.responseStart - navEntry.requestStart);
-    };
-
-    // Record FCP
-    const recordFCP = () => {
-      try {
-        const paintEntries = performance.getEntriesByType('paint');
-        const fcpEntry = paintEntries.find(entry => entry.name === 'first-contentful-paint');
-        if (fcpEntry) {
-          setMetrics(prev => ({ ...prev, fcp: Math.round(fcpEntry.startTime) }));
-        }
-      } catch (e) {
-        console.error('Error measuring FCP:', e);
-      }
-    };
-
-    // PerformanceObserver for LCP
-    const lcpObserver = new PerformanceObserver((entries) => {
-      const lcpEntry = entries.getEntries().at(-1);
-      if (lcpEntry) {
-        setMetrics(prev => ({ ...prev, lcp: Math.round(lcpEntry.startTime) }));
-      }
-    });
-    
-    // PerformanceObserver for CLS
-    const clsObserver = new PerformanceObserver((entries) => {
-      let clsScore = 0;
-      for (const entry of entries.getEntries()) {
-        // Type assertion to LayoutShift
-        const layoutShift = entry as LayoutShift;
-        if (!layoutShift.hadRecentInput) {
-          clsScore += layoutShift.value;
-        }
-      }
-      setMetrics(prev => ({ ...prev, cls: parseFloat(clsScore.toFixed(3)) }));
-    });
-    
-    // PerformanceObserver for FID
-    const fidObserver = new PerformanceObserver((entries) => {
-      const fidEntry = entries.getEntries()[0] as FirstInputDelay;
-      if (fidEntry) {
-        setMetrics(prev => ({ ...prev, fid: Math.round(fidEntry.processingStart - fidEntry.startTime) }));
-      }
-    });
-
-    // Initial TTFB calculation
-    const ttfb = calculateTTFB();
-    setMetrics(prev => ({ ...prev, ttfb }));
-
-    // Call FCP after a short delay to ensure paint entries are available
-    setTimeout(recordFCP, 500);
-
-    // Start observing other metrics
-    try {
-      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-      clsObserver.observe({ type: 'layout-shift', buffered: true });
-      fidObserver.observe({ type: 'first-input', buffered: true });
-    } catch (e) {
-      console.error('Error setting up performance observers:', e);
+    if (typeof window === 'undefined' || !('PerformanceObserver' in window)) {
+      return;
     }
 
-    // Cleanup observers on unmount
+    // Toggle visibility with keyboard shortcut (Alt+P)
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.altKey && e.key === 'p') {
+        setShowMonitor(prev => !prev);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyPress);
+
+    // Function to send metrics to analytics or console
+    const logMetric = (metric: {name: string, value: number, id?: string}) => {
+      // Log to console
+      console.log(`Performance Metric: ${metric.name}`, metric);
+      
+      // Update state based on metric type
+      switch (metric.name) {
+        case 'LCP':
+          setMetrics(prev => ({ ...prev, lcp: Math.round(metric.value) }));
+          break;
+        case 'FID':
+          setMetrics(prev => ({ ...prev, fid: Math.round(metric.value) }));
+          break;
+        case 'CLS':
+          setMetrics(prev => ({ ...prev, cls: parseFloat(metric.value.toFixed(3)) }));
+          break;
+        case 'TTFB':
+          setMetrics(prev => ({ ...prev, ttfb: Math.round(metric.value) }));
+          break;
+        case 'RESOURCE_TIMING':
+          setMetrics(prev => ({ ...prev, resourceLoad: Math.round(metric.value) }));
+          break;
+      }
+    };
+
+    // Create observer references
+    let lcpObserver: PerformanceObserver | null = null;
+    let fidObserver: PerformanceObserver | null = null;
+    let clsObserver: PerformanceObserver | null = null;
+    let resourceObserver: PerformanceObserver | null = null;
+
+    // Measure TTFB
+    try {
+      const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      if (navEntry) {
+        logMetric({
+          name: 'TTFB',
+          value: navEntry.responseStart
+        });
+      }
+    } catch (e) {
+      console.error('TTFB measurement error:', e);
+    }
+
+    // Track LCP
+    try {
+      lcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const lastEntry = entries[entries.length - 1] as any;
+        
+        // Log LCP
+        logMetric({
+          name: 'LCP',
+          value: lastEntry.startTime,
+          id: lastEntry.element ? lastEntry.element.getAttribute('id') || lastEntry.element.tagName : 'unknown'
+        });
+        
+        // Log LCP breakdown components
+        if (lastEntry.element && lastEntry.element.tagName === 'IMG') {
+          const url = lastEntry.element.src || 'unknown';
+          logMetric({
+            name: 'LCP_IMAGE',
+            value: lastEntry.startTime,
+            id: url.split('/').pop() || url
+          });
+        }
+      });
+      
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+    } catch (e) {
+      console.error('LCP Observer error:', e);
+    }
+
+    // Track FID
+    try {
+      fidObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          logMetric({
+            name: 'FID',
+            value: (entry as any).processingStart - (entry as any).startTime,
+          });
+        }
+      });
+      
+      fidObserver.observe({ type: 'first-input', buffered: true });
+    } catch (e) {
+      console.error('FID Observer error:', e);
+    }
+
+    // Track CLS
+    try {
+      let clsValue = 0;
+      let clsEntries = [];
+      
+      clsObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          // Only count layout shifts without recent user input
+          if (!(entry as any).hadRecentInput) {
+            const cls = (entry as any).value;
+            clsValue += cls;
+            clsEntries.push(entry);
+          }
+        }
+        
+        logMetric({
+          name: 'CLS',
+          value: clsValue,
+        });
+      });
+      
+      clsObserver.observe({ type: 'layout-shift', buffered: true });
+    } catch (e) {
+      console.error('CLS Observer error:', e);
+    }
+
+    // Track resource timing for LCP image
+    try {
+      resourceObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if ((entry as any).name.includes('cloudinary') && (entry as any).initiatorType === 'img') {
+            logMetric({
+              name: 'RESOURCE_TIMING',
+              value: (entry as any).responseEnd - (entry as any).startTime,
+              id: (entry as any).name
+            });
+          }
+        }
+      });
+      
+      resourceObserver.observe({ type: 'resource', buffered: true });
+    } catch (e) {
+      console.error('Resource Observer error:', e);
+    }
+
     return () => {
-      lcpObserver.disconnect();
-      clsObserver.disconnect();
-      fidObserver.disconnect();
+      // Clean up observers when component unmounts
+      try {
+        if (lcpObserver) lcpObserver.disconnect();
+        if (fidObserver) fidObserver.disconnect();
+        if (clsObserver) clsObserver.disconnect();
+        if (resourceObserver) resourceObserver.disconnect();
+        window.removeEventListener('keydown', handleKeyPress);
+      } catch (e) {
+        console.error('Error disconnecting observers:', e);
+      }
     };
   }, []);
 
-  // Only show the component in development mode
-  if (process.env.NODE_ENV !== 'development') return null;
+  // Return UI only for development environment or if explicitly shown
+  if (process.env.NODE_ENV !== 'development' && !showMonitor) return null;
+  
+  if (!showMonitor) return null;
 
   return (
     <div
@@ -124,22 +197,82 @@ export default function PerformanceMonitor() {
         zIndex: 9999,
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
         color: 'white',
-        padding: '10px',
-        borderRadius: '5px',
-        fontSize: '12px',
+        padding: '12px',
+        borderRadius: '6px',
         fontFamily: 'monospace',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+        fontSize: '14px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
         userSelect: 'none',
+        maxWidth: '260px',
       }}
     >
-      <div style={{ marginBottom: '8px', fontWeight: 'bold', borderBottom: '1px solid #444', paddingBottom: '4px' }}>
-        Performance Metrics
+      <div style={{ 
+        marginBottom: '10px', 
+        fontWeight: 'bold', 
+        borderBottom: '1px solid #555',
+        paddingBottom: '6px',
+        display: 'flex',
+        justifyContent: 'space-between'
+      }}>
+        <span>Performance Metrics</span>
+        <span 
+          onClick={() => setShowMonitor(false)}
+          style={{ cursor: 'pointer', opacity: 0.7 }}
+        >✕</span>
       </div>
-      <div>TTFB: {metrics.ttfb !== null ? `${metrics.ttfb}ms` : 'Measuring...'}</div>
-      <div>FCP: {metrics.fcp !== null ? `${metrics.fcp}ms` : 'Measuring...'}</div>
-      <div>LCP: {metrics.lcp !== null ? `${metrics.lcp}ms` : 'Measuring...'}</div>
-      <div>CLS: {metrics.cls !== null ? metrics.cls : 'Measuring...'}</div>
-      <div>FID: {metrics.fid !== null ? `${metrics.fid}ms` : 'Measuring...'}</div>
+      
+      <div style={{ marginBottom: '6px' }}>
+        <span style={{ color: '#75b1ff', display: 'inline-block', width: '50px' }}>LCP:</span> 
+        <span style={{ 
+          color: metrics.lcp ? (metrics.lcp < 2500 ? '#4ade80' : metrics.lcp < 4000 ? '#fbbf24' : '#f87171') : '#ccc'
+        }}>
+          {metrics.lcp ? `${metrics.lcp}ms` : 'Measuring...'}
+        </span>
+      </div>
+      
+      <div style={{ marginBottom: '6px' }}>
+        <span style={{ color: '#75b1ff', display: 'inline-block', width: '50px' }}>FID:</span> 
+        <span style={{ 
+          color: metrics.fid ? (metrics.fid < 100 ? '#4ade80' : metrics.fid < 300 ? '#fbbf24' : '#f87171') : '#ccc'
+        }}>
+          {metrics.fid ? `${metrics.fid}ms` : 'Measuring...'}
+        </span>
+      </div>
+      
+      <div style={{ marginBottom: '6px' }}>
+        <span style={{ color: '#75b1ff', display: 'inline-block', width: '50px' }}>CLS:</span> 
+        <span style={{ 
+          color: metrics.cls ? (metrics.cls < 0.1 ? '#4ade80' : metrics.cls < 0.25 ? '#fbbf24' : '#f87171') : '#ccc'
+        }}>
+          {metrics.cls ?? 'Measuring...'}
+        </span>
+      </div>
+      
+      <div style={{ marginBottom: '6px' }}>
+        <span style={{ color: '#75b1ff', display: 'inline-block', width: '50px' }}>TTFB:</span> 
+        <span style={{ 
+          color: metrics.ttfb ? (metrics.ttfb < 600 ? '#4ade80' : metrics.ttfb < 1200 ? '#fbbf24' : '#f87171') : '#ccc'
+        }}>
+          {metrics.ttfb ? `${metrics.ttfb}ms` : 'Measuring...'}
+        </span>
+      </div>
+      
+      {metrics.resourceLoad && (
+        <div style={{ marginBottom: '6px' }}>
+          <span style={{ color: '#75b1ff', display: 'inline-block', width: '50px' }}>Img:</span> 
+          <span style={{ 
+            color: metrics.resourceLoad < 400 ? '#4ade80' : metrics.resourceLoad < 1000 ? '#fbbf24' : '#f87171'
+          }}>
+            {`${metrics.resourceLoad}ms`}
+          </span>
+        </div>
+      )}
+      
+      <div style={{ fontSize: '11px', opacity: 0.7, marginTop: '10px' }}>
+        Press Alt+P to toggle this panel
+      </div>
     </div>
   );
-}
+};
+
+export default PerformanceMonitor;
