@@ -17,15 +17,12 @@ const getCampaign = async (params: { offer_id?: string }) => {
 
     const response = await fetch(
       `${process.env.API_URL_V2}campaign?${query.toString()}`,
-      { 
-        next: { revalidate: 300 }
-      }
+      { cache: "no-store" }
     );
     const data = await response.json();
     return data.data;
   } catch (error) {
     console.log(error);
-    return null;
   }
 };
 
@@ -33,7 +30,7 @@ const getVariantCollection = async (slug: string, variant_id: string) => {
   try {
     const response = await fetch(
       `${process.env.API_URL_V2}collection?slug=${slug}&variant_id=${variant_id}`, {
-      next: { revalidate: 300 },
+      cache: "no-store",
     });
     if (!response.ok) {
       const errorResponse = await response.json();
@@ -43,15 +40,14 @@ const getVariantCollection = async (slug: string, variant_id: string) => {
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.log(error);
-    return null;
+    console.log(error)
   }
 }
 
 const getReviews = async (product_handle: string) => {
   try {
     const response = await fetch(`${process.env.API_URL_V2}/reviews?slug=${product_handle}`, {
-      next: { revalidate: 300 },
+      cache: "no-store",
     });
     if (!response.ok) {
       const errorResponse = await response.json();
@@ -62,7 +58,6 @@ const getReviews = async (product_handle: string) => {
     return data.statusCode.data;
   } catch (error) {
     console.log(error);
-    return [];
   }
 };
 
@@ -104,7 +99,7 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
         <MdErrorOutline className="text-red-600 text-6xl mb-4" />
         <h1 className="font-bold text-red-600 text-lg mb-2">Access Denied</h1>
         <p className="text-gray-600 text-sm text-center">
-          This offer is not available on the current domain.
+          This campaign is not available on this domain.
         </p>
       </div>
     );

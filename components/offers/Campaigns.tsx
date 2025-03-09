@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,26 +7,19 @@ import TextComponent from './components/TextComponent';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
 
-// Critical components loaded immediately
-// Only dynamically import non-critical components
+// Dynamically import heavy components
 const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), { 
-  loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div>,
-  ssr: true // Pre-render for better LCP
+  loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div> 
 });
-
-// Non-critical components can be loaded lazily after initial render
-const AccordionComponent = dynamic(() => import('./components/AccordionComponent'), {
-  ssr: false,
-  loading: () => <div className="h-24 animate-pulse bg-gray-100 rounded my-2"></div>
-});
-const HtmlComponent = dynamic(() => import('./components/HtmlComponent'), { ssr: false });
-const RatingsComponent = dynamic(() => import('./components/RatingsComponent'), { ssr: false });
-const MultipleCta = dynamic(() => import('./components/MultipleCta'), { ssr: false });
-const VariantsComponent = dynamic(() => import('./components/VariantsComponent'), { ssr: false });
-const ReviewsComponent = dynamic(() => import('./components/ReviewsComponent'), { ssr: false });
-const Checkout = dynamic(() => import('./components/Checkout'), { ssr: false });
-const Ticker = dynamic(() => import('./components/Ticker'), { ssr: false });
-const Tags = dynamic(() => import('./components/Tags'), { ssr: false });
+const AccordionComponent = dynamic(() => import('./components/AccordionComponent'));
+const HtmlComponent = dynamic(() => import('./components/HtmlComponent'));
+const RatingsComponent = dynamic(() => import('./components/RatingsComponent'));
+const MultipleCta = dynamic(() => import('./components/MultipleCta'));
+const VariantsComponent = dynamic(() => import('./components/VariantsComponent'));
+const ReviewsComponent = dynamic(() => import('./components/ReviewsComponent'));
+const Checkout = dynamic(() => import('./components/Checkout'));
+const Ticker = dynamic(() => import('./components/Ticker'));
+const Tags = dynamic(() => import('./components/Tags'));
 const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
 
 interface CampaignData {
@@ -120,25 +113,24 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     const [error, setError] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
 
-    // Wrap the array in useMemo to prevent re-creation on every render
-    const specialVariantIds = useMemo(() => [
+    // cureveda strawberry variant IDs that should have default quantity of 2 for bogo coupon
+    const specialVariantIds = [
         '41056148652078',
         '41056148684846',
         '41056148717614'
-    ], []);
+    ];
 
     const handleIncrease = () => {
-        setQuantity(prevQuantity => prevQuantity + 1);
+        setQuantity((prev) => prev + 1);
     };
 
     const handleDecrease = () => {
         if (quantity > 1) {
-            setQuantity(prevQuantity => prevQuantity - 1);
+            setQuantity((prev) => prev - 1);
         }
     };
-
-    // Wrap functions in useCallback to prevent re-creation on every render
-    const updateCampaignVariant = useCallback((variants: any[], variantId: string | null) => {
+    // Function to find and set the correct campaign variant
+    const updateCampaignVariant = (variants: any[], variantId: string | null) => {
         if (!variantId) {
             setCampaign(campaignData);
             return;
@@ -156,9 +148,9 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                 advertiser: newVariant.advertiser,
             }));
         }
-    }, [campaignData]);
+    };
 
-    const updateUrlWithParams = useCallback((variantId: string | null) => {
+    const updateUrlWithParams = (variantId: string | null) => {
         if (!preserveParams) return;
 
         const currentUrl = new URL(window.location.href);
@@ -178,7 +170,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
         const newUrl = `${window.location.pathname}?${params.toString()}`;
         window.history.replaceState({}, '', newUrl);
-    }, [preserveParams, utm_params]);
+    };
 
     // Initial campaign setup
     useEffect(() => {
@@ -203,7 +195,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         if (campaignData.collections?.variants) {
             updateCampaignVariant(campaignData.collections.variants, variantId);
         }
-    }, [campaignData, utm_params, preserveParams, specialVariantIds, updateCampaignVariant, updateUrlWithParams]);
+    }, [campaignData, utm_params]);
 
     // Listen for variant changes
     useEffect(() => {
@@ -227,7 +219,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         return () => {
             window.removeEventListener('variantChanged', handleVariantChange as EventListener);
         };
-    }, [campaignData, utm_params, specialVariantIds, updateCampaignVariant, updateUrlWithParams]);
+    }, [campaignData, utm_params]);
 
     if (error) return <div>Error: {error}</div>;
     if (!campaign) return <></>;
