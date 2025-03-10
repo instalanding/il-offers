@@ -130,11 +130,10 @@ export default function PerformanceMonitor() {
             console.log(`Total page load time: ${pageLoadTime}ms`);
           }
           
-          // Check for potential LCP bottlenecks - access current metrics value inside the callback
+          // Check for potential LCP bottlenecks
           setTimeout(() => {
-            // Get the current metrics state at the time this runs
-            const currentLcpMetric = metrics.LCP;
-            if (currentLcpMetric && currentLcpMetric.value > 2500) {
+            const lcpMetric = metrics.LCP;
+            if (lcpMetric && lcpMetric.value > 2500) {
               setShowRecommendations(true);
             }
           }, 1000);
@@ -149,7 +148,7 @@ export default function PerformanceMonitor() {
         console.error("Error setting up performance observers", error);
       }
     }
-  }, []); // No dependency on metrics
+  }, []);
   
   // Only render in development or with ?debug=true
   if (
@@ -191,8 +190,8 @@ export default function PerformanceMonitor() {
         <div className="mt-3 border-t border-gray-600 pt-2">
           <h4 className="font-bold text-yellow-400">Recommendations:</h4>
           <ul className="text-gray-300 list-disc pl-4 mt-1 text-[10px]">
-            <li>Use &lt;link rel=&quot;preload&quot;&gt; for the LCP image</li>
-            <li>Set fetchPriority=&quot;high&quot; on LCP image</li>
+            <li>Use &lt;link rel="preload"&gt; for the LCP image</li>
+            <li>Set fetchPriority="high" on LCP image</li>
             <li>Optimize image size and format</li>
             <li>Reduce render-blocking resources</li>
           </ul>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -181,8 +181,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         window.history.replaceState({}, '', newUrl);
     };
 
-    // Extract all image URLs from the blocks for preloading
-    const getAllImageUrls = () => {
+    // Extract all image URLs from the blocks for preloading - memoize to avoid recalculations
+    const imageUrls = useMemo(() => {
         const urls: string[] = [];
         
         if (blocks && blocks.length > 0) {
@@ -196,17 +196,19 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         }
         
         return urls;
-    };
+    }, [blocks]); // Only recalculate when blocks change
     
     // Handler for when all images are preloaded
-    const handleImagesPreloaded = () => {
-        setAllImagesLoaded(true);
-        
-        // Optionally log to performance monitor
-        if (window.performance && window.performance.mark) {
-            window.performance.mark('all-images-preloaded');
+    const handleImagesPreloaded = useCallback(() => {
+        if (!allImagesLoaded) {
+            setAllImagesLoaded(true);
+            
+            // Optionally log to performance monitor
+            if (window.performance && window.performance.mark) {
+                window.performance.mark('all-images-preloaded');
+            }
         }
-    };
+    }, [allImagesLoaded]); // Only recreate if allImagesLoaded changes
 
     // Initial campaign setup
     useEffect(() => {
@@ -231,7 +233,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         if (campaignData.collections?.variants) {
             updateCampaignVariant(campaignData.collections.variants, variantId);
         }
-    }, [campaignData, utm_params, preserveParams, specialVariantIds, updateCampaignVariant, updateUrlWithParams]);
+    }, [campaignData, utm_params]);
 
     // Listen for variant changes
     useEffect(() => {
@@ -251,11 +253,11 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
             }
         };
 
-        document.addEventListener('variant:changed', handleVariantChange as EventListener);
+        window.addEventListener('variantChanged', handleVariantChange as EventListener);
         return () => {
-            document.removeEventListener('variant:changed', handleVariantChange as EventListener);
+            window.removeEventListener('variantChanged', handleVariantChange as EventListener);
         };
-    }, [campaignData, specialVariantIds, updateCampaignVariant, updateUrlWithParams]);
+    }, [campaignData, utm_params]);
 
     useEffect(() => {
         try {
@@ -319,10 +321,10 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     };
 
     // Create the gradient styles
-    const gradientValue = createGradient(variantData?.config?.primary_color || '#000000');
-    // The function returns a string gradient value, not an object
-    const primaryColor = variantData?.config?.primary_color || '#000000';
-    const secondaryColor = '#333333'; // Default secondary color
+    const gradientResult = createGradient(variantData?.config?.primary_color || '#000000');
+    const primaryColor = gradientResult.primaryColor || '#000000';
+    const secondaryColor = gradientResult.secondaryColor || '#333333';
+    const gradientStyle = gradientResult.gradient || 'linear-gradient(180deg, rgba(0,0,0,0.5), white)';
 
     return (
         <>
@@ -335,20 +337,20 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
             <main
                 className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 "
                 style={{
-                    overflowY: 'auto', backgroundImage: campaign?.config?.primary_color
-                        ? createGradient(campaign.config.primary_color)
-                        : 'none'
+                    overflowY: 'auto', backgroundImage: gradientStyle
                 }}
             >
                 <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none md:rounded-lg overflow-auto mx-auto rounded-none">
 
-                    {/* Preload all images for faster UX */}
-                    <ImagePreloader 
-                        images={getAllImageUrls()} 
-                        priorityImageIndices={[0]} // First image is highest priority (LCP)
-                        onComplete={handleImagesPreloaded}
-                        debug={process.env.NODE_ENV === 'development'}
-                    />
+                    {/* Preload all images for faster UX - only if not already loaded */}
+                    {!allImagesLoaded && imageUrls.length > 0 && (
+                        <ImagePreloader 
+                            images={imageUrls} 
+                            priorityImageIndices={[0]} // First image is highest priority (LCP)
+                            onComplete={handleImagesPreloaded}
+                            debug={process.env.NODE_ENV === 'development'}
+                        />
+                    )}
 
                     <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
                     {blocks.map((block: Block) => {

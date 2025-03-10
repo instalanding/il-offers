@@ -7,13 +7,9 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import dynamic from 'next/dynamic';
 
-// Configure the font with display swap for better performance
 const openSans = Open_Sans({
   subsets: ["latin"],
   display: "swap",
-  preload: true, // Ensure font is preloaded
-  fallback: ['system-ui', 'arial', 'sans-serif'], // Fallback fonts
-  variable: '--font-open-sans', // Use CSS variable for the font
 });
 
 // Enhanced preconnect list with prioritized domains based on critical resources
@@ -80,7 +76,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={openSans.variable}>
+    <html lang="en">
       <head>
         {/* Critical Resource Hints (High Priority) */}
         {PRECONNECT_DOMAINS.slice(0, 2).map((domain, index) => (
@@ -112,7 +108,7 @@ export default function RootLayout({
         {/* Resource Hints for Performance */}
         <meta httpEquiv="x-dns-prefetch-control" content="on" />
       </head>
-      <body className="font-sans">
+      <body className={openSans.className}>
         <Toaster />
         <Providers>
           {children}

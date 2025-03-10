@@ -40,7 +40,7 @@ const RecordImpressions = ({ checkoutData }: ImpressionsProp) => {
         if (visitorId) {
             impressions();
         }
-    }, [visitorId, impressions, checkoutData]);
+    }, [visitorId]);
 
     return null;
 };

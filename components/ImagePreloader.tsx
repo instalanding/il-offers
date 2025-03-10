@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { optimizeCloudinaryUrl } from '@/utils/imageUtils';
 
 interface ImagePreloaderProps {
@@ -27,55 +27,88 @@ export default function ImagePreloader({
 }: ImagePreloaderProps) {
   const [loadedCount, setLoadedCount] = useState(0);
   const [allLoaded, setAllLoaded] = useState(false);
+  const imagesSignatureRef = useRef<string>('');
+  const isLoadingRef = useRef<boolean>(false);
+  
+  // Prevent duplicate preload operations by tracking image signatures
+  const getImagesSignature = (imgs: string[]): string => {
+    if (!imgs || !imgs.length) return '';
+    // Use a simple hash of the first few and last few images to detect changes
+    const sample = [...(imgs.slice(0, 2)), ...(imgs.slice(-2))].join('|');
+    return sample;
+  };
   
   useEffect(() => {
+    // Skip if no images or already handled these exact images
+    const imagesSignature = getImagesSignature(images);
     if (!images || images.length === 0) {
-      if (onComplete) onComplete();
-      setAllLoaded(true);
+      if (onComplete && !allLoaded) {
+        onComplete();
+        setAllLoaded(true);
+      }
       return;
+    }
+    
+    // Skip if already loading these same images or already loaded
+    if (isLoadingRef.current && imagesSignature === imagesSignatureRef.current) {
+      return;
+    }
+    
+    // Reset state for new image set
+    if (imagesSignature !== imagesSignatureRef.current) {
+      setLoadedCount(0);
+      setAllLoaded(false);
+      imagesSignatureRef.current = imagesSignature;
+      isLoadingRef.current = true;
     }
     
     let loadedImages = 0;
     const totalImages = images.length;
     const startTime = performance.now();
     
+    // Use a synchronized counter instead of state updates for each image
+    const checkCompletion = () => {
+      loadedImages++;
+      
+      // Update the loadedCount state only occasionally to prevent too many renders
+      if (loadedImages % 3 === 0 || loadedImages === totalImages) {
+        setLoadedCount(loadedImages);
+      }
+      
+      if (loadedImages === totalImages && !allLoaded) {
+        const totalTime = performance.now() - startTime;
+        if (debug) {
+          console.log(`All ${totalImages} images preloaded in ${Math.round(totalTime)}ms`);
+        }
+        
+        isLoadingRef.current = false;
+        setAllLoaded(true);
+        
+        if (onComplete) {
+          // Delay the completion callback slightly to avoid React state batching issues
+          setTimeout(() => {
+            onComplete();
+          }, 0);
+        }
+      }
+    };
+    
     // First, handle priority images with higher priority
+    const preloadedIndices = new Set<number>();
+    
     priorityImageIndices.forEach((index) => {
       if (index >= 0 && index < images.length) {
+        preloadedIndices.add(index);
         const img = new Image();
         
         // Use high-quality optimized version for priority images
         const url = images[index];
         
-        img.onload = () => {
-          loadedImages++;
-          setLoadedCount(loadedImages);
+        img.onload = img.onerror = () => {
+          checkCompletion();
           
-          if (debug) {
+          if (debug && img.onload === img.onerror) {
             console.log(`Priority image #${index} loaded: ${url}`);
-          }
-          
-          if (loadedImages === totalImages) {
-            const totalTime = performance.now() - startTime;
-            if (debug) {
-              console.log(`All ${totalImages} images preloaded in ${Math.round(totalTime)}ms`);
-            }
-            if (onComplete) onComplete();
-            setAllLoaded(true);
-          }
-        };
-        
-        img.onerror = () => {
-          loadedImages++;
-          setLoadedCount(loadedImages);
-          
-          if (debug) {
-            console.error(`Failed to preload priority image #${index}: ${url}`);
-          }
-          
-          if (loadedImages === totalImages) {
-            if (onComplete) onComplete();
-            setAllLoaded(true);
           }
         };
         
@@ -88,42 +121,14 @@ export default function ImagePreloader({
     // Then handle the rest of the images
     images.forEach((url, index) => {
       // Skip priority images that we've already handled
-      if (priorityImageIndices.includes(index)) {
+      if (preloadedIndices.has(index)) {
         return;
       }
       
       const img = new Image();
       
-      img.onload = () => {
-        loadedImages++;
-        setLoadedCount(loadedImages);
-        
-        if (debug) {
-          console.log(`Image #${index} loaded: ${url}`);
-        }
-        
-        if (loadedImages === totalImages) {
-          const totalTime = performance.now() - startTime;
-          if (debug) {
-            console.log(`All ${totalImages} images preloaded in ${Math.round(totalTime)}ms`);
-          }
-          if (onComplete) onComplete();
-          setAllLoaded(true);
-        }
-      };
-      
-      img.onerror = () => {
-        loadedImages++;
-        setLoadedCount(loadedImages);
-        
-        if (debug) {
-          console.error(`Failed to preload image #${index}: ${url}`);
-        }
-        
-        if (loadedImages === totalImages) {
-          if (onComplete) onComplete();
-          setAllLoaded(true);
-        }
+      img.onload = img.onerror = () => {
+        checkCompletion();
       };
       
       // Use lower quality for non-priority images
@@ -133,7 +138,7 @@ export default function ImagePreloader({
     return () => {
       // No cleanup needed, but we could cancel requests if needed
     };
-  }, [images, priorityImageIndices, onComplete, debug]);
+  }, [images, priorityImageIndices, onComplete, debug, allLoaded]);
   
   // This component doesn't render anything visible
   return null;

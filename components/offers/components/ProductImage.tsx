@@ -26,16 +26,29 @@ export function ProductImage({
   const [loaded, setLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const startTimeRef = useRef<number>(performance.now());
+  const prevSrcRef = useRef<string>(src);
   
-  // Optimize the image URL
-  const optimizedSrc = optimizeCloudinaryUrl(src, width);
+  // Reset state when src changes
+  useEffect(() => {
+    if (prevSrcRef.current !== src) {
+      setLoaded(false);
+      startTimeRef.current = performance.now();
+      prevSrcRef.current = src;
+    }
+  }, [src]);
   
-  // Generate srcset for responsive images
-  const srcSet = src ? generateImageSrcSet(src) : '';
+  // Optimize the image URL - memoize to prevent recalculation on every render
+  const optimizedSrc = useRef(optimizeCloudinaryUrl(src, width)).current;
+  
+  // Generate srcset for responsive images - memoize to prevent recalculation
+  const srcSet = useRef(src ? generateImageSrcSet(src) : '').current;
   
   useEffect(() => {
+    // Don't set up observers if not in browser or no imageRef
+    if (typeof window === 'undefined' || !imageRef.current) return;
+    
     // Add LCP tracking entry marker if this is an LCP image
-    if (isLCP && imageRef.current && 'PerformanceObserver' in window) {
+    if (isLCP && 'PerformanceObserver' in window) {
       try {
         // Mark the element for LCP tracking
         imageRef.current.setAttribute('data-lcp', 'true');
@@ -74,10 +87,13 @@ export function ProductImage({
         console.error('Error tracking LCP:', error);
       }
     }
-  }, [isLCP]);
+  }, [isLCP]); // Only trigger when isLCP changes
   
-  // Track image load time
+  // Track image load time - using event handler to avoid state updates in render
   const handleLoad = () => {
+    // Don't update state if already loaded (prevents double updates)
+    if (loaded) return;
+    
     const loadTime = performance.now() - startTimeRef.current;
     if (isLCP) {
       console.log(`Product image loaded in ${Math.round(loadTime)}ms`);
