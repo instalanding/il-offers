@@ -14,7 +14,6 @@ const nextConfig = {
         ]
     },
     images: {
-        domains: ['s3.amazonaws.com'],
         remotePatterns: [
             {
                 protocol: 'https',
@@ -23,7 +22,22 @@ const nextConfig = {
                 pathname: '**',
             },
         ],
+        formats: ['image/avif', 'image/webp'],
+        minimumCacheTTL: 86400, // 24 hours
+        deviceSizes: [480, 768, 1024, 1280, 1536], // Customize device sizes
+        imageSizes: [16, 32, 48, 64, 96, 128, 256], // Customize image sizes
     },
+    experimental: {
+        optimizeCss: true,
+        // optimizeServerReact: true
+    },
+    // Explicitly set the server runtime
+    serverRuntimeConfig: {
+        // Will only be available on the server side
+    },
+    publicRuntimeConfig: {
+        // Will be available on both server and client
+    }
 };
 
 export default nextConfig;

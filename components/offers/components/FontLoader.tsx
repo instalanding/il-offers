@@ -1,17 +1,50 @@
 "use client";
-import React, { useEffect } from "react";
-import useFetchGoogleFonts from "@/hooks/useFetchGoogleFonts";
+import React from 'react';
 
-const FontLoader = ({ fontFamily }: { fontFamily: string }) => {
-    const { loadFonts } = useFetchGoogleFonts();
+interface FontLoaderProps {
+  fontFamily: string;
+}
 
-    useEffect(() => {
-        if (fontFamily) {
-            loadFonts(fontFamily);
-        }
-    }, [fontFamily, loadFonts]);
+// Map of font families to their respective font-display values
+const fontDisplayMap: Record<string, string> = {
+  'Inter': 'swap',
+  'Montserrat': 'swap',
+  'Roboto': 'swap',
+  'Open Sans': 'swap',
+  'Lato': 'swap',
+  'Poppins': 'swap',
+  // Add more font families as needed
+};
 
-    return null; // This component does not render anything
+const FontLoader: React.FC<FontLoaderProps> = ({ fontFamily }) => {
+  const fontDisplay = fontDisplayMap[fontFamily] || 'swap';
+  
+  // Normalize font family name for Google Fonts URL
+  const normalizedFontFamily = fontFamily.replace(/\s+/g, '+');
+  
+  return (
+    <>
+      <link 
+        rel="preconnect" 
+        href="https://fonts.googleapis.com" 
+        crossOrigin="anonymous"
+      />
+      <link 
+        rel="preconnect" 
+        href="https://fonts.gstatic.com" 
+        crossOrigin="anonymous"
+      />
+      <link
+        rel="preload"
+        as="style"
+        href={`https://fonts.googleapis.com/css2?family=${normalizedFontFamily}:wght@400;500;600;700&display=${fontDisplay}`}
+      />
+      <link
+        rel="stylesheet"
+        href={`https://fonts.googleapis.com/css2?family=${normalizedFontFamily}:wght@400;500;600;700&display=${fontDisplay}`}
+      />
+    </>
+  );
 };
 
 export default FontLoader; 

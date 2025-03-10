@@ -21,7 +21,7 @@ export default function useCheckout() {
     if (typeof window === "undefined") return;
     if (scriptLoaded.current) return; // ✅ Prevent multiple loads
 
-    console.log("Loading Shiprocket scripts...");
+    //console.log("Loading Shiprocket scripts...");
     scriptLoaded.current = true; // ✅ Set ref to true immediately
 
     // Load script dynamically
@@ -31,7 +31,7 @@ export default function useCheckout() {
     script.defer = true;
     script.onload = () => {
       setLoaded(true);
-      console.log("Shiprocket script loaded!");
+      //console.log("Shiprocket script loaded!");
     };
     document.body.appendChild(script);
 
@@ -49,7 +49,7 @@ export default function useCheckout() {
 
   useEffect(() => {
     if (isMobileDevice()) {
-      console.log("User is on a mobile device, loading scripts...");
+      //console.log("User is on a mobile device, loading scripts...");
       loadScripts();
     }
   }, []);
@@ -77,7 +77,7 @@ export default function useCheckout() {
     e.preventDefault();
 
     if (!loaded) {
-      console.log("Script not loaded yet. Loading now...");
+      //console.log("Script not loaded yet. Loading now...");
       loadScripts();
       setTimeout(() => {
         handleCheckout(e, variant_id, offer_id, couponCode, utm_params, quantity);
