@@ -7,6 +7,7 @@ import { cache } from 'react';
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import { generateFontPreloadLinks } from '@/lib/fontUtils';
+import { FONT_FAMILY_MAPPING } from '@/lib/fontUtils';
 
 // Simple loading component
 function ProductLoading() {
@@ -402,74 +403,13 @@ export default async function ProductPage({
 // Enhance environment validation to ensure correct API path
 function validateEnvironment() {
   if (!process.env.API_URL_V2) {
+    console.error("API_URL_V2 is not defined in environment variables");
     return false;
   }
   
-  // Remove any trailing slashes to ensure consistent URL formatting
-  if (process.env.API_URL_V2.endsWith('/')) {
-    process.env.API_URL_V2 = process.env.API_URL_V2.slice(0, -1);
-  }
-  
-  // Check if API_URL_V2 already includes /v2/api
   if (!process.env.API_URL_V2.includes('/v2/api')) {
     process.env.API_URL_V2 = `${process.env.API_URL_V2}/v2/api`;
   }
   
   return true;
-}
-
-export const FONT_FAMILY_MAPPING: Record<string, string> = {
-  // Current Fonts
-  'Oswald': 'Oswald:wght@400;500;600;700',
-  'Roboto': 'Roboto:wght@400;500;700',
-  'Open Sans': 'Open+Sans:wght@400;500;600;700',
-  'Lato': 'Lato:wght@400;700',
-  'Montserrat': 'Montserrat:wght@400;500;600;700',
-  'Poppins': 'Poppins:wght@400;500;600;700',
-  
-  // Modern Sans-Serifs for Tech & Contemporary Brands
-  'Inter': 'Inter:wght@300;400;500;600;700',  // Apple-like, modern UI font
-  'Work Sans': 'Work+Sans:wght@400;500;600',  // Clean, minimal
-  'DM Sans': 'DM+Sans:wght@400;500;700',     // Modern geometric
-  'Manrope': 'Manrope:wght@400;500;600;700', // Contemporary, tech-friendly
-  
-  // Elegant Serifs for Luxury & Premium Brands
-  'Playfair Display': 'Playfair+Display:wght@400;500;600;700',  // Luxury
-  'Cormorant Garamond': 'Cormorant+Garamond:wght@400;500;600',  // Upscale
-  'Merriweather': 'Merriweather:wght@300;400;700',             // Readable, editorial
-  'Libre Baskerville': 'Libre+Baskerville:wght@400;700',       // Classic
-  
-  // Friendly, Approachable Fonts
-  'Quicksand': 'Quicksand:wght@400;500;600;700',  // Rounded, friendly
-  'Nunito': 'Nunito:wght@400;600;700',           // Rounded, soft
-  'Comfortaa': 'Comfortaa:wght@400;500;700',     // Playful, rounded
-  
-  // Display & Decorative (for headlines & emphasis)
-  'Bebas Neue': 'Bebas+Neue',                   // Strong, bold headlines
-  'Archivo Black': 'Archivo+Black',             // Modern, impactful
-  'Playfair Display SC': 'Playfair+Display+SC', // Small caps elegance
-  
-  // Handwriting & Script (for brands with personal touch)
-  'Dancing Script': 'Dancing+Script:wght@400;700',   // Elegant script
-  'Caveat': 'Caveat:wght@400;700',                   // Casual handwriting
-  
-  // Monospace (for tech, coding-focused brands)
-  'Fira Code': 'Fira+Code:wght@400;500;700',         // Coding with ligatures
-  'Space Mono': 'Space+Mono:wght@400;700',           // Distinctive tech
-  
-  // Non-Latin Support
-  'Noto Sans': 'Noto+Sans:wght@400;500;700',         // Excellent multilingual
-  'IBM Plex Sans': 'IBM+Plex+Sans:wght@400;500;600', // Good multilingual support
-  
-  // Versatile Variable Fonts
-  'Epilogue': 'Epilogue:wght@100..900',              // Variable weight
-  'Outfit': 'Outfit:wght@100..900',                  // Modern variable
-  
-  // Industry-Specific
-  'Rubik': 'Rubik:wght@400;500;700',                 // Health/wellness
-  'Barlow': 'Barlow:wght@400;500;600;700',           // Automotive/industrial
-  'Karla': 'Karla:wght@400;500;700',                 // Fashion-friendly
-  
-  // Accessibility-Focused
-  'Atkinson Hyperlegible': 'Atkinson+Hyperlegible:wght@400;700' // High readability
 }
