@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
-import { Providers } from './providers';
+import { Toaster } from "@/components/ui/toaster";
+import { GoogleTagManager } from "@next/third-parties/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import dynamic from 'next/dynamic';
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -14,6 +17,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(`https://instalanding.shop`),
 };
 
+// Import PerformanceMonitor only on client-side
+const PerformanceMonitor = dynamic(() => import('../components/PerformanceMonitor'), { 
+  ssr: false,
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -21,11 +29,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={openSans.className}>
-        <Providers>
+      {/* <SpeedInsights/> */}
+        {/* <GoogleTagManager gtmId="GTM-P6D6G8DC" /> */}
+        <body className={openSans.className}>
+          <Toaster />
           {children}
-        </Providers>
-      </body>
+          {/* {process.env.NODE_ENV === 'pre-production' && <PerformanceMonitor />} */}
+          <PerformanceMonitor />
+        </body>
     </html>
   );
 }
