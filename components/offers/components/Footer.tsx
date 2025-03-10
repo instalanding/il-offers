@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { calculatePercentageOff } from "@/lib/calculateDiscount";
 import { formatPrice } from "@/lib/formatUtils";
-import useCheckout from "@/hooks/Checkout";
+// import useCheckout from "@/hooks/Checkout";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -59,7 +59,7 @@ const Footer: React.FC<{
   handleDecrease,
   checkoutData,
 }) => {
-    const { handleCheckout, handleMouseEnter, handleTouchStart } = useCheckout();
+    // const { handleCheckout, handleMouseEnter, handleTouchStart } = useCheckout();
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
 
@@ -76,61 +76,87 @@ const Footer: React.FC<{
       }
     };
 
-    const handleCheckoutButtonClick = async (
-      e: React.MouseEvent<HTMLButtonElement>
-    ) => {
-      // setLoading(true);
-      try {
-        if (isMobile) {
-          handleTouchStart();
-        }
-        if (
-          checkoutData.checkout_name === "shiprocket" ||
-          checkoutData.checkout_name === "fastr" ||
-          checkoutData.checkout_name === "fastrr"
-        ) {
-          setTimeout(() => {
-            //console.log("checkout called");
-            handleCheckout(
-              e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
-              checkoutData.variant_id,
-              checkoutData.offer_id,
-              checkoutData.coupon_code,
-              checkoutData.utm_params,
-              quantity
-            );
-          }, 3000);
-        } else if (checkoutData.checkout_name === "shopify") {
-          router.push(
-            `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
-          );
-        } else {
-          router.push(
-            `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
-          );
-        }
-        recordClicks();
-        if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
-          checkoutData.pixel.forEach((pixelId) => {
-            const noscript = document.createElement("noscript");
-            const img = document.createElement("img");
-            img.height = 1;
-            img.width = 1;
-            img.style.display = "none";
-            img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
-            img.alt = "Facebook Pixel";
-            noscript.appendChild(img);
-            document.body.appendChild(noscript);
-          });
-        }
-      } catch (error) {
-        console.error("Error during checkout:", error);
-      } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 6000);
+    const handleCheckoutButtonClick = async () => {
+      if (checkoutData.checkout_name === "shopify") {
+        router.push(
+          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+        );
+      } else {
+        router.push(
+          `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+        );
       }
-    };
+      recordClicks();
+      if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
+        checkoutData.pixel.forEach((pixelId) => {
+          const noscript = document.createElement("noscript");
+          const img = document.createElement("img");
+          img.height = 1;
+          img.width = 1;
+          img.style.display = "none";
+          img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
+          img.alt = "Facebook Pixel";
+          noscript.appendChild(img);
+          document.body.appendChild(noscript);
+        });
+      }
+    }
+
+    // const handleCheckoutButtonClick = async (
+    //   e: React.MouseEvent<HTMLButtonElement>
+    // ) => {
+    //   // setLoading(true);
+    //   try {
+    //     if (isMobile) {
+    //       handleTouchStart();
+    //     }
+    //     if (
+    //       checkoutData.checkout_name === "shiprocket" ||
+    //       checkoutData.checkout_name === "fastr" ||
+    //       checkoutData.checkout_name === "fastrr"
+    //     ) {
+    //       setTimeout(() => {
+    //         //console.log("checkout called");
+    //         handleCheckout(
+    //           e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    //           checkoutData.variant_id,
+    //           checkoutData.offer_id,
+    //           checkoutData.coupon_code,
+    //           checkoutData.utm_params,
+    //           quantity
+    //         );
+    //       }, 3000);
+    //     } else if (checkoutData.checkout_name === "shopify") {
+    //       router.push(
+    //         `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+    //       );
+    //     } else {
+    //       router.push(
+    //         `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+    //       );
+    //     }
+    //     recordClicks();
+    //     if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
+    //       checkoutData.pixel.forEach((pixelId) => {
+    //         const noscript = document.createElement("noscript");
+    //         const img = document.createElement("img");
+    //         img.height = 1;
+    //         img.width = 1;
+    //         img.style.display = "none";
+    //         img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
+    //         img.alt = "Facebook Pixel";
+    //         noscript.appendChild(img);
+    //         document.body.appendChild(noscript);
+    //       });
+    //     }
+    //   } catch (error) {
+    //     console.error("Error during checkout:", error);
+    //   } finally {
+    //     setTimeout(() => {
+    //       setLoading(false);
+    //     }, 6000);
+    //   }
+    // };
 
     async function recordClicks() {
       try {
@@ -157,7 +183,6 @@ const Footer: React.FC<{
         <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
         <div
           className="sticky bottom-0 bg-gray-100"
-          onTouchStart={handleTouchStart}
         >
           <div className="flex flex-col">
             <div
@@ -246,7 +271,23 @@ const Footer: React.FC<{
                     </button>
                   </div>
                 )}
-                {loading ? (
+                {/* Removing the shiprocket and fastrr checkout buttons */}
+                <Button
+                  onClick={(e) => {
+                    // setLoading(true);
+                    handleCheckoutButtonClick();
+                  }}
+                  disabled={isSoldOut}
+                  className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg transition-colors
+                ${isSoldOut ? "opacity-50 cursor-not-allowed" : ""}`}
+                  style={{
+                    backgroundColor: config.primaryColor,
+                    color: config.secondaryColor,
+                  }}
+                >
+                  {isSoldOut ? "Sold Out" : <>{config.buttonText}</>}
+                </Button>
+                {/* {loading ? (
                   <Button
                     className={`max-w-[300px] border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full flex-1 rounded-lg`}
                     disabled={loading}
@@ -275,7 +316,7 @@ const Footer: React.FC<{
                   >
                     {isSoldOut ? "Sold Out" : <>{config.buttonText}</>}
                   </Button>
-                )}
+                )} */}
               </div>
             </div>
           </div>
