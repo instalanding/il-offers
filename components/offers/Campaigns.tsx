@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import TextComponent from './components/TextComponent';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
+import ImagePreloader from '../ImagePreloader';
+import OptimizedImage from '@/components/OptimizedImage';
 
 // Dynamically import heavy components
 const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), { 
@@ -111,7 +113,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [quantity, setQuantity] = useState(1);
+    const [quantity, setQuantity] = useState<number>(1);
+    const [blocks, setBlocks] = useState<Block[]>([]);
+    const [currentVariantId, setCurrentVariantId] = useState<string>(campaignData?.variant_id || "");
+    const [variantData, setVariantData] = useState<any>(campaignData);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+    const [checkout, setCheckout] = useState<string>('');
+    const [allImagesLoaded, setAllImagesLoaded] = useState<boolean>(false);
 
     // cureveda strawberry variant IDs that should have default quantity of 2 for bogo coupon
     const specialVariantIds = [
@@ -172,7 +181,32 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         window.history.replaceState({}, '', newUrl);
     };
 
+    // Extract all image URLs from the blocks for preloading
+    const getAllImageUrls = () => {
+        const urls: string[] = [];
+        
+        if (blocks && blocks.length > 0) {
+            blocks.forEach(block => {
+                if (block.type === 'carousel' && block.images && block.images.length > 0) {
+                    block.images.forEach(img => {
+                        if (img.url) urls.push(img.url);
+                    });
+                }
+            });
+        }
+        
+        return urls;
+    };
     
+    // Handler for when all images are preloaded
+    const handleImagesPreloaded = () => {
+        setAllImagesLoaded(true);
+        
+        // Optionally log to performance monitor
+        if (window.performance && window.performance.mark) {
+            window.performance.mark('all-images-preloaded');
+        }
+    };
 
     // Initial campaign setup
     useEffect(() => {
@@ -197,7 +231,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         if (campaignData.collections?.variants) {
             updateCampaignVariant(campaignData.collections.variants, variantId);
         }
-    }, [campaignData, utm_params]);
+    }, [campaignData, utm_params, preserveParams, specialVariantIds, updateCampaignVariant, updateUrlWithParams]);
 
     // Listen for variant changes
     useEffect(() => {
@@ -217,16 +251,24 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
             }
         };
 
-        window.addEventListener('variantChanged', handleVariantChange as EventListener);
+        document.addEventListener('variant:changed', handleVariantChange as EventListener);
         return () => {
-            window.removeEventListener('variantChanged', handleVariantChange as EventListener);
+            document.removeEventListener('variant:changed', handleVariantChange as EventListener);
         };
-    }, [campaignData, utm_params]);
+    }, [campaignData, specialVariantIds, updateCampaignVariant, updateUrlWithParams]);
+
+    useEffect(() => {
+        try {
+            const parsedBlocks = JSON.parse(campaignData?.blocks || '[]');
+            setBlocks(parsedBlocks);
+        } catch (error) {
+            console.error("Error parsing blocks:", error);
+            setBlocks([]);
+        }
+    }, [campaignData?.blocks]);
 
     if (error) return <div>Error: {error}</div>;
     if (!campaign) return <></>;
-
-    const blocks: Block[] = JSON.parse(campaign.blocks);
 
     const campaignConfig = {
         font_family: campaign.config.font_family,
@@ -276,7 +318,11 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         return campaign?.inventory;
     };
 
-
+    // Create the gradient styles
+    const gradientValue = createGradient(variantData?.config?.primary_color || '#000000');
+    // The function returns a string gradient value, not an object
+    const primaryColor = variantData?.config?.primary_color || '#000000';
+    const secondaryColor = '#333333'; // Default secondary color
 
     return (
         <>
@@ -295,6 +341,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                 }}
             >
                 <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none md:rounded-lg overflow-auto mx-auto rounded-none">
+
+                    {/* Preload all images for faster UX */}
+                    <ImagePreloader 
+                        images={getAllImageUrls()} 
+                        priorityImageIndices={[0]} // First image is highest priority (LCP)
+                        onComplete={handleImagesPreloaded}
+                        debug={process.env.NODE_ENV === 'development'}
+                    />
 
                     <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
                     {blocks.map((block: Block) => {

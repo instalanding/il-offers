@@ -27,7 +27,7 @@ function ProductLoading() {
   );
 }
 
-// Dynamic import of client Campaigns component
+// Dynamic import of client components for performance optimization
 const ClientCampaigns = dynamic(() => import('@/components/offers/Campaigns').catch(err => {
   console.error("Error loading Campaigns component:", err);
   const ErrorComponent = () => <div>Error loading campaign content</div>;
@@ -46,6 +46,12 @@ const ClientPerformanceMonitor = dynamic(() => import('@/components/ClientPerfor
 
 // Load the FontPreloader as a client component
 const ClientFontPreloader = dynamic(() => import('@/components/FontPreloader'), {
+  ssr: false,
+  loading: () => null
+});
+
+// Load the PreconnectScript for early domain connections
+const PreconnectScript = dynamic(() => import('@/components/PreconnectScript'), {
   ssr: false,
   loading: () => null
 });
@@ -109,6 +115,73 @@ const getCachedCampaign = cache(async (slug: string, variant_id?: string) => {
   }
 });
 
+// Helper to extract first image URL safely - modified for prioritizing LCP
+const getFirstImageUrl = (campaignData: any): { url: string, width: number, height: number } => {
+  if (!campaignData?.blocks) return { url: '', width: 0, height: 0 };
+  
+  try {
+    // Parse the blocks to find carousel images
+    const blocks = typeof campaignData.blocks === 'string' 
+      ? JSON.parse(campaignData.blocks) 
+      : campaignData.blocks;
+    
+    // Find the first carousel block
+    const carouselBlock = blocks.find((block: any) => block.type === 'carousel');
+    
+    // If we have a carousel with images
+    if (carouselBlock?.images && Array.isArray(carouselBlock.images) && carouselBlock.images.length > 0) {
+      const firstImage = carouselBlock.images[0];
+      // Return with dimensions if possible
+      return { 
+        url: firstImage.url || '', 
+        width: firstImage.width || 480, 
+        height: firstImage.height || 480 
+      };
+    }
+    
+    // Fallback to meta image if available
+    if (campaignData.meta_description?.image?.url) {
+      return { 
+        url: campaignData.meta_description.image.url, 
+        width: 480, 
+        height: 480 
+      };
+    }
+  } catch (error) {
+    console.error("Error parsing campaign image data:", error);
+  }
+  
+  return { url: '', width: 0, height: 0 };
+};
+
+// Function to generate optimized Cloudinary URL for LCP
+function getOptimizedImageUrl(imageUrl: string, width: number = 480): string {
+  if (!imageUrl) return '';
+  
+  // Check if it's a Cloudinary URL
+  if (imageUrl.includes('cloudinary.com')) {
+    // Extract the existing transformations if any
+    const urlParts = imageUrl.split('/upload/');
+    if (urlParts.length !== 2) return imageUrl;
+    
+    // Use f_auto for format, q_auto:good for quality, and w_ for width
+    // Add dpr_1.0 to prevent automatic doubling on retina displays
+    const optimizedTransformations = `f_auto,q_auto:good,w_${width},dpr_1.0`;
+    
+    // Check if there are existing transformations
+    if (urlParts[1].includes('/')) {
+      // Replace or add our optimizations
+      return `${urlParts[0]}/upload/${optimizedTransformations}/${urlParts[1].split('/').pop()}`;
+    } else {
+      // Add our optimizations
+      return `${urlParts[0]}/upload/${optimizedTransformations}/${urlParts[1]}`;
+    }
+  }
+  
+  // If not Cloudinary, return original URL
+  return imageUrl;
+}
+
 // Metadata generation for this page
 export async function generateMetadata({
   params,
@@ -129,11 +202,79 @@ export async function generateMetadata({
     // Generate font preload links
     const fontLinks = generateFontPreloadLinks(fontFamily || '');
     
+    // Get LCP image for preloading
+    const lcpImageUrl = getFirstImageUrl(data);
+    
+    // Add critical domains for preconnect
+    const preconnectLinks = [
+      { rel: 'preconnect', href: 'https://res.cloudinary.com', crossOrigin: 'anonymous' },
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+      { rel: 'dns-prefetch', href: 'https://res.cloudinary.com' }
+    ];
+    
+    // Combine all links
+    const links = [
+      ...preconnectLinks,
+      ...fontLinks,
+      ...(lcpImageUrl.url ? [{
+        rel: 'preload', 
+        as: 'image',
+        href: getOptimizedImageUrl(lcpImageUrl.url, 480),
+        // Highest priority for LCP image
+        imageSrcSet: `${getOptimizedImageUrl(lcpImageUrl.url, 480)} 1x, ${getOptimizedImageUrl(lcpImageUrl.url, 960)} 2x`,
+        imageSizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
+      }] : [])
+    ];
+    
     return {
       title,
       description,
       metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://instalanding.shop'),
-      ...(fontLinks.length > 0 && { links: fontLinks }),
+      icons: {
+        icon: '/favicon.ico', // Add your favicon
+      },
+      viewport: {
+        width: 'device-width',
+        initialScale: 1,
+        maximumScale: 5,
+      },
+      // Type-safe way to use Next.js Metadata links
+      openGraph: lcpImageUrl.url ? {
+        title,
+        description,
+        url: `/${params.slug}`,
+        siteName: 'Instalanding',
+        images: [{
+          url: getOptimizedImageUrl(lcpImageUrl.url, 1200),
+          width: 1200,
+          height: 630,
+          alt: title
+        }],
+        locale: 'en_US',
+        type: 'website',
+      } : undefined,
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: lcpImageUrl.url ? [getOptimizedImageUrl(lcpImageUrl.url, 1200)] : [],
+      },
+      alternates: {
+        canonical: `/${params.slug}`,
+      },
+      // Pass the links as an object with the correct type
+      other: {
+        preconnect: JSON.stringify(preconnectLinks),
+        fontlinks: JSON.stringify(fontLinks),
+        lcplink: lcpImageUrl.url ? JSON.stringify({
+          rel: 'preload', 
+          as: 'image',
+          href: getOptimizedImageUrl(lcpImageUrl.url, 480),
+          imageSrcSet: `${getOptimizedImageUrl(lcpImageUrl.url, 480)} 1x, ${getOptimizedImageUrl(lcpImageUrl.url, 960)} 2x`,
+          imageSizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
+        }) : '',
+      }
     };
   } catch (error) {
     return {
@@ -234,14 +375,6 @@ type SearchParams = {
   user_ip?: string;
   variant_id?: string;
   debug?: string;
-};
-
-// Helper to extract first image URL safely
-const getFirstImageUrl = (campaignData: any): string => {
-  if (!campaignData?.images || !Array.isArray(campaignData.images) || campaignData.images.length === 0) {
-    return '';
-  }
-  return campaignData.images[0]?.url || '';
 };
 
 // Main component
@@ -366,17 +499,23 @@ export default async function ProductPage({
   // Return the complete page
   return (
     <>
-      {/* Preload LCP image if available */}
-      {firstImage && (
+      {/* Add preconnect script for early domain connections */}
+      <PreconnectScript />
+      
+      {/* Enhanced LCP image preload */}
+      {firstImage.url && (
         <link
           rel="preload"
-          href={firstImage}
+          href={getOptimizedImageUrl(firstImage.url, 480)}
           as="image" 
           fetchPriority="high"
+          type="image/webp"
+          imageSrcSet={`${getOptimizedImageUrl(firstImage.url, 480)} 1x, ${getOptimizedImageUrl(firstImage.url, 960)} 2x`}
+          imageSizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
         />
       )}
       
-      {/* Render the client component with all the data */}
+      {/* Add the client campaigns component which will handle the main rendering */}
       <ClientCampaigns
         campaignData={{
           ...campaignData,
@@ -389,13 +528,13 @@ export default async function ProductPage({
         preserveParams={true}
       />
       
-      {/* Add performance monitoring in development or with query param */}
+      {/* Add font preloader for optimized font loading */}
+      <ClientFontPreloader fontFamily={fontFamily} />
+      
+      {/* Add performance monitoring in development or when debug is enabled */}
       {(process.env.NODE_ENV === 'development' || searchParams.debug === 'true') && (
         <ClientPerformanceMonitor />
       )}
-      
-      {/* Add font preloading to HTML head - client component handles this better */}
-      <ClientFontPreloader fontFamily={fontFamily} />
     </>
   );
 }
