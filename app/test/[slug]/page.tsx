@@ -1,35 +1,26 @@
-import { revalidatePath } from "next/cache";
+import { CampaignWithParams } from "./client-components";
+
 
 const page = async ({
   params,
-  searchParams,
 }: {
   params: { slug: string };
-  searchParams: { generate?: string };
 }) => {
-  // Check if we need to revalidate based on search params
 
-  // if (searchParams.generate === "true") {
-  //   console.log(`Revalidating path: /test/${params.slug}`);
-  //   revalidatePath(`/test/${params.slug}`);
-  // }
-  
   const response = await fetch(
     `${process.env.API_URL_V2}/campaign?slug=${params.slug}`,
-    { 
-      next: { 
-        revalidate: searchParams.generate === "true" ? 0 : 60 * 60 * 24 
-      } 
-    } // Conditional revalidation based on generate parameter
+    {
+      next: {
+        revalidate: 600,
+      },
+    }
   );
   const data = await response.json();
-  console.log(data);
-
-  const string = JSON.stringify(data);
 
   return (
-
-      <div>{string}</div>
+    <div>
+      <CampaignWithParams campaignData={data.data} userIp={""} />
+    </div>
   );
 };
 
@@ -44,5 +35,5 @@ export async function generateStaticParams() {
   ];
 }
 
-// Force static generation
+// // Force static generation
 export const dynamic = "force-static";
