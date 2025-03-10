@@ -172,6 +172,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         window.history.replaceState({}, '', newUrl);
     };
 
+    
+
     // Initial campaign setup
     useEffect(() => {
         setCampaign(campaignData);
