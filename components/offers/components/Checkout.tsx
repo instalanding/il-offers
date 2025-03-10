@@ -1,7 +1,7 @@
 import React from 'react'
 import { IoIosAdd, IoIosRemove } from 'react-icons/io';
 import { Button } from '../../ui/button';
-import useCheckout from "@/hooks/Checkout";
+// import useCheckout from "@/hooks/Checkout";
 import { useRouter } from "next/navigation";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
@@ -36,7 +36,7 @@ interface Checkout {
 }
 
 const Checkout: React.FC<CheckoutComponentProps> = ({ value, style, quantity, handleDecrease, handleIncrease, checkoutData }) => {
-    const { handleCheckout } = useCheckout();
+    // const { handleCheckout } = useCheckout();
     const router = useRouter();
 
     const alignmentStyle = {
@@ -62,45 +62,45 @@ const Checkout: React.FC<CheckoutComponentProps> = ({ value, style, quantity, ha
         }
     };
 
-    const handleCheckoutButtonClick = (e: React.MouseEvent) => {
-        try {
-            if (checkoutData.checkout_name === "shiprocket" || checkoutData.checkout_name === "fastr" || checkoutData.checkout_name === "fastrr") {
-                handleCheckout(
-                    e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
-                    checkoutData.variant_id,
-                    checkoutData.offer_id,
-                    checkoutData.coupon_code,
-                    checkoutData.utm_params,
-                    quantity
-                );
-            } else if (checkoutData.checkout_name === "shopify") {
-                router.push(
-                    `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
-                );
-            } else {
-                router.push(
-                    `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
-                );
-            }
+    // const handleCheckoutButtonClick = (e: React.MouseEvent) => {
+    //     try {
+    //         if (checkoutData.checkout_name === "shiprocket" || checkoutData.checkout_name === "fastr" || checkoutData.checkout_name === "fastrr") {
+    //             handleCheckout(
+    //                 e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    //                 checkoutData.variant_id,
+    //                 checkoutData.offer_id,
+    //                 checkoutData.coupon_code,
+    //                 checkoutData.utm_params,
+    //                 quantity
+    //             );
+    //         } else if (checkoutData.checkout_name === "shopify") {
+    //             router.push(
+    //                 `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+    //             );
+    //         } else {
+    //             router.push(
+    //                 `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+    //             );
+    //         }
 
-            recordClicks();
-            if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
-                checkoutData.pixel.forEach((pixelId) => {
-                    const noscript = document.createElement("noscript");
-                    const img = document.createElement("img");
-                    img.height = 1;
-                    img.width = 1;
-                    img.style.display = "none";
-                    img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
-                    img.alt = "Facebook Pixel";
-                    noscript.appendChild(img);
-                    document.body.appendChild(noscript);
-                });
-            }
-        } catch (error) {
-            console.error("Error during checkout:", error);
-        }
-    };
+    //         recordClicks();
+    //         if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
+    //             checkoutData.pixel.forEach((pixelId) => {
+    //                 const noscript = document.createElement("noscript");
+    //                 const img = document.createElement("img");
+    //                 img.height = 1;
+    //                 img.width = 1;
+    //                 img.style.display = "none";
+    //                 img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
+    //                 img.alt = "Facebook Pixel";
+    //                 noscript.appendChild(img);
+    //                 document.body.appendChild(noscript);
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error("Error during checkout:", error);
+    //     }
+    // };
     async function recordClicks() {
         try {
             const visitorId = await getVisitorId();
@@ -135,7 +135,7 @@ const Checkout: React.FC<CheckoutComponentProps> = ({ value, style, quantity, ha
                 )}
                 <div style={{ width: value.width }}>
                     <Button
-                        onClick={handleCheckoutButtonClick}
+                        onClick={()=>{}}
                         disabled={isSoldOut}
 
                         className={`border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full rounded-lg transition-colors w-full ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}

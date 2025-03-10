@@ -364,22 +364,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style}
                                     />
                                 );
-                            case 'checkout':
-                                return (
-                                    <Checkout
-                                        key={block.id}
-                                        value={block.value}
-                                        style={block.style}
-                                        checkoutData={{
-                                            ...checkoutData,
-                                            variant_id: campaign.variant_id,
-                                            inventory: getCurrentVariantInventory()
-                                        }}
-                                        quantity={quantity}
-                                        handleIncrease={handleIncrease}
-                                        handleDecrease={handleDecrease}
-                                    />
-                                );
+                            // case 'checkout':
+                            //     return (
+                            //         <Checkout
+                            //             key={block.id}
+                            //             value={block.value}
+                            //             style={block.style}
+                            //             checkoutData={{
+                            //                 ...checkoutData,
+                            //                 variant_id: campaign.variant_id,
+                            //                 inventory: getCurrentVariantInventory()
+                            //             }}
+                            //             quantity={quantity}
+                            //             handleIncrease={handleIncrease}
+                            //             handleDecrease={handleDecrease}
+                            //         />
+                            //     );
                             case 'ticker':
                                 return (
                                     <Ticker
