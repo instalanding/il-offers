@@ -51,7 +51,7 @@ const ClientFontPreloader = dynamic(() => import('@/components/FontPreloader'), 
 });
 
 // Constants
-const REVALIDATE_TIME = 3600; // 1 hour cache
+const REVALIDATE_TIME = 10; // 1 hour cache
 
 // Update the API fetch calls with more robust error handling
 const getCachedCampaign = cache(async (slug: string, variant_id?: string) => {
