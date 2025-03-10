@@ -28,7 +28,7 @@ export function CampaignWithParams({ campaignData, userIp }: { campaignData: any
     <Campaigns 
       campaignData={{
         ...(filteredCampaign.length > 0 ? filteredCampaign[0] : {}), 
-        collections: campaignData.data, 
+        collections: campaignData, 
         reviews:[]
       }} 
       userIp={userIp} 
