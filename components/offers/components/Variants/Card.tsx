@@ -14,6 +14,7 @@ interface CardProps {
     inventory?: number | null;
     greatDeal: boolean;
     mostLoved: boolean;
+    productHandle?: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -24,7 +25,8 @@ const Card: React.FC<CardProps> = ({
     priceDetails,
     inventory = null,
     greatDeal,
-    mostLoved
+    mostLoved,
+    productHandle
 }) => {
 
     const isSoldOut = inventory !== null && inventory === 0;
@@ -45,6 +47,7 @@ const Card: React.FC<CardProps> = ({
     // hardcoded: for cureveda we have to show recommended tag for results pack and disable other tags
     const recommended = value.toLowerCase().includes("results pack") || value.toLowerCase().includes("result pack");
     const noTags = value.toLowerCase().includes("results pack") || value.toLowerCase().includes("starter pack") || value.toLowerCase().includes("value pack") || value.toLowerCase().includes("progress pack") || value.toLowerCase().includes("result pack");
+    const isCureveda = productHandle === "cureveda-pro-vegan-plant-protein";
 
     return (
         <div className="flex flex-col gap-1">
@@ -55,11 +58,13 @@ const Card: React.FC<CardProps> = ({
                 flex flex-col h-full relative bg-none text-sm justify-center
                 snap-start flex-shrink-0 border rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer
                 ${isSelected
-                        ? greatDeal && !noTags
-                            ? "border-1 border-[#546327] bg-white text-black hover:bg-gray-100"
-                            : recommended
+                        ? isCureveda
+                            ? "border-1 border-[#E7A023] bg-[#FBE9CA] text-black hover:bg-[#f8e2b8]"
+                            : greatDeal && !noTags
                                 ? "border-1 border-[#546327] bg-white text-black hover:bg-gray-100"
-                                : "border-1 bg-white border-gray-900 text-black hover:bg-gray-100"
+                                : recommended
+                                    ? "border-1 border-[#546327] bg-white text-black hover:bg-gray-100"
+                                    : "border-1 bg-white border-gray-900 text-black hover:bg-gray-100"
                         : isSoldOut
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                             : isDisabled
