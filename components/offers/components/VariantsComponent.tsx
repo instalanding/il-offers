@@ -205,7 +205,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                 return (
                     <div key={optionKey} className="mb-4">
                         <h3 className="text-sm font-medium mb-2">
-                            {optionKey === 'option1' ? 'Flavour' : optionKey === 'option2' ? 'Size' : optionConfig.label}: {selectedOptions[optionKey] && 
+                            {optionKey === 'option1' ? 'Flavour' : optionKey === 'option2' ? 'Size' : optionConfig.label}: {selectedOptions[optionKey] &&
                                 <span className="font-bold ml-1">{selectedOptions[optionKey]}</span>
                             }
                         </h3>
@@ -249,7 +249,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             });
     };
 
-    return <div style={style} className="p-4">{renderVariantOptions()}</div>;
+    return <div style={style} >{renderVariantOptions()}</div>;
 };
 
 export default React.memo(VariantsComponent);
