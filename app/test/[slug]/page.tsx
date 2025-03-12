@@ -27,13 +27,13 @@ const page = async ({
 export default page;
 
 // Generate static params for specific slug
-export async function generateStaticParams() {
-  return [
-    {
-      slug: "saptamveda-spirulina-capsules-2000-mg-per-serving",
-    },
-  ];
-}
+// export async function generateStaticParams() {
+//   return [
+//     {
+//       slug: "saptamveda-spirulina-capsules-2000-mg-per-serving",
+//     },
+//   ];
+// }
 
 // // Force static generation
 export const dynamic = "force-static";

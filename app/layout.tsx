@@ -66,9 +66,9 @@ export const metadata: Metadata = {
 };
 
 // Import PerformanceMonitor only on client-side
-const PerformanceMonitor = dynamic(() => import('../components/PerformanceMonitor'), { 
-  ssr: false,
-});
+// const PerformanceMonitor = dynamic(() => import('../components/PerformanceMonitor'), { 
+//   ssr: false,
+// });
 
 export default function RootLayout({
   children,
@@ -113,7 +113,7 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
-        <PerformanceMonitor />
+        {/* <PerformanceMonitor /> */}
       </body>
     </html>
   );
