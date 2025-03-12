@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,9 +7,8 @@ import TextComponent from './components/TextComponent';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
 
-// Dynamically import heavy components
-const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), { 
-  loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div> 
+const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), {
+    loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div>
 });
 const AccordionComponent = dynamic(() => import('./components/AccordionComponent'));
 const HtmlComponent = dynamic(() => import('./components/HtmlComponent'));
@@ -17,7 +16,7 @@ const RatingsComponent = dynamic(() => import('./components/RatingsComponent'));
 const MultipleCta = dynamic(() => import('./components/MultipleCta'));
 const VariantsComponent = dynamic(() => import('./components/VariantsComponent'));
 const ReviewsComponent = dynamic(() => import('./components/ReviewsComponent'));
-// const Checkout = dynamic(() => import('./components/Checkout'));
+const Checkout = dynamic(() => import('./components/Checkout'));
 const Ticker = dynamic(() => import('./components/Ticker'));
 const Tags = dynamic(() => import('./components/Tags'));
 const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
@@ -28,8 +27,6 @@ interface CampaignData {
     product_handle: string,
     offer_id: string,
     variant_id: string,
-    color?: string;
-    size?: string;
     blocks: string;
     config: {
         font_family: string;
@@ -140,12 +137,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         if (newVariant) {
             setCampaign(prev => ({
                 ...prev!,
+                _id: newVariant._id,
+                offer_id: newVariant.offer_id,
                 variant_id: newVariant.variant_id,
-                price: newVariant.price,
-                variant_options: newVariant.variant_options,
                 blocks: newVariant.blocks,
+                price: newVariant.price,
                 config: newVariant.config,
                 advertiser: newVariant.advertiser,
+                variant_options: newVariant.variant_options,
             }));
         }
     };
@@ -197,7 +196,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         }
     }, [campaignData, utm_params]);
 
-    // Listen for variant changes
+    // On variant changes by user
     useEffect(() => {
         const handleVariantChange = (event: CustomEvent) => {
             const variantId = event.detail.variantId;
@@ -364,22 +363,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style}
                                     />
                                 );
-                            // case 'checkout':
-                            //     return (
-                            //         <Checkout
-                            //             key={block.id}
-                            //             value={block.value}
-                            //             style={block.style}
-                            //             checkoutData={{
-                            //                 ...checkoutData,
-                            //                 variant_id: campaign.variant_id,
-                            //                 inventory: getCurrentVariantInventory()
-                            //             }}
-                            //             quantity={quantity}
-                            //             handleIncrease={handleIncrease}
-                            //             handleDecrease={handleDecrease}
-                            //         />
-                            //     );
+                            case 'checkout':
+                                return (
+                                    <Checkout
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style}
+                                        checkoutData={{
+                                            ...checkoutData,
+                                            variant_id: campaign.variant_id,
+                                            inventory: getCurrentVariantInventory()
+                                        }}
+                                        quantity={quantity}
+                                        handleIncrease={handleIncrease}
+                                        handleDecrease={handleDecrease}
+                                    />
+                                );
                             case 'ticker':
                                 return (
                                     <Ticker

@@ -4,7 +4,7 @@ import { calculatePercentageOff } from '@/lib/calculateDiscount';
 import { IoIosAdd, IoIosRemove } from 'react-icons/io';
 import { Button } from '@/components/ui/button';
 import useCheckout from '@/hooks/Checkout';
-import { Checkout, Price } from '../Footer';
+import { Checkout, Price } from '../../Footer';
 
 
 interface FastrrCheckoutProps {

@@ -4,7 +4,7 @@ import { calculatePercentageOff } from '@/lib/calculateDiscount';
 import { IoIosAdd, IoIosRemove } from 'react-icons/io';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { Checkout, Config, Price } from '../Footer';
+import { Checkout, Config, Price } from '../../Footer';
 
 interface ShopifyCheckoutProps {
     checkoutData: Checkout;
@@ -30,18 +30,29 @@ const ShopifyCheckout = ({
     recordClicks
 }: ShopifyCheckoutProps) => {
     const router = useRouter();
-    
+
     const handleCheckoutButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const params = new URLSearchParams();
+        params.append('discount', checkoutData.coupon_code);
+
+        // Add all UTM parameters from checkoutData
+        const utmParams = checkoutData.utm_params as Record<string, string>;
+        Object.entries(utmParams).forEach(([key, value]) => {
+            if (value) {
+                params.append(key, value);
+            }
+        });
+
         if (checkoutData.checkout_name === "shopify") {
             router.push(
-                `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+                `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?${params.toString()}`
             );
         } else {
             router.push(
-                `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
+                `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?${params.toString()}`
             );
         }
-        recordClicks()
+        recordClicks();
     };
 
     return (
