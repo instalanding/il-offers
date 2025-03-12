@@ -17,7 +17,7 @@ const RatingsComponent = dynamic(() => import('./components/RatingsComponent'));
 const MultipleCta = dynamic(() => import('./components/MultipleCta'));
 const VariantsComponent = dynamic(() => import('./components/VariantsComponent'));
 const ReviewsComponent = dynamic(() => import('./components/ReviewsComponent'));
-const Checkout = dynamic(() => import('./components/Checkout'));
+// const Checkout = dynamic(() => import('./components/Checkout'));
 const Ticker = dynamic(() => import('./components/Ticker'));
 const Tags = dynamic(() => import('./components/Tags'));
 const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
@@ -364,22 +364,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style}
                                     />
                                 );
-                            case 'checkout':
-                                return (
-                                    <Checkout
-                                        key={block.id}
-                                        value={block.value}
-                                        style={block.style}
-                                        checkoutData={{
-                                            ...checkoutData,
-                                            variant_id: campaign.variant_id,
-                                            inventory: getCurrentVariantInventory()
-                                        }}
-                                        quantity={quantity}
-                                        handleIncrease={handleIncrease}
-                                        handleDecrease={handleDecrease}
-                                    />
-                                );
+                            // case 'checkout':
+                            //     return (
+                            //         <Checkout
+                            //             key={block.id}
+                            //             value={block.value}
+                            //             style={block.style}
+                            //             checkoutData={{
+                            //                 ...checkoutData,
+                            //                 variant_id: campaign.variant_id,
+                            //                 inventory: getCurrentVariantInventory()
+                            //             }}
+                            //             quantity={quantity}
+                            //             handleIncrease={handleIncrease}
+                            //             handleDecrease={handleDecrease}
+                            //         />
+                            //     );
                             case 'ticker':
                                 return (
                                     <Ticker
