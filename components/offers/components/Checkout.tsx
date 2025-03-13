@@ -1,10 +1,8 @@
 import React from 'react'
-import { IoIosAdd, IoIosRemove } from 'react-icons/io';
-import { Button } from '../../ui/button';
-// import useCheckout from "@/hooks/Checkout";
-import { useRouter } from "next/navigation";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
+import FastrrCheckout from "./Checkouts/CheckoutBlock/FastrrCheckout";
+import ShopifyCheckout from "./Checkouts/CheckoutBlock/ShopifyCheckout";
 
 interface CheckoutComponentProps {
     value: {
@@ -36,18 +34,6 @@ interface Checkout {
 }
 
 const Checkout: React.FC<CheckoutComponentProps> = ({ value, style, quantity, handleDecrease, handleIncrease, checkoutData }) => {
-    // const { handleCheckout } = useCheckout();
-    const router = useRouter();
-
-    const alignmentStyle = {
-        display: 'flex',
-        justifyContent:
-            value.alignment === 'left'
-                ? 'flex-start'
-                : value.alignment === 'right'
-                    ? 'flex-end'
-                    : 'center',
-    };
 
     const getVisitorId = async () => {
         if (typeof window === "undefined") return;
@@ -62,92 +48,64 @@ const Checkout: React.FC<CheckoutComponentProps> = ({ value, style, quantity, ha
         }
     };
 
-    // const handleCheckoutButtonClick = (e: React.MouseEvent) => {
-    //     try {
-    //         if (checkoutData.checkout_name === "shiprocket" || checkoutData.checkout_name === "fastr" || checkoutData.checkout_name === "fastrr") {
-    //             handleCheckout(
-    //                 e as React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    //                 checkoutData.variant_id,
-    //                 checkoutData.offer_id,
-    //                 checkoutData.coupon_code,
-    //                 checkoutData.utm_params,
-    //                 quantity
-    //             );
-    //         } else if (checkoutData.checkout_name === "shopify") {
-    //             router.push(
-    //                 `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
-    //             );
-    //         } else {
-    //             router.push(
-    //                 `https://${checkoutData.store_url}/cart/${checkoutData.variant_id}:${quantity}?discount=${checkoutData.coupon_code}`
-    //             );
-    //         }
-
-    //         recordClicks();
-    //         if (checkoutData.pixel && Array.isArray(checkoutData.pixel)) {
-    //             checkoutData.pixel.forEach((pixelId) => {
-    //                 const noscript = document.createElement("noscript");
-    //                 const img = document.createElement("img");
-    //                 img.height = 1;
-    //                 img.width = 1;
-    //                 img.style.display = "none";
-    //                 img.src = `https://www.facebook.com/tr?id=${pixelId}&ev=Checkout&noscript=1`;
-    //                 img.alt = "Facebook Pixel";
-    //                 noscript.appendChild(img);
-    //                 document.body.appendChild(noscript);
-    //             });
-    //         }
-    //     } catch (error) {
-    //         console.error("Error during checkout:", error);
-    //     }
-    // };
     async function recordClicks() {
         try {
             const visitorId = await getVisitorId();
+            const utmParams = checkoutData.utm_params as Record<string, string>;
+            const currentUrl = window.location.href;
+
+            const queryParams = new URLSearchParams({
+                offer_id: checkoutData.offer_id,
+                advertiser_id: checkoutData.advertiser_id,
+                user_ip: checkoutData.userIp,
+                product_url: currentUrl,
+                visitor_id: visitorId || '',
+                campaign_id: checkoutData.campaign_id,
+                utm_source: utmParams.utm_source || utmParams.source || '',
+                utm_medium: utmParams.utm_medium || utmParams.medium || '',
+                utm_campaign: utmParams.utm_campaign || utmParams.campaign || ''
+            });
+
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&visitor_id=${visitorId}&campaign_id=${checkoutData.campaign_id}`,
+                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?${queryParams.toString()}`,
                 {}
             );
-        } catch (error) { }
+        } catch (error) {
+            console.error('Record clicks error:', error);
+        }
     }
-
     const isSoldOut = checkoutData.inventory !== undefined && checkoutData.inventory === 0;
 
     return (
         <>
             <input type="hidden" value={checkoutData.store_url} id="sellerDomain" />
 
-            <div className='flex gap-2 w-full' style={{ ...style, ...alignmentStyle }}>
-                {value.quantity && (
-                    <div className='flex items-center gap-2 border rounded-lg py-2 px-1 w-auto'>
-                        <button
-                            onClick={handleDecrease}
-                            disabled={quantity === 1}
-                            className='disabled:opacity-50'
-                        >
-                            <IoIosRemove size={18} />
-                        </button>
-                        <span className='text-lg font-semibold'>{quantity}</span>
-                        <button onClick={handleIncrease}>
-                            <IoIosAdd size={18} />
-                        </button>
-                    </div>
-                )}
-                <div style={{ width: value.width }}>
-                    <Button
-                        onClick={()=>{}}
-                        disabled={isSoldOut}
-
-                        className={`border flex items-center justify-center text-[18px] gap-2 px-8 py-2 h-full rounded-lg transition-colors w-full ${isSoldOut ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        style={{ backgroundColor: value.color }}
-                    >
-                        {isSoldOut ? 'Sold Out' : <>{value.buttonText}</>}
-
-                    </Button>
-                </div>
-            </div>
+            {checkoutData.checkout_name === "shiprocket" ||
+                checkoutData.checkout_name === "fastr" ||
+                checkoutData.checkout_name === "fastrr" ? (
+                <FastrrCheckout
+                    value={value}
+                    style={style}
+                    quantity={quantity}
+                    handleIncrease={handleIncrease}
+                    handleDecrease={handleDecrease}
+                    checkoutData={checkoutData}
+                    isSoldOut={isSoldOut}
+                    recordClicks={recordClicks}
+                />
+            ) : (
+                <ShopifyCheckout
+                    value={value}
+                    style={style}
+                    quantity={quantity}
+                    handleIncrease={handleIncrease}
+                    handleDecrease={handleDecrease}
+                    checkoutData={checkoutData}
+                    isSoldOut={isSoldOut}
+                    recordClicks={recordClicks}
+                />
+            )}
         </>
-
     );
 }
 

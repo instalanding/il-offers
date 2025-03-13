@@ -9,9 +9,8 @@ import { firePixels } from "../../utils/firePixels";
 import ImagePreloader from '../ImagePreloader';
 import OptimizedImage from '@/components/OptimizedImage';
 
-// Dynamically import heavy components
-const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), { 
-  loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div> 
+const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), {
+    loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div>
 });
 const AccordionComponent = dynamic(() => import('./components/AccordionComponent'));
 const HtmlComponent = dynamic(() => import('./components/HtmlComponent'));
@@ -30,8 +29,6 @@ interface CampaignData {
     product_handle: string,
     offer_id: string,
     variant_id: string,
-    color?: string;
-    size?: string;
     blocks: string;
     config: {
         font_family: string;
@@ -149,12 +146,14 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         if (newVariant) {
             setCampaign(prev => ({
                 ...prev!,
+                _id: newVariant._id,
+                offer_id: newVariant.offer_id,
                 variant_id: newVariant.variant_id,
-                price: newVariant.price,
-                variant_options: newVariant.variant_options,
                 blocks: newVariant.blocks,
+                price: newVariant.price,
                 config: newVariant.config,
                 advertiser: newVariant.advertiser,
+                variant_options: newVariant.variant_options,
             }));
         }
     };
@@ -184,7 +183,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     // Extract all image URLs from the blocks for preloading - memoize to avoid recalculations
     const imageUrls = useMemo(() => {
         const urls: string[] = [];
-        
+
         if (blocks && blocks.length > 0) {
             blocks.forEach(block => {
                 if (block.type === 'carousel' && block.images && block.images.length > 0) {
@@ -194,15 +193,15 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                 }
             });
         }
-        
+
         return urls;
     }, [blocks]); // Only recalculate when blocks change
-    
+
     // Handler for when all images are preloaded
     const handleImagesPreloaded = useCallback(() => {
         if (!allImagesLoaded) {
             setAllImagesLoaded(true);
-            
+
             // Optionally log to performance monitor
             if (window.performance && window.performance.mark) {
                 window.performance.mark('all-images-preloaded');
@@ -235,7 +234,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         }
     }, [campaignData, utm_params]);
 
-    // Listen for variant changes
+    // On variant changes by user
     useEffect(() => {
         const handleVariantChange = (event: CustomEvent) => {
             const variantId = event.detail.variantId;
@@ -344,8 +343,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
                     {/* Preload all images for faster UX - only if not already loaded */}
                     {!allImagesLoaded && imageUrls.length > 0 && (
-                        <ImagePreloader 
-                            images={imageUrls} 
+                        <ImagePreloader
+                            images={imageUrls}
                             priorityImageIndices={[0]} // First image is highest priority (LCP)
                             onComplete={handleImagesPreloaded}
                             debug={process.env.NODE_ENV === 'development'}
