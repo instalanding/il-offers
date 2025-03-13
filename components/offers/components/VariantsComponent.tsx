@@ -204,9 +204,9 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
 
                 return (
                     <div key={optionKey} className="mb-4">
-                        <h3 className="text-sm font-medium mb-2">
-                            {optionKey === 'option1' ? 'Flavour' : optionKey === 'option2' ? 'Size' : optionConfig.label}: {selectedOptions[optionKey] &&
-                                <span className="font-bold ml-1">{selectedOptions[optionKey]}</span>
+                        <h3 className="text-sm font-medium mb-2 flex items-center justify-start gap-1">
+                            {optionConfig.label} {selectedOptions[optionKey] &&
+                                <span className="font-bold">{selectedOptions[optionKey]}</span>
                             }
                         </h3>
                         <div className={`
