@@ -30,6 +30,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "critters": "^0.0.23",
+    "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.1.8",
     "express-useragent": "^1.0.15",
     "framer-motion": "^12.4.7",
