@@ -160,23 +160,20 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
     const updateUrlWithParams = (variantId: string | null) => {
         if (!preserveParams) return;
+        const params = new URLSearchParams();
 
-        const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
-
-        // Update variant
         if (variantId) {
             params.set('variant', variantId);
         }
 
-        // Ensure UTM parameters are present
         Object.entries(utm_params).forEach(([key, value]) => {
-            if (value && !params.has(key)) {
+            if (value) {
                 params.set(key, value);
             }
         });
 
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
         window.history.replaceState({}, '', newUrl);
     };
 

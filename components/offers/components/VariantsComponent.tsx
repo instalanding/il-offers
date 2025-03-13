@@ -125,7 +125,8 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
 
     const updateURL = (variantId: string | null, handle: string | undefined) => {
         if (variantId && handle) {
-            const newUrl = `/products/${handle}?variant=${variantId}`;
+            const baseUrl = `/products/${handle}`;
+            const newUrl = variantId ? `${baseUrl}?variant=${variantId}` : baseUrl;
             window.history.pushState({}, "", newUrl);
             window.dispatchEvent(
                 new CustomEvent("variantChanged", {
@@ -204,9 +205,9 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
 
                 return (
                     <div key={optionKey} className="mb-4">
-                        <h3 className="text-sm font-medium mb-2">
-                            {optionConfig.label}: {selectedOptions[optionKey] &&
-                                <span className="font-bold ml-1">{selectedOptions[optionKey]}</span>
+                        <h3 className="text-sm font-medium mb-2 flex items-center justify-start gap-1">
+                            {optionConfig.label} {selectedOptions[optionKey] &&
+                                <span className="font-bold">{selectedOptions[optionKey]}</span>
                             }
                         </h3>
                         <div className={`
