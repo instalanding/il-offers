@@ -125,7 +125,8 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
 
     const updateURL = (variantId: string | null, handle: string | undefined) => {
         if (variantId && handle) {
-            const newUrl = `/products/${handle}?variant=${variantId}`;
+            const baseUrl = `/products/${handle}`;
+            const newUrl = variantId ? `${baseUrl}?variant=${variantId}` : baseUrl;
             window.history.pushState({}, "", newUrl);
             window.dispatchEvent(
                 new CustomEvent("variantChanged", {

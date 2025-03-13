@@ -7,12 +7,10 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import Link from "next/link";
 import Image from "next/image";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { userAgent } from "next/server";
 
 const MultiCta = ({ value, style, checkoutData }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
@@ -60,19 +58,35 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
         redirectToExternal(redirectUrl);
     }
 
-    async function recordClicks(
-        ctaType: string
-    ) {
+    async function recordClicks(ctaType: string) {
+
         try {
             const visitorId = await getVisitorId();
+            const utmParams = checkoutData.utm_params as Record<string, string>;
+            const currentUrl = window.location.href;
+
+            const queryParams = new URLSearchParams({
+                offer_id: checkoutData.offer_id,
+                advertiser_id: checkoutData.advertiser_id,
+                user_ip: checkoutData.userIp,
+                product_url: currentUrl,
+                visitor_id: visitorId || '',
+                campaign_id: checkoutData.campaign_id,
+                ctatype: ctaType,
+                utm_source: utmParams.utm_source || utmParams.source || '',
+                utm_medium: utmParams.utm_medium || utmParams.medium || '',
+                utm_campaign: utmParams.utm_campaign || utmParams.campaign || ''
+            });
+
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&visitor_id=${visitorId}&campaign_id=${checkoutData.campaign_id}&ctatype=${ctaType}`,
+                `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?${queryParams.toString()}`,
                 {}
             );
         } catch (error) {
-            console.error("Error recording click:", error);
+            console.error('Record clicks error:', error);
         }
     }
+
     return (
         <Accordion
             type="single"
