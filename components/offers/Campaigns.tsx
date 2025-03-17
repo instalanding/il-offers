@@ -97,7 +97,12 @@ interface Block {
     id: string;
     type: string;
     htmlTag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
-    images?: { url: string }[];
+    // images?: { url: string }[];
+    images?: {
+        id: number;
+        variant_ids: number[];
+        url: string;
+    }[];
     value?: any;
     style?: React.CSSProperties;
     price?: number;

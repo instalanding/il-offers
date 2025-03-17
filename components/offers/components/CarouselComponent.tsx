@@ -5,16 +5,20 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { ProductImage } from './ProductImage';
 
 interface CarouselProps {
-    images: { url: string }[];
+    images: {
+        id: number;
+        variant_ids: number[];
+        url: string;
+    }[];
     variantId: string;
 }
 
 const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
     // Memoize placeholder images to avoid recreating on each render
     const placeholderImages = useMemo(() => [
-        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" },
-        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" },
-        { url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" }
+        { id: 0, variant_ids: [], url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" },
+        { id: 1, variant_ids: [], url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" },
+        { id: 2, variant_ids: [], url: "https://res.cloudinary.com/duslrhgcq/image/upload/v1737708332/nzmwfrmho2jzdjyay3ie.webp" }
     ], []);
 
     // Memoize finalImages to avoid recreating array on each render
@@ -22,6 +26,13 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
         (images && images.length > 0) ? images : placeholderImages,
         [images, placeholderImages]
     );
+
+    // Find the index of the image that contains the current variant ID
+    const initialSlide = useMemo(() => {
+        const variantIdNumber = parseInt(variantId);
+        const index = finalImages.findIndex(img => img.variant_ids.includes(variantIdNumber));
+        return index >= 0 ? index : 0;
+    }, [finalImages, variantId]);
 
     // Check if the specific variantId is present for badge
     const showBadge = variantId === "41056148652078";
@@ -70,7 +81,7 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
 
     return (
         <div className="carousel-wrapper">
-            <Carousel>
+            <Carousel opts={{ startIndex: initialSlide }}>
                 <CarouselContent>
                     {carouselItems}
                 </CarouselContent>
