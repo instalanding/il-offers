@@ -1,8 +1,9 @@
 import React from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import axios from "axios";
-import FastrrCheckout from "./Checkouts/FastrrCheckout";
-import ShopifyCheckout from "./Checkouts/ShopifyCheckout";
+import FastrrCheckout from "./Checkouts/Footer/FastrrCheckout";
+import ShopifyCheckout from "./Checkouts/Footer/ShopifyCheckout";
+
 
 export interface Config {
   primaryColor: string;
@@ -69,11 +70,28 @@ const Footer: React.FC<{
     async function recordClicks() {
       try {
         const visitorId = await getVisitorId();
+        const utmParams = checkoutData.utm_params as Record<string, string>;
+        const currentUrl = window.location.href;
+
+        const queryParams = new URLSearchParams({
+          offer_id: checkoutData.offer_id,
+          advertiser_id: checkoutData.advertiser_id,
+          user_ip: checkoutData.userIp,
+          product_url: currentUrl,
+          visitor_id: visitorId || '',
+          campaign_id: checkoutData.campaign_id,
+          utm_source: utmParams.utm_source || utmParams.source || '',
+          utm_medium: utmParams.utm_medium || utmParams.medium || '',
+          utm_campaign: utmParams.utm_campaign || utmParams.campaign || ''
+        });
+
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?offer_id=${checkoutData.offer_id}&advertiser_id=${checkoutData.advertiser_id}&user_ip=${checkoutData.userIp}&product_url=${checkoutData.store_url}&visitor_id=${visitorId}&campaign_id=${checkoutData.campaign_id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}analytics/clicks/?${queryParams.toString()}`,
           {}
         );
-      } catch (error) { }
+      } catch (error) {
+        console.error('Record clicks error:', error);
+      }
     }
 
     const isSoldOut =
@@ -111,6 +129,6 @@ const Footer: React.FC<{
           recordClicks={recordClicks}
         />
     )
-}
+
 
 export default Footer;

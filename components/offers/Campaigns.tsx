@@ -9,9 +9,8 @@ import { firePixels } from "../../utils/firePixels";
 import ImagePreloader from '../ImagePreloader';
 import OptimizedImage from '@/components/OptimizedImage';
 
-// Dynamically import heavy components
-const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), { 
-  loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div> 
+const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), {
+    loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div>
 });
 const AccordionComponent = dynamic(() => import('./components/AccordionComponent'));
 const HtmlComponent = dynamic(() => import('./components/HtmlComponent'));
@@ -30,8 +29,6 @@ interface CampaignData {
     product_handle: string,
     offer_id: string,
     variant_id: string,
-    color?: string;
-    size?: string;
     blocks: string;
     config: {
         font_family: string;
@@ -100,7 +97,12 @@ interface Block {
     id: string;
     type: string;
     htmlTag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
-    images?: { url: string }[];
+    // images?: { url: string }[];
+    images?: {
+        id: number;
+        variant_ids: number[];
+        url: string;
+    }[];
     value?: any;
     style?: React.CSSProperties;
     price?: number;
@@ -149,42 +151,41 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         if (newVariant) {
             setCampaign(prev => ({
                 ...prev!,
+                _id: newVariant._id,
+                offer_id: newVariant.offer_id,
                 variant_id: newVariant.variant_id,
-                price: newVariant.price,
-                variant_options: newVariant.variant_options,
                 blocks: newVariant.blocks,
+                price: newVariant.price,
                 config: newVariant.config,
                 advertiser: newVariant.advertiser,
+                variant_options: newVariant.variant_options,
             }));
         }
     };
 
     const updateUrlWithParams = (variantId: string | null) => {
         if (!preserveParams) return;
+        const params = new URLSearchParams();
 
-        const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
-
-        // Update variant
         if (variantId) {
             params.set('variant', variantId);
         }
 
-        // Ensure UTM parameters are present
         Object.entries(utm_params).forEach(([key, value]) => {
-            if (value && !params.has(key)) {
+            if (value) {
                 params.set(key, value);
             }
         });
 
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
         window.history.replaceState({}, '', newUrl);
     };
 
     // Extract all image URLs from the blocks for preloading - memoize to avoid recalculations
     const imageUrls = useMemo(() => {
         const urls: string[] = [];
-        
+
         if (blocks && blocks.length > 0) {
             blocks.forEach(block => {
                 if (block.type === 'carousel' && block.images && block.images.length > 0) {
@@ -194,15 +195,15 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                 }
             });
         }
-        
+
         return urls;
     }, [blocks]); // Only recalculate when blocks change
-    
+
     // Handler for when all images are preloaded
     const handleImagesPreloaded = useCallback(() => {
         if (!allImagesLoaded) {
             setAllImagesLoaded(true);
-            
+
             // Optionally log to performance monitor
             if (window.performance && window.performance.mark) {
                 window.performance.mark('all-images-preloaded');
@@ -235,7 +236,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         }
     }, [campaignData, utm_params]);
 
-    // Listen for variant changes
+    // On variant changes by user
     useEffect(() => {
         const handleVariantChange = (event: CustomEvent) => {
             const variantId = event.detail.variantId;
@@ -344,8 +345,8 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
                     {/* Preload all images for faster UX - only if not already loaded */}
                     {!allImagesLoaded && imageUrls.length > 0 && (
-                        <ImagePreloader 
-                            images={imageUrls} 
+                        <ImagePreloader
+                            images={imageUrls}
                             priorityImageIndices={[0]} // First image is highest priority (LCP)
                             onComplete={handleImagesPreloaded}
                             debug={process.env.NODE_ENV === 'development'}
