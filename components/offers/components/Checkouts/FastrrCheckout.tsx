@@ -3,8 +3,8 @@ import { formatPrice } from "@/lib/formatUtils";
 import { calculatePercentageOff } from '@/lib/calculateDiscount';
 import { IoIosAdd, IoIosRemove } from 'react-icons/io';
 import { Button } from '@/components/ui/button';
-// import useCheckout from '@/hooks/Checkout';
-import { Config, Checkout, Price } from '../Footer';
+import useCheckout from '@/hooks/Checkout';
+import { Checkout, Price } from '../Footer';
 
 
 interface FastrrCheckoutProps {
@@ -19,6 +19,13 @@ interface FastrrCheckoutProps {
     recordClicks: () => void;
 }
 
+interface Config {
+    primaryColor: string;
+    secondaryColor: string;
+    footerText: string;
+    buttonText: string;
+}
+
 const FastrrCheckout = ({
     checkoutData,
     config,
@@ -31,25 +38,7 @@ const FastrrCheckout = ({
     recordClicks
 }: FastrrCheckoutProps) => {
 
-    // Temporarily mocked functions
-    const handleCheckout = (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-        variant_id: string,
-        offer_id: string,
-        coupon_code: string,
-        utm_params: any,
-        quantity: number
-    ) => {
-        console.log("Checkout triggered", { variant_id, offer_id, coupon_code, utm_params, quantity });
-    };
-
-    const handleMouseEnter = () => {
-        // Mock function
-    };
-
-    const handleTouchStart = () => {
-        // Mock function
-    };
+    const { handleCheckout, handleMouseEnter, handleTouchStart } = useCheckout();
 
     const handleCheckoutButtonClick = async (
         e: React.MouseEvent<HTMLButtonElement>
