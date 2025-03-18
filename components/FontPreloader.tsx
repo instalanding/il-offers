@@ -11,6 +11,7 @@ const FONT_FAMILY_MAPPING: Record<string, string> = {
   'Lato': 'Lato:wght@400;700',
   'Montserrat': 'Montserrat:wght@400;500;600;700',
   'Poppins': 'Poppins:wght@400;500;600;700',
+  'Inter': 'Inter:wght@400;500;600;700',
   // Add other fonts your campaigns might use
 };
 
