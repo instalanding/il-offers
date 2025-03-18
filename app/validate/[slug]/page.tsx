@@ -11,7 +11,7 @@ const page = async ({
   // Check if we need to revalidate based on search params
 
   console.log(`Revalidating path: /test/${params.slug}`);
-  revalidatePath(`/test/${params.slug}`);
+  revalidatePath(`/products/${params.slug}`);
 
   
 
