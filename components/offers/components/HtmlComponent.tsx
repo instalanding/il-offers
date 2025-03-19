@@ -14,41 +14,39 @@ const HtmlComponent: React.FC<HtmlComponentProps> = ({ value, style }) => {
   const [cleanedHtml, setCleanedHtml] = useState<string>(value);
 
   useEffect(() => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(value, 'text/html');
+    // Create a temporary container to parse the HTML
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = value;
     
-    // Extract external scripts
+    // Extract external scripts but don't remove them
     const scripts: string[] = [];
-    doc.querySelectorAll('script').forEach((script) => {
+    tempContainer.querySelectorAll('script[src]').forEach((script) => {
       const src = script.getAttribute('src');
       if (src) {
         scripts.push(src);
-        script.parentNode?.removeChild(script);
       }
     });
     setExternalScripts(scripts);
     
-    // Extract external stylesheets
+    // Extract external stylesheets but don't remove them
     const styles: string[] = [];
-    doc.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
+    tempContainer.querySelectorAll('link[rel="stylesheet"]').forEach((link) => {
       const href = link.getAttribute('href');
       if (href) {
         styles.push(href);
-        link.parentNode?.removeChild(link);
       }
     });
     setExternalStyles(styles);
     
-    // Extract inline styles
+    // Extract inline styles but don't remove them
     const inlineStylesArr: string[] = [];
-    doc.querySelectorAll('style').forEach((styleTag) => {
+    tempContainer.querySelectorAll('style').forEach((styleTag) => {
       inlineStylesArr.push(styleTag.innerHTML);
-      styleTag.parentNode?.removeChild(styleTag);
     });
     setInlineStyles(inlineStylesArr);
     
-    // Get cleaned HTML without external resources
-    setCleanedHtml(doc.body.innerHTML);
+    // Set the HTML content without removing anything
+    setCleanedHtml(value);
   }, [value]);
 
   // Execute inline scripts after the component is mounted
