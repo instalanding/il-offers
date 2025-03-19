@@ -1,15 +1,16 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import TextComponent from './components/TextComponent';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
+import ImagePreloader from '../ImagePreloader';
+import OptimizedImage from '@/components/OptimizedImage';
 
-// Dynamically import heavy components
-const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), { 
-  loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div> 
+const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), {
+    loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div>
 });
 const AccordionComponent = dynamic(() => import('./components/AccordionComponent'));
 const HtmlComponent = dynamic(() => import('./components/HtmlComponent'));
@@ -28,9 +29,6 @@ interface CampaignData {
     product_handle: string,
     offer_id: string,
     variant_id: string,
-    coupon_code: string;
-    color?: string;
-    size?: string;
     blocks: string;
     config: {
         font_family: string;
@@ -39,7 +37,6 @@ interface CampaignData {
         header_text: string;
         footer_text: string;
         button_text: string;
-        cloudinary_params: string;
     };
     price: {
         offerPrice: {
@@ -100,7 +97,12 @@ interface Block {
     id: string;
     type: string;
     htmlTag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
-    images?: { url: string }[];
+    // images?: { url: string }[];
+    images?: {
+        id: number;
+        variant_ids: number[];
+        url: string;
+    }[];
     value?: any;
     style?: React.CSSProperties;
     price?: number;
@@ -113,7 +115,21 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
     const [campaign, setCampaign] = useState<CampaignData | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [quantity, setQuantity] = useState(1);
+    const [quantity, setQuantity] = useState<number>(1);
+    const [blocks, setBlocks] = useState<Block[]>([]);
+    const [currentVariantId, setCurrentVariantId] = useState<string>(campaignData?.variant_id || "");
+    const [variantData, setVariantData] = useState<any>(campaignData);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+    const [checkout, setCheckout] = useState<string>('');
+    const [allImagesLoaded, setAllImagesLoaded] = useState<boolean>(false);
+
+    // cureveda strawberry variant IDs that should have default quantity of 2 for bogo coupon
+    const specialVariantIds = [
+        '41056148652078',
+        '41056148684846',
+        '41056148717614'
+    ];
 
     const handleIncrease = () => {
         setQuantity((prev) => prev + 1);
@@ -135,46 +151,103 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         if (newVariant) {
             setCampaign(prev => ({
                 ...prev!,
+                _id: newVariant._id,
+                offer_id: newVariant.offer_id,
                 variant_id: newVariant.variant_id,
-                price: newVariant.price,
-                variant_options: newVariant.variant_options,
                 blocks: newVariant.blocks,
-                config: newVariant.config
+                price: newVariant.price,
+                config: newVariant.config,
+                advertiser: newVariant.advertiser,
+                variant_options: newVariant.variant_options,
             }));
         }
     };
 
     const updateUrlWithParams = (variantId: string | null) => {
         if (!preserveParams) return;
+        const params = new URLSearchParams();
 
-        const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
-
-        // Update variant
         if (variantId) {
             params.set('variant', variantId);
         }
 
-        // Ensure UTM parameters are present
         Object.entries(utm_params).forEach(([key, value]) => {
-            if (value && !params.has(key)) {
+            if (value) {
                 params.set(key, value);
             }
         });
 
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        const queryString = params.toString();
+        const newUrl = queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
         window.history.replaceState({}, '', newUrl);
     };
+
+    // Extract all image URLs from the blocks for preloading - memoize to avoid recalculations
+    const imageUrls = useMemo(() => {
+        const urls: string[] = [];
+
+        if (blocks && blocks.length > 0) {
+            blocks.forEach(block => {
+                if (block.type === 'carousel' && block.images && block.images.length > 0) {
+                    block.images.forEach(img => {
+                        if (img.url) urls.push(img.url);
+                    });
+                }
+            });
+        }
+
+        return urls;
+    }, [blocks]); // Only recalculate when blocks change
+
+    // Handler for when all images are preloaded
+    const handleImagesPreloaded = useCallback(() => {
+        if (!allImagesLoaded) {
+            setAllImagesLoaded(true);
+
+            // Optionally log to performance monitor
+            if (window.performance && window.performance.mark) {
+                window.performance.mark('all-images-preloaded');
+            }
+        }
+    }, [allImagesLoaded]); // Only recreate if allImagesLoaded changes
 
     // Initial campaign setup
     useEffect(() => {
         setCampaign(campaignData);
     }, [campaignData]);
 
-    // Listen for variant changes
+    // Initial URL handling
+    useEffect(() => {
+        const currentUrl = new URL(window.location.href);
+        const params = new URLSearchParams(currentUrl.search);
+        const variantId = params.get('variant');
+
+        // Set quantity to 2 for special variant IDs
+        if (variantId && specialVariantIds.includes(variantId)) {
+            setQuantity(2);
+        }
+
+        if (preserveParams) {
+            updateUrlWithParams(variantId);
+        }
+
+        if (campaignData.collections?.variants) {
+            updateCampaignVariant(campaignData.collections.variants, variantId);
+        }
+    }, [campaignData, utm_params]);
+
+    // On variant changes by user
     useEffect(() => {
         const handleVariantChange = (event: CustomEvent) => {
             const variantId = event.detail.variantId;
+
+            // Set quantity to 2 for special variant IDs
+            if (variantId && specialVariantIds.includes(variantId)) {
+                setQuantity(2);
+            } else {
+                setQuantity(1); // Reset to 1 for other variants
+            }
+
             if (campaignData.collections?.variants) {
                 updateUrlWithParams(variantId);
                 updateCampaignVariant(campaignData.collections.variants, variantId);
@@ -187,25 +260,18 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         };
     }, [campaignData, utm_params]);
 
-    // Initial URL handling
     useEffect(() => {
-        const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
-        const variantId = params.get('variant');
-
-        if (preserveParams) {
-            updateUrlWithParams(variantId);
+        try {
+            const parsedBlocks = JSON.parse(campaignData?.blocks || '[]');
+            setBlocks(parsedBlocks);
+        } catch (error) {
+            console.error("Error parsing blocks:", error);
+            setBlocks([]);
         }
-
-        if (campaignData.collections?.variants) {
-            updateCampaignVariant(campaignData.collections.variants, variantId);
-        }
-    }, [campaignData, utm_params]);
+    }, [campaignData?.blocks]);
 
     if (error) return <div>Error: {error}</div>;
     if (!campaign) return <></>;
-
-    const blocks: Block[] = JSON.parse(campaign.blocks);
 
     const campaignConfig = {
         font_family: campaign.config.font_family,
@@ -255,7 +321,11 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         return campaign?.inventory;
     };
 
-
+    // Create the gradient styles
+    const gradientResult = createGradient(variantData?.config?.primary_color || '#000000');
+    const primaryColor = gradientResult.primaryColor || '#000000';
+    const secondaryColor = gradientResult.secondaryColor || '#333333';
+    const gradientStyle = gradientResult.gradient || 'linear-gradient(180deg, rgba(0,0,0,0.5), white)';
 
     return (
         <>
@@ -268,18 +338,26 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
             <main
                 className="w-full overflow-auto h-[100dvh] p-[2%] max-sm:p-0 "
                 style={{
-                    overflowY: 'auto', backgroundImage: campaign?.config?.primary_color
-                        ? createGradient(campaign.config.primary_color)
-                        : 'none'
+                    overflowY: 'auto', backgroundImage: gradientStyle
                 }}
             >
                 <div style={{ fontFamily: campaignConfig.font_family }} className="w-[400px] bg-white flex flex-col max-sm:w-full h-full shadow-lg max-sm:shadow-none md:rounded-lg overflow-auto mx-auto rounded-none">
+
+                    {/* Preload all images for faster UX - only if not already loaded */}
+                    {!allImagesLoaded && imageUrls.length > 0 && (
+                        <ImagePreloader
+                            images={imageUrls}
+                            priorityImageIndices={[0]} // First image is highest priority (LCP)
+                            onComplete={handleImagesPreloaded}
+                            debug={process.env.NODE_ENV === 'development'}
+                        />
+                    )}
 
                     <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
                             case 'carousel':
-                                return <CarouselComponent prefix={campaign.config.cloudinary_params} key={block.id} images={block.images || []} />;
+                                return <CarouselComponent key={block.id} images={block.images || []} variantId={campaign.variant_id} />;
                             case 'text':
                                 return (
                                     <TextComponent
@@ -345,22 +423,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style}
                                     />
                                 );
-                            case 'checkout':
-                                return (
-                                    <Checkout
-                                        key={block.id}
-                                        value={block.value}
-                                        style={block.style}
-                                        checkoutData={{
-                                            ...checkoutData,
-                                            variant_id: campaign.variant_id,
-                                            inventory: getCurrentVariantInventory()
-                                        }}
-                                        quantity={quantity}
-                                        handleIncrease={handleIncrease}
-                                        handleDecrease={handleDecrease}
-                                    />
-                                );
+                            // case 'checkout':
+                            //     return (
+                            //         <Checkout
+                            //             key={block.id}
+                            //             value={block.value}
+                            //             style={block.style}
+                            //             checkoutData={{
+                            //                 ...checkoutData,
+                            //                 variant_id: campaign.variant_id,
+                            //                 inventory: getCurrentVariantInventory()
+                            //             }}
+                            //             quantity={quantity}
+                            //             handleIncrease={handleIncrease}
+                            //             handleDecrease={handleDecrease}
+                            //         />
+                            //     );
                             case 'ticker':
                                 return (
                                     <Ticker
