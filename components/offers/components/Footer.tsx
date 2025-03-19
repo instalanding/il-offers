@@ -4,6 +4,7 @@ import axios from "axios";
 import FastrrCheckout from "./Checkouts/Footer/FastrrCheckout";
 import ShopifyCheckout from "./Checkouts/Footer/ShopifyCheckout";
 
+
 export interface Config {
   primaryColor: string;
   secondaryColor: string;
@@ -102,7 +103,6 @@ const Footer: React.FC<{
       : 0;
 
 
-
     return (
       checkoutData.checkout_name === "shiprocket" ||
         checkoutData.checkout_name === "fastr" ||
@@ -129,6 +129,6 @@ const Footer: React.FC<{
           recordClicks={recordClicks}
         />
     )
-  }
+}
 
 export default Footer;
