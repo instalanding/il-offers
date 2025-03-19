@@ -66,6 +66,14 @@ export default function useCheckout() {
     }
   };
 
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      localStorage.clear();
+    }, 30000);
+  }, []);
+
   const handleCheckout = async (
     e: React.MouseEvent<HTMLButtonElement>,
     variant_id: string,
@@ -76,14 +84,18 @@ export default function useCheckout() {
   ) => {
     e.preventDefault();
 
+    console.log("utm_params", utm_params)
+
     if (!loaded) {
       //console.log("Script not loaded yet. Loading now...");
       loadScripts();
       setTimeout(() => {
         handleCheckout(e, variant_id, offer_id, couponCode, utm_params, quantity);
-      }, 500); // Small delay to ensure script loads
+      }, 500);// Small delay to ensure script loads
       return;
     }
+
+
 
     await shiprocketCheckoutEvents.buyDirect({
       type: "cart",
@@ -94,9 +106,9 @@ export default function useCheckout() {
         },
       ],
       couponCode: couponCode,
-      utmParams: `utm_source=${utm_source || "instalanding"}&utm_medium=${utm_medium || "campaign_instalanding"
-        }&utm_campaign=${utm_campaign || offer_id}${utm_term ? `&utm_term=${utm_term}` : ""}${utm_id ? `&utm_id=${utm_id}` : ""
-        }${utm_content ? `&utm_content=${utm_content}` : ""}`,
+      utmParams: `utm_source=${utm_params.utm_source || "instalanding"}&utm_medium=${utm_params.utm_medium || "campaign_instalanding"
+        }&utm_campaign=${utm_params.utm_campaign || offer_id}${utm_params.utm_term ? `&utm_term=${utm_params.utm_term}` : ""}${utm_params.utm_id ? `&utm_id=${utm_params.utm_id}` : ""
+        }${utm_params.utm_content ? `&utm_content=${utm_params.utm_content}` : ""}`,
     });
   };
 

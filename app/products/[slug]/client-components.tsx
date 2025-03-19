@@ -69,6 +69,15 @@ export function CampaignWithParams({
     return cleanup;
   }, [fontFamily]);
 
+  useEffect(() => {
+    // Only proceed if we have UTM parameters
+    if (Object.keys(utm_params).length > 0) {
+      // Store UTM parameters in localStorage
+      localStorage.setItem('utm_params', JSON.stringify(utm_params));
+      console.log('UTM params stored in localStorage:', utm_params);
+    }
+  }, [utm_params]);
+
   return (
     <Campaigns
       campaignData={{

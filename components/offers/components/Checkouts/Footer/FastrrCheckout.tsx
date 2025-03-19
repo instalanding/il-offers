@@ -40,6 +40,8 @@ const FastrrCheckout = ({
 
     const { handleCheckout, handleMouseEnter, handleTouchStart } = useCheckout();
 
+    const utm_params = JSON.parse(localStorage.getItem('utm_params') || '{}');
+
     const handleCheckoutButtonClick = async (
         e: React.MouseEvent<HTMLButtonElement>
     ) => {
@@ -48,8 +50,8 @@ const FastrrCheckout = ({
             checkoutData.variant_id,
             checkoutData.offer_id,
             checkoutData.coupon_code,
-            checkoutData.utm_params,
-            quantity
+            utm_params,
+            quantity,
         );
         recordClicks();
     };
