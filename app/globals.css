@@ -24,8 +24,7 @@
 /* Preemptively set sizes for common UI elements to reduce layout shift */
 .carousel-wrapper {
   position: relative;
-  width: 100%;
-  min-height: 480px; /* Reserve space for the image */
+  width: 100%; /* Reserve space for the image */
   height: auto;
   display: block;
   contain: content;
