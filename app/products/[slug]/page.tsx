@@ -35,7 +35,7 @@ const page = async ({
   params: Params;
   searchParams: SearchParams;
 }) => {
-  
+
   const campaign = await getCampaignData(params.slug);
 
   return (

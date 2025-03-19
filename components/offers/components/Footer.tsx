@@ -129,6 +129,6 @@ const Footer: React.FC<{
           recordClicks={recordClicks}
         />
     )
-}
+  }
 
 export default Footer;
