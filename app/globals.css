@@ -266,11 +266,11 @@ html {
   margin-block: 10px;
 }
 
-.text-editor-css p {
+/* .text-editor-css p {
   font-size: 16px;
   font-weight: 400;
   line-height: 26px;
-}
+} */
 
 .text-editor-css ol > li {
   list-style-type: decimal;
