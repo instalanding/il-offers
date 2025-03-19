@@ -30,7 +30,7 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
     // Find the index of the image that contains the current variant ID
     const initialSlide = useMemo(() => {
         const variantIdNumber = parseInt(variantId);
-        const index = finalImages.findIndex(img => img.variant_ids.includes(variantIdNumber));
+        const index = finalImages.findIndex(img => img.variant_ids?.includes(variantIdNumber));
         return index >= 0 ? index : 0;
     }, [finalImages, variantId]);
 
