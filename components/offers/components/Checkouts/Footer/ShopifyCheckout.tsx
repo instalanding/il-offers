@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { formatPrice } from "@/lib/formatUtils";
 import { calculatePercentageOff } from '@/lib/calculateDiscount';
 import { IoIosAdd, IoIosRemove } from 'react-icons/io';
@@ -31,15 +31,24 @@ const ShopifyCheckout = ({
 }: ShopifyCheckoutProps) => {
     const router = useRouter();
 
+    useEffect(() => {
+        setTimeout(() => {
+          localStorage.clear();
+        }, 30000);
+      }, []);
+
     const handleCheckoutButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         const params = new URLSearchParams();
         params.append('discount', checkoutData.coupon_code);
 
         // Add all UTM parameters from checkoutData
-        const utmParams = checkoutData.utm_params as Record<string, string>;
+        // const utmParams = checkoutData.utm_params as Record<string, string>;
+
+        const utmParams = JSON.parse(localStorage.getItem('utm_params') || '{}');
+
         Object.entries(utmParams).forEach(([key, value]) => {
             if (value) {
-                params.append(key, value);
+                params.append(key, String(value));
             }
         });
 
