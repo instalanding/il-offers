@@ -28,6 +28,8 @@ const ReviewsComponent: React.FC<RatingsComponentProps> = ({ value, style }) => 
     const reviews = value.reviews.slice(0, value.topReviewsCount);
     const totalStars = 5;
 
+    // console.log(value, "reviews");
+
     return (
         <div style={{ ...style, overflow: "visible" }} className="flex flex-col gap-1">
             <h3 className="text-lg text-center font-medium">{value.title}</h3>

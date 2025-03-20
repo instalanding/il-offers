@@ -1,3 +1,4 @@
+import { formatDateServer } from "@/lib/serverFormatUtils";
 import { CampaignWithParams } from "./client-components";
 import { Metadata, ResolvingMetadata } from "next/types";
 
@@ -27,6 +28,23 @@ async function getCampaignData(slug: string) {
   return data.data;
 }
 
+async function getReviewsData(product_handle: string) {
+  const response = await fetch(
+    `${process.env.API_URL_V2}/reviews?slug=${product_handle}`
+  );
+  const data = await response.json();
+
+  const reviews = Array.isArray(data.statusCode.data)
+    ? data.statusCode.data.map((review: any) => ({
+        userName: review.reviewer_name,
+        comment: review.review_body_text,
+        rating: review.review_rating,
+        date: formatDateServer(review.review_date),
+      }))
+    : [];
+
+  return reviews;
+}
 
 const page = async ({
   params,
@@ -35,13 +53,14 @@ const page = async ({
   params: Params;
   searchParams: SearchParams;
 }) => {
-
   const campaign = await getCampaignData(params.slug);
+  const reviews = await getReviewsData(params.slug);
 
   return (
     <div>
       <CampaignWithParams
         campaignData={campaign}
+        reviews={reviews}
         userIp={searchParams.user_ip || ""}
       />
     </div>
@@ -52,8 +71,6 @@ export default page;
 
 // Change from static to dynamic rendering to access search params
 export const dynamic = "force-static";
-
-
 
 export async function generateMetadata(
   {
@@ -70,11 +87,14 @@ export async function generateMetadata(
 
   const allData = await getCampaignData(slug);
 
-  const data = allData[0]
+  const data = allData[0];
 
   const title = data?.meta_description?.title || "Instalanding Offers";
-  const description = data?.meta_description?.description || "Explore exclusive offers with Instalanding.";
-  const imageUrl = data?.meta_description?.image?.url || "/default-meta-image.jpg";
+  const description =
+    data?.meta_description?.description ||
+    "Explore exclusive offers with Instalanding.";
+  const imageUrl =
+    data?.meta_description?.image?.url || "/default-meta-image.jpg";
 
   return {
     title: title,
