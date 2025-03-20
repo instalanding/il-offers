@@ -42,9 +42,11 @@ function loadFont(fontFamily: string) {
 
 export function CampaignWithParams({
   campaignData,
+  reviews,
   userIp,
 }: {
   campaignData: any;
+  reviews: any;
   userIp: string;
 }) {
   const searchParams = useSearchParams();
@@ -78,12 +80,14 @@ export function CampaignWithParams({
     }
   }, [utm_params]);
 
+  console.log(reviews, "reviews");
+
   return (
     <Campaigns
       campaignData={{
         ...(filteredCampaign.length > 0 ? filteredCampaign[0] : {}),
         collections: { variants: campaignData },
-        reviews: [],
+        reviews: reviews,
       }}
       userIp={userIp}
       utm_params={utm_params}
