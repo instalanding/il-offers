@@ -1,9 +1,11 @@
-"use server";
 import React from "react";
 import dynamic from "next/dynamic";
 import { MdErrorOutline } from "react-icons/md";
 import { Metadata, ResolvingMetadata } from "next";
 import { cache } from 'react';
+
+
+export const runtime = "edge";
 
 // Client-side components with error handling
 const Collections = dynamic(() => import("@/components/offers/Collections").catch(err => {
@@ -147,6 +149,7 @@ const FONT_FAMILY_MAPPING: Record<string, string> = {
 };
 
 const getCollections = cache(async (slug: string, variant_id?: string) => {
+    "use server";
     if (!validateEnvironment()) {
         return null;
     }
