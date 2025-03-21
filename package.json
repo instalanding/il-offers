@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pages:build":"npx @cloudflare/next-on-pages"
+    "pages:build": "npx @cloudflare/next-on-pages"
   },
   "dependencies": {
     "@cashfreepayments/cashfree-js": "^1.0.5",
@@ -56,6 +56,7 @@
     "react-icons": "^5.2.1",
     "react-qr-code": "^2.0.15",
     "sharp": "^0.33.5",
+    "styled-jsx": "^5.1.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0",
