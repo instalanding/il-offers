@@ -1,0 +1,1 @@
+var t={},p=(s,g,_)=>(t.__chunk_301=(d,r,a)=>{"use strict";a.d(r,{E:()=>n});let n=l=>{try{let e=new Date(l),c=e.getDate(),o=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][e.getMonth()],u=e.getFullYear();return`${o} ${c}, ${u}`}catch{return"Invalid date"}}},t);export{p as __getNamedExports};
