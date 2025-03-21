@@ -3,6 +3,7 @@ import { CampaignWithParams } from "./client-components";
 import { Metadata, ResolvingMetadata } from "next/types";
 
 
+
 export const runtime = "edge";
 
 type Params = {
