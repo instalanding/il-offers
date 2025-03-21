@@ -30,7 +30,7 @@ function ProductLoading() {
 }
 
 // Dynamic import of client components for performance optimization
-const ClientCampaigns = dynamic(() => import('@/components/offers/Campaigns').catch(err => {
+const ClientCampaigns = dynamic(() => import('../../../components/offers/Campaigns').catch(err => {
   console.error("Error loading Campaigns component:", err);
   const ErrorComponent = () => <div>Error loading campaign content</div>;
   ErrorComponent.displayName = 'CampaignsErrorFallback';
@@ -72,8 +72,8 @@ const getCachedCampaign = cache(async (slug: string, variant_id?: string) => {
 
     // Construct the API URL
     const apiUrl = `${process.env.API_URL_V2}/campaign?${queryString}`;
-    
-    const response = await fetch(apiUrl, { 
+
+    const response = await fetch(apiUrl, {
       next: { revalidate: REVALIDATE_TIME }
     });
 
@@ -90,7 +90,7 @@ const getCachedCampaign = cache(async (slug: string, variant_id?: string) => {
 
     try {
       const data = JSON.parse(text);
-      
+
       // Based on the API response format, we need to check:
       // 1. If data exists and has a data property
       // 2. If data.data is an array
@@ -103,11 +103,11 @@ const getCachedCampaign = cache(async (slug: string, variant_id?: string) => {
             return variantMatch;
           }
         }
-        
+
         // If no variant_id specified or no match found, return the first item
         return data.data[0];
       }
-      
+
       return null;
     } catch (parseError) {
       return null;
@@ -120,56 +120,56 @@ const getCachedCampaign = cache(async (slug: string, variant_id?: string) => {
 // Helper to extract first image URL safely - modified for prioritizing LCP
 const getFirstImageUrl = (campaignData: any): { url: string, width: number, height: number } => {
   if (!campaignData?.blocks) return { url: '', width: 0, height: 0 };
-  
+
   try {
     // Parse the blocks to find carousel images
-    const blocks = typeof campaignData.blocks === 'string' 
-      ? JSON.parse(campaignData.blocks) 
+    const blocks = typeof campaignData.blocks === 'string'
+      ? JSON.parse(campaignData.blocks)
       : campaignData.blocks;
-    
+
     // Find the first carousel block
     const carouselBlock = blocks.find((block: any) => block.type === 'carousel');
-    
+
     // If we have a carousel with images
     if (carouselBlock?.images && Array.isArray(carouselBlock.images) && carouselBlock.images.length > 0) {
       const firstImage = carouselBlock.images[0];
       // Return with dimensions if possible
-      return { 
-        url: firstImage.url || '', 
-        width: firstImage.width || 480, 
-        height: firstImage.height || 480 
+      return {
+        url: firstImage.url || '',
+        width: firstImage.width || 480,
+        height: firstImage.height || 480
       };
     }
-    
+
     // Fallback to meta image if available
     if (campaignData.meta_description?.image?.url) {
-      return { 
-        url: campaignData.meta_description.image.url, 
-        width: 480, 
-        height: 480 
+      return {
+        url: campaignData.meta_description.image.url,
+        width: 480,
+        height: 480
       };
     }
   } catch (error) {
     console.error("Error parsing campaign image data:", error);
   }
-  
+
   return { url: '', width: 0, height: 0 };
 };
 
 // Function to generate optimized Cloudinary URL for LCP
 function getOptimizedImageUrl(imageUrl: string, width: number = 480): string {
   if (!imageUrl) return '';
-  
+
   // Check if it's a Cloudinary URL
   if (imageUrl.includes('cloudinary.com')) {
     // Extract the existing transformations if any
     const urlParts = imageUrl.split('/upload/');
     if (urlParts.length !== 2) return imageUrl;
-    
+
     // Use f_auto for format, q_auto:good for quality, and w_ for width
     // Add dpr_1.0 to prevent automatic doubling on retina displays
     const optimizedTransformations = `f_auto,q_auto:good,w_${width},dpr_1.0`;
-    
+
     // Check if there are existing transformations
     if (urlParts[1].includes('/')) {
       // Replace or add our optimizations
@@ -179,7 +179,7 @@ function getOptimizedImageUrl(imageUrl: string, width: number = 480): string {
       return `${urlParts[0]}/upload/${optimizedTransformations}/${urlParts[1]}`;
     }
   }
-  
+
   // If not Cloudinary, return original URL
   return imageUrl;
 }
@@ -193,20 +193,20 @@ export async function generateMetadata({
   try {
     // Fetch campaign data
     const data = await getCachedCampaign(params.slug);
-    
+
     // Extract title and description
     const title = data?.meta_description?.title || data?.campaign_title || "Instalanding";
     const description = data?.meta_description?.description || "Explore exclusive offers with Instalanding.";
-    
+
     // Get font family for preloading
     const fontFamily = data?.config?.font_family;
-    
+
     // Generate font preload links
     const fontLinks = generateFontPreloadLinks(fontFamily || '');
-    
+
     // Get LCP image for preloading
     const lcpImageUrl = getFirstImageUrl(data);
-    
+
     // Add critical domains for preconnect
     const preconnectLinks = [
       { rel: 'preconnect', href: 'https://res.cloudinary.com', crossOrigin: 'anonymous' },
@@ -214,13 +214,13 @@ export async function generateMetadata({
       { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
       { rel: 'dns-prefetch', href: 'https://res.cloudinary.com' }
     ];
-    
+
     // Combine all links
     const links = [
       ...preconnectLinks,
       ...fontLinks,
       ...(lcpImageUrl.url ? [{
-        rel: 'preload', 
+        rel: 'preload',
         as: 'image',
         href: getOptimizedImageUrl(lcpImageUrl.url, 480),
         // Highest priority for LCP image
@@ -228,7 +228,7 @@ export async function generateMetadata({
         imageSizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
       }] : [])
     ];
-    
+
     return {
       title,
       description,
@@ -270,7 +270,7 @@ export async function generateMetadata({
         preconnect: JSON.stringify(preconnectLinks),
         fontlinks: JSON.stringify(fontLinks),
         lcplink: lcpImageUrl.url ? JSON.stringify({
-          rel: 'preload', 
+          rel: 'preload',
           as: 'image',
           href: getOptimizedImageUrl(lcpImageUrl.url, 480),
           imageSrcSet: `${getOptimizedImageUrl(lcpImageUrl.url, 480)} 1x, ${getOptimizedImageUrl(lcpImageUrl.url, 960)} 2x`,
@@ -290,18 +290,18 @@ export async function generateMetadata({
 const getCachedVariantCollection = cache(async (slug: string, variant_id: string) => {
   try {
     const queryString = `slug=${encodeURIComponent(slug)}&variant_id=${encodeURIComponent(variant_id)}`;
-    
+
     // Construct the API URL
     const apiUrl = `${process.env.API_URL_V2}/collection?${queryString}`;
-    
+
     const response = await fetch(apiUrl, {
       next: { revalidate: REVALIDATE_TIME }
     });
-    
+
     if (!response.ok) {
       return [];
     }
-    
+
     // Add extra checks to prevent JSON parsing errors
     const text = await response.text();
     if (!text || text.trim() === '') {
@@ -323,21 +323,21 @@ const getCachedVariantCollection = cache(async (slug: string, variant_id: string
 // Cache the reviews data fetching with robust error handling
 const getCachedReviews = cache(async (product_handle: string) => {
   if (!product_handle) return [];
-  
+
   try {
     const queryString = `slug=${encodeURIComponent(product_handle)}`;
-    
+
     // Construct the API URL
     const apiUrl = `${process.env.API_URL_V2}/reviews?${queryString}`;
-    
+
     const response = await fetch(apiUrl, {
       next: { revalidate: REVALIDATE_TIME }
     });
-    
+
     if (!response.ok) {
       return [];
     }
-    
+
     // Add extra checks to prevent JSON parsing errors
     const text = await response.text();
     if (!text || text.trim() === '') {
@@ -346,7 +346,7 @@ const getCachedReviews = cache(async (product_handle: string) => {
 
     try {
       const data = JSON.parse(text);
-      
+
       // Handle different possible response structures
       if (data?.statusCode?.data && Array.isArray(data.statusCode.data)) {
         // Structure: { statusCode: { success: true, data: [...] }, message, success }
@@ -380,10 +380,10 @@ type SearchParams = {
 };
 
 // Main component
-export default async function ProductPage({ 
+export default async function ProductPage({
   params,
-  searchParams 
-}: { 
+  searchParams
+}: {
   params: { slug: string };
   searchParams: SearchParams;
 }) {
@@ -411,7 +411,7 @@ export default async function ProductPage({
   // Extract UTM parameters for tracking
   const utm_params = Object.fromEntries(
     Object.entries(searchParams).filter(([key]) =>
-      key.startsWith('utm_') || 
+      key.startsWith('utm_') ||
       ['source', 'medium', 'campaign', 'id', 'term', 'content'].includes(key)
     )
   );
@@ -437,7 +437,7 @@ export default async function ProductPage({
       </div>
     );
   }
-  
+
   // Error handling for missing campaign
   if (!campaignData) {
     return (
@@ -477,7 +477,7 @@ export default async function ProductPage({
 
   const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
   const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
-  
+
   // Fetch additional data in parallel
   const [reviews, collections] = await Promise.all([
     hasReviewsBlock ? getCachedReviews(campaignData.product_handle) : Promise.resolve([]),
@@ -494,7 +494,7 @@ export default async function ProductPage({
 
   // Get font family and prepare data for client component
   const fontFamily = campaignData?.config?.font_family || "Inter";
-  
+
   // Get first image for preloading
   const firstImage = getFirstImageUrl(campaignData);
 
@@ -503,20 +503,20 @@ export default async function ProductPage({
     <>
       {/* Add preconnect script for early domain connections */}
       <PreconnectScript />
-      
+
       {/* Enhanced LCP image preload */}
       {firstImage.url && (
         <link
           rel="preload"
           href={getOptimizedImageUrl(firstImage.url, 480)}
-          as="image" 
+          as="image"
           fetchPriority="high"
           type="image/webp"
           imageSrcSet={`${getOptimizedImageUrl(firstImage.url, 480)} 1x, ${getOptimizedImageUrl(firstImage.url, 960)} 2x`}
           imageSizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
         />
       )}
-      
+
       {/* Add the client campaigns component which will handle the main rendering */}
       <ClientCampaigns
         campaignData={{
@@ -529,10 +529,10 @@ export default async function ProductPage({
         userIp={userIp}
         preserveParams={true}
       />
-      
+
       {/* Add font preloader for optimized font loading */}
       <ClientFontPreloader fontFamily={fontFamily} />
-      
+
       {/* Add performance monitoring in development or when debug is enabled */}
       {(process.env.NODE_ENV === 'development' || searchParams.debug === 'true') && (
         <ClientPerformanceMonitor />
@@ -547,10 +547,10 @@ function validateEnvironment() {
     console.error("API_URL_V2 is not defined in environment variables");
     return false;
   }
-  
+
   if (!process.env.API_URL_V2.includes('/v2/api')) {
     process.env.API_URL_V2 = `${process.env.API_URL_V2}/v2/api`;
   }
-  
+
   return true;
 }

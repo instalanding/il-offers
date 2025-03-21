@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,7 +7,6 @@ import TextComponent from './components/TextComponent';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
 import ImagePreloader from '../ImagePreloader';
-import OptimizedImage from '@/components/OptimizedImage';
 
 const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), {
     loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div>
@@ -400,18 +399,17 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                     />
                                 );
                             case 'variants':
+                                // Find the carousel block to get its images
+                                const carouselBlock = blocks.find(b => b.type === 'carousel');
                                 return (
                                     <VariantsComponent
                                         key={block.id}
                                         value={{
-                                            options: block.value?.options || {
-                                                option1: { enabled: true, label: 'Select an option', displayStyle: 'capsule' },
-                                                option2: { enabled: true, label: 'Choose a variant', displayStyle: 'capsule' },
-                                                option3: { enabled: true, label: 'Pick one', displayStyle: 'capsule' }
-                                            }
+                                            options: block.value?.options
                                         }}
                                         style={block.style}
                                         collections={campaignData.collections}
+                                        images={carouselBlock?.images || []}
                                     />
                                 );
                             case 'multiple-cta':
@@ -423,22 +421,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style}
                                     />
                                 );
-                            // case 'checkout':
-                            //     return (
-                            //         <Checkout
-                            //             key={block.id}
-                            //             value={block.value}
-                            //             style={block.style}
-                            //             checkoutData={{
-                            //                 ...checkoutData,
-                            //                 variant_id: campaign.variant_id,
-                            //                 inventory: getCurrentVariantInventory()
-                            //             }}
-                            //             quantity={quantity}
-                            //             handleIncrease={handleIncrease}
-                            //             handleDecrease={handleDecrease}
-                            //         />
-                            //     );
+                            case 'checkout':
+                                return (
+                                    <Checkout
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style}
+                                        checkoutData={{
+                                            ...checkoutData,
+                                            variant_id: campaign.variant_id,
+                                            inventory: getCurrentVariantInventory()
+                                        }}
+                                        quantity={quantity}
+                                        handleIncrease={handleIncrease}
+                                        handleDecrease={handleDecrease}
+                                    />
+                                );
                             case 'ticker':
                                 return (
                                     <Ticker

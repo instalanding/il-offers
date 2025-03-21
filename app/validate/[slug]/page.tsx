@@ -5,7 +5,6 @@ export const runtime = "edge";
 // Only apply "use server" to the specific functions that need it
 async function revalidateSlug(slug: string) {
   "use server";
-  console.log(`Revalidating path: /products/${slug}`);
   revalidatePath(`/products/${slug}`);
 }
 

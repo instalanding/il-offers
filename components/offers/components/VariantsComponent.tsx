@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Card from "./Variants/Card";
 import Capsule from "./Variants/Capsule";
+import Chip from "./Variants/Chip";
+import Custom from "./Variants/Custom";
 
 interface VariantOption {
     variant_id: string;
@@ -25,17 +27,41 @@ interface VariantsComponentProps {
             option1: {
                 enabled: boolean;
                 label: string;
-                displayStyle: 'card' | 'capsule';
+                displayStyle: 'card' | 'capsule' | 'chip' | 'custom';
+                showImage: boolean;
+                showLabel: boolean;
+                chipShape: 'circular' | 'square';
+                labelPlacement: 'inside' | 'below';
+                customStyle?: {
+                    fontSize: number;
+                    backgroundColor: string;
+                }
             };
             option2: {
                 enabled: boolean;
                 label: string;
-                displayStyle: 'card' | 'capsule';
+                displayStyle: 'card' | 'capsule' | 'chip' | 'custom';
+                showImage: boolean;
+                showLabel: boolean;
+                chipShape: 'circular' | 'square';
+                labelPlacement: 'inside' | 'below';
+                customStyle?: {
+                    fontSize: number;
+                    backgroundColor: string;
+                }
             };
             option3: {
                 enabled: boolean;
                 label: string;
-                displayStyle: 'card' | 'capsule';
+                displayStyle: 'card' | 'capsule' | 'chip' | 'custom';
+                showImage: boolean;
+                showLabel: boolean;
+                chipShape: 'circular' | 'square';
+                labelPlacement: 'inside' | 'below';
+                customStyle?: {
+                    fontSize: number;
+                    backgroundColor: string;
+                }
             };
         };
     };
@@ -43,9 +69,14 @@ interface VariantsComponentProps {
     collections?: {
         variants?: Array<VariantOption>;
     };
+    images: {
+        id: number;
+        variant_ids: number[];
+        url: string;
+    }[];
 }
 
-const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, collections }) => {
+const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, collections, images }) => {
     const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({});
     const [currentVariant, setCurrentVariant] = useState<string | null>(null);
     const [productHandle, setProductHandle] = useState<string | null>(null);
@@ -151,6 +182,21 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
         }
     };
 
+    const getComponent = (displayStyle: string) => {
+        switch (displayStyle) {
+            case 'card':
+                return Card;
+            case 'capsule':
+                return Capsule;
+            case 'chip':
+                return Chip;
+            case 'custom':
+                return Custom;
+            default:
+                return Capsule;
+        }
+    };
+
     const renderVariantOptions = () => {
         const optionGroups = sortedVariants.reduce((acc, variant) => {
             Object.entries(variant.variant_options).forEach(([key, val]) => {
@@ -181,7 +227,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             .map(([optionKey, values], index) => {
                 const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
                 if (!optionConfig?.enabled) return null;
-
+                console.log(optionConfig, "option ocnfig")
                 // Convert Set to Array and apply specific sorting
                 let sortedValues = Array.from(values);
 
@@ -212,7 +258,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                         </h3>
                         <div className={`
                             flex justify-start flex-wrap gap-2 
-                            ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3' : 'flex flex-wrap'}
+                            ${optionConfig.displayStyle === 'card' ? 'grid grid-cols-3 gap-3' : 'flex flex-wrap'}
                         `}>
                             {sortedValues.map((optionValue, valueIndex) => {
                                 const matchingVariant = sortedVariants.find((v) => {
@@ -222,7 +268,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                     );
                                 });
 
-                                const Component = optionConfig.displayStyle === 'card' ? Card : Capsule;
+                                const Component = getComponent(optionConfig.displayStyle);
 
                                 const isMostLoved = valueIndex === 0;
                                 const isGreatDeal = maxDiscountVariant.variant && !isMostLoved && maxDiscountVariant.variant
@@ -241,6 +287,15 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                         greatDeal={isGreatDeal}
                                         mostLoved={isMostLoved}
                                         productHandle={matchingVariant?.product_handle}
+                                        imageUrl={matchingVariant?.variant_id
+                                            ? images.find(image =>
+                                                image?.variant_ids?.includes(parseInt(matchingVariant.variant_id)))?.url
+                                            : undefined}
+                                        showImage={optionConfig.showImage}
+                                        showLabel={optionConfig.showLabel}
+                                        customStyle={optionConfig.customStyle}
+                                        labelPlacement={optionConfig.labelPlacement}
+                                        chipShape={optionConfig.chipShape}
                                     />
                                 );
                             })}
