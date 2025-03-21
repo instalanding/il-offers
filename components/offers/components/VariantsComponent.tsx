@@ -30,6 +30,7 @@ interface VariantsComponentProps {
                 displayStyle: 'card' | 'capsule' | 'chip' | 'custom';
                 showImage: boolean;
                 showLabel: boolean;
+                showDiscount: boolean;
                 chipShape: 'circular' | 'square';
                 labelPlacement: 'inside' | 'below';
                 customStyle?: {
@@ -43,6 +44,7 @@ interface VariantsComponentProps {
                 displayStyle: 'card' | 'capsule' | 'chip' | 'custom';
                 showImage: boolean;
                 showLabel: boolean;
+                showDiscount: boolean;
                 chipShape: 'circular' | 'square';
                 labelPlacement: 'inside' | 'below';
                 customStyle?: {
@@ -56,6 +58,7 @@ interface VariantsComponentProps {
                 displayStyle: 'card' | 'capsule' | 'chip' | 'custom';
                 showImage: boolean;
                 showLabel: boolean;
+                showDiscount: boolean;
                 chipShape: 'circular' | 'square';
                 labelPlacement: 'inside' | 'below';
                 customStyle?: {
@@ -227,7 +230,6 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
             .map(([optionKey, values], index) => {
                 const optionConfig = value.options[optionKey as 'option1' | 'option2' | 'option3'];
                 if (!optionConfig?.enabled) return null;
-                console.log(optionConfig, "option ocnfig")
                 // Convert Set to Array and apply specific sorting
                 let sortedValues = Array.from(values);
 
@@ -296,6 +298,7 @@ const VariantsComponent: React.FC<VariantsComponentProps> = ({ value, style, col
                                         customStyle={optionConfig.customStyle}
                                         labelPlacement={optionConfig.labelPlacement}
                                         chipShape={optionConfig.chipShape}
+                                        showDiscount={optionConfig.showDiscount}
                                     />
                                 );
                             })}
