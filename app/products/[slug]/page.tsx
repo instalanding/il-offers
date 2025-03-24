@@ -3,7 +3,7 @@ import { CampaignWithParams } from "./client-components";
 import { Metadata, ResolvingMetadata } from "next/types";
 
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 type Params = {
   slug: string;
@@ -39,11 +39,11 @@ async function getReviewsData(product_handle: string) {
 
   const reviews = Array.isArray(data.statusCode.data)
     ? data.statusCode.data.map((review: any) => ({
-        userName: review.reviewer_name,
-        comment: review.review_body_text,
-        rating: review.review_rating,
-        date: formatDateServer(review.review_date),
-      }))
+      userName: review.reviewer_name,
+      comment: review.review_body_text,
+      rating: review.review_rating,
+      date: formatDateServer(review.review_date),
+    }))
     : [];
 
   return reviews;

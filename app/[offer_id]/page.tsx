@@ -1,3 +1,5 @@
+"use server";
+
 import React from "react";
 import dynamic from "next/dynamic";
 import { Metadata, ResolvingMetadata } from "next";
@@ -8,7 +10,7 @@ import { isValidDomain } from '@/utils/domainUtils';
 import { cache } from 'react';
 
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 // Client-side components with error handling
 const ClientCampaigns = dynamic(() => import("../../components/offers/Campaigns").catch(err => {
@@ -114,7 +116,7 @@ type SearchParams = {
 
 // Cache-enhanced API fetching functions with "use server" directive applied only to server functions
 const getCachedCampaign = cache(async (params: { offer_id?: string }) => {
-  "use server";
+  // "use server";
   try {
     if (!validateEnvironment()) {
       return null;

@@ -10,7 +10,7 @@ import { generateFontPreloadLinks } from '@/lib/fontUtils';
 import { FONT_FAMILY_MAPPING } from '@/lib/fontUtils';
 
 
-export const runtime = "edge";
+// export const runtime = "edge";
 // Simple loading component
 function ProductLoading() {
   return (
