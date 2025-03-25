@@ -76,11 +76,8 @@ export function CampaignWithParams({
     if (Object.keys(utm_params).length > 0) {
       // Store UTM parameters in localStorage
       localStorage.setItem('utm_params', JSON.stringify(utm_params));
-      console.log('UTM params stored in localStorage:', utm_params);
     }
   }, [utm_params]);
-
-  console.log(reviews, "reviews");
 
   return (
     <Campaigns

@@ -3,7 +3,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { Metadata, ResolvingMetadata } from "next";
 import { MdErrorOutline } from "react-icons/md";
-import { formatDate } from "@/lib/formatUtils";
+import { formatDateServer } from "@/lib/serverFormatUtils";
 import { headers } from 'next/headers';
 import { isValidDomain } from '@/utils/domainUtils';
 import { cache } from 'react';
@@ -88,12 +88,12 @@ function validateEnvironment() {
   if (!process.env.API_URL_V2) {
     return false;
   }
-  
+
   // Remove trailing slashes for URL normalization
   if (process.env.API_URL_V2.endsWith('/')) {
     process.env.API_URL_V2 = process.env.API_URL_V2.slice(0, -1);
   }
-  
+
   return true;
 }
 
@@ -124,7 +124,7 @@ const getCachedCampaign = cache(async (params: { offer_id?: string }) => {
 
     const response = await fetch(
       `${process.env.API_URL_V2}/campaign?${query.toString()}`,
-      { 
+      {
         next: { revalidate: 3600 } // Cache for 1 hour
       }
     );
@@ -202,7 +202,7 @@ const getCachedReviews = cache(async (product_handle: string) => {
 
     try {
       const data = JSON.parse(text);
-      
+
       // Handle multiple potential response structures
       if (data?.statusCode?.data && Array.isArray(data.statusCode.data)) {
         return data.statusCode.data;
@@ -269,10 +269,10 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
   } catch (error) {
     blocks = [];
   }
-  
+
   const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
   const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
-  
+
   // Fetch additional data in parallel only if needed
   const [apiReviews, collections] = await Promise.all([
     hasReviewsBlock && data?.product_handle ? getCachedReviews(data.product_handle) : Promise.resolve([]),
@@ -280,13 +280,13 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
   ]);
 
   // Process review data safely
-  const reviews = Array.isArray(apiReviews) 
+  const reviews = Array.isArray(apiReviews)
     ? apiReviews.map((review: any) => ({
-        userName: review.reviewer_name,
-        comment: review.review_body_text,
-        rating: review.review_rating,
-        date: formatDate(review.review_date)
-      }))
+      userName: review.reviewer_name,
+      comment: review.review_body_text,
+      rating: review.review_rating,
+      date: formatDateServer(review.review_date)
+    }))
     : [];
 
   const fontFamily = data?.config?.font_family || "Inter";
@@ -299,20 +299,20 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
         <link
           rel="preload"
           href={firstImage}
-          as="image" 
+          as="image"
           fetchPriority="high"
         />
       )}
-      
+
       <ClientFontPreloader fontFamily={fontFamily} />
-      
+
       <ClientCampaigns
         campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }}
         utm_params={utm_params}
         userIp={userIp}
         preserveParams={true}
       />
-      
+
       {(process.env.NODE_ENV === 'development' || searchParams.debug === 'true') && (
         <ClientPerformanceMonitor />
       )}
@@ -340,7 +340,7 @@ export async function generateMetadata(
   const description = data?.meta_description?.description || "Explore exclusive offers with Instalanding.";
   const imageUrl = data?.meta_description?.image?.url || "/default-meta-image.jpg";
   const fontFamily = data?.config?.font_family || "Inter";
-  
+
   // Generate font preload links
   const fontLinks = generateFontPreloadLinks(fontFamily);
 
