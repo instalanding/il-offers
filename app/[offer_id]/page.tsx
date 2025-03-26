@@ -180,6 +180,39 @@ const getCachedVariantCollection = cache(async (slug: string, variant_id: string
   }
 });
 
+const getCachedCollectionById = cache(async (collection_id: string) => {
+  try {
+    if (!validateEnvironment() || !collection_id) {
+      return null;
+    }
+
+    const response = await fetch(
+      `${process.env.API_URL_V2}/collection/${collection_id}`, {
+      next: { revalidate: 10 } // Cache for 1 hour
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const text = await response.text();
+    if (!text || text.trim() === '') {
+      return null;
+    }
+
+    try {
+      const data = JSON.parse(text);
+      return data.data;
+    } catch (parseError) {
+      return null;
+    }
+  } catch (error) {
+    return null;
+  }
+
+});
+
+
 const getCachedReviews = cache(async (product_handle: string) => {
   try {
     if (!validateEnvironment() || !product_handle) {
@@ -270,14 +303,23 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
     blocks = [];
   }
 
+  const collectionBlock = blocks.find((block: any) => block.type === 'collections');
+  const collection_id = collectionBlock?.value?.collection_id || '2b2ce'; // fallback to '2b2ce' if not found
+
   const hasReviewsBlock = blocks.some((block: any) => block.type === 'reviews');
   const hasVariantsBlock = blocks.some((block: any) => block.type === 'variants');
+  const hasCollectionsBlock = blocks.some((block: any) => block.type === 'collections');
 
-  // Fetch additional data in parallel only if needed
-  const [apiReviews, collections] = await Promise.all([
+  // Match the destructuring order with the Promise.all order
+  const [apiReviews, collectionById, collections] = await Promise.all([
     hasReviewsBlock && data?.product_handle ? getCachedReviews(data.product_handle) : Promise.resolve([]),
+    hasCollectionsBlock ? getCachedCollectionById(collection_id) : Promise.resolve(null),
     hasVariantsBlock && data?.product_handle ? getCachedVariantCollection(data.product_handle, data.variant_id) : Promise.resolve([])
   ]);
+
+  // console.log('Collection Block:', collectionBlock);
+  // console.log('Collection ID:', collection_id);
+  // console.log('Collection By ID:', collectionById);
 
   // Process review data safely
   const reviews = Array.isArray(apiReviews)
@@ -307,7 +349,13 @@ const Campaign = async ({ params, searchParams }: { params: { offer_id?: string 
       <ClientFontPreloader fontFamily={fontFamily} />
 
       <ClientCampaigns
-        campaignData={{ ...data, config: { ...data.config, font_family: fontFamily }, reviews, collections }}
+        campaignData={{
+          ...data,
+          config: { ...data.config, font_family: fontFamily },
+          reviews,
+          collections,
+          collectionById,
+        }}
         utm_params={utm_params}
         userIp={userIp}
         preserveParams={true}

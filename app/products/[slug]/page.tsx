@@ -1,6 +1,7 @@
 import { formatDateServer } from "@/lib/serverFormatUtils";
 import { CampaignWithParams } from "./client-components";
 import { Metadata, ResolvingMetadata } from "next/types";
+import { cache } from 'react';
 
 type Params = {
   slug: string;
@@ -36,15 +37,48 @@ async function getReviewsData(product_handle: string) {
 
   const reviews = Array.isArray(data.statusCode.data)
     ? data.statusCode.data.map((review: any) => ({
-        userName: review.reviewer_name,
-        comment: review.review_body_text,
-        rating: review.review_rating,
-        date: formatDateServer(review.review_date),
-      }))
+      userName: review.reviewer_name,
+      comment: review.review_body_text,
+      rating: review.review_rating,
+      date: formatDateServer(review.review_date),
+    }))
     : [];
 
   return reviews;
 }
+
+const getCachedCollectionById = cache(async (collection_id: string) => {
+  try {
+    if (!collection_id || !process.env.API_URL_V2) {
+      return null;
+    }
+
+    const response = await fetch(
+      `${process.env.API_URL_V2}/collection/${collection_id}`,
+      {
+        next: { revalidate: 10 }
+      }
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const text = await response.text();
+    if (!text || text.trim() === '') {
+      return null;
+    }
+
+    try {
+      const data = JSON.parse(text);
+      return data.data;
+    } catch (parseError) {
+      return null;
+    }
+  } catch (error) {
+    return null;
+  }
+});
 
 const page = async ({
   params,
@@ -56,12 +90,26 @@ const page = async ({
   const campaign = await getCampaignData(params.slug);
   const reviews = await getReviewsData(params.slug);
 
+  // Add blocks parsing and collection fetching
+  let blocks = [];
+  try {
+    blocks = JSON.parse(campaign[0]?.blocks || '[]');
+  } catch (error) {
+    blocks = [];
+  }
+
+  const collectionBlock = blocks.find((block: any) => block.type === 'collections');
+  const collection_id = collectionBlock?.value?.collection_id || '2b2ce';
+
+  const collectionById = await getCachedCollectionById(collection_id);
+
   return (
     <div>
       <CampaignWithParams
         campaignData={campaign}
         reviews={reviews}
         userIp={searchParams.user_ip || ""}
+        collectionById={collectionById}
       />
     </div>
   );

@@ -20,6 +20,7 @@ const ReviewsComponent = dynamic(() => import('./components/ReviewsComponent'));
 const Checkout = dynamic(() => import('./components/Checkout'));
 const Ticker = dynamic(() => import('./components/Ticker'));
 const Tags = dynamic(() => import('./components/Tags'));
+const CollectionsComponent = dynamic(() => import('./components/CollectionsComponent'));
 const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
 
 interface CampaignData {
@@ -67,6 +68,7 @@ interface CampaignData {
             inventory: number;
         }>;
     };
+    collectionById: any,
     inventory?: number,
     advertiser: {
         _id: string;
@@ -450,6 +452,15 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         key={block.id}
                                         value={block.value}
                                         style={block.style} />
+                                );
+                            case 'collections':
+                                return (
+                                    <CollectionsComponent
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style}
+                                        collectionById={campaignData.collectionById}
+                                    />
                                 );
                             default:
                                 return null;
