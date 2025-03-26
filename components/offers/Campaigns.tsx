@@ -21,6 +21,8 @@ const ReviewsComponent = dynamic(() => import('./components/ReviewsComponent'));
 const Checkout = dynamic(() => import('./components/Checkout'));
 const Ticker = dynamic(() => import('./components/Ticker'));
 const Tags = dynamic(() => import('./components/Tags'));
+const Lists = dynamic(() => import('./components/Lists'));
+
 const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
 
 interface CampaignData {
@@ -326,7 +328,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     const primaryColor = gradientResult.primaryColor || '#000000';
     const secondaryColor = gradientResult.secondaryColor || '#333333';
     const gradientStyle = gradientResult.gradient || 'linear-gradient(180deg, rgba(0,0,0,0.5), white)';
-
+console.log("ss",blocks)
     return (
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
@@ -453,6 +455,13 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         value={block.value}
                                         style={block.style} />
                                 );
+                           case 'lists':
+                                    return (    
+                                        <Lists
+                                            key={block.id}
+                                            value={block.value}
+                                            style={block.style} />
+                                    );
                             default:
                                 return null;
                         }
