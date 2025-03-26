@@ -15,6 +15,9 @@ interface CardProps {
     greatDeal: boolean;
     mostLoved: boolean;
     productHandle?: string;
+    imageUrl?: string;
+    showImage?: boolean;
+    showDiscount: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -26,7 +29,10 @@ const Card: React.FC<CardProps> = ({
     inventory = null,
     greatDeal,
     mostLoved,
-    productHandle
+    productHandle,
+    imageUrl,
+    showImage,
+    showDiscount,
 }) => {
 
     const isSoldOut = inventory !== null && inventory === 0;
@@ -34,7 +40,7 @@ const Card: React.FC<CardProps> = ({
     const offerPrice = priceDetails?.offerPrice?.value;
     const originalPrefix = priceDetails?.originalPrice?.prefix || "";
     const offerPrefix = priceDetails?.offerPrice?.prefix || "";
-    
+
     // Round off the offer price to nearest integer
     const roundedOfferPrice = offerPrice ? Math.round(parseFloat(offerPrice)).toString() : undefined;
 
@@ -55,21 +61,21 @@ const Card: React.FC<CardProps> = ({
                 onClick={onClick}
                 disabled={isDisabled || isSoldOut}
                 className={`
-                flex flex-col h-full relative bg-none text-sm justify-center
+                flex flex-col h-full relative bg-none text-sm
                 snap-start flex-shrink-0 border rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer
                 ${isSelected
                         ? isCureveda
                             ? "border-1 border-[#E7A023] bg-[#FBE9CA] text-black hover:bg-[#f8e2b8]"
                             : greatDeal && !noTags
-                                ? "border-1 border-[#546327] bg-white text-black hover:bg-gray-100"
+                                ? "ring-2 ring-offset-2 ring-[#546327] scale-[1.02] shadow-lg"
                                 : recommended
-                                    ? "border-1 border-[#546327] bg-white text-black hover:bg-gray-100"
-                                    : "border-1 bg-white border-gray-900 text-black hover:bg-gray-100"
+                                    ? "ring-2 ring-offset-2 ring-[#546327] scale-[1.02] shadow-lg"
+                                    : 'ring-2 ring-offset-2 ring-black scale-[1.02] shadow-lg'
                         : isSoldOut
                             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                             : isDisabled
                                 ? "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : "bg-white text-black hover:bg-gray-100"
+                                : "bg-white text-black "
                     }
             `}
             >
@@ -77,6 +83,11 @@ const Card: React.FC<CardProps> = ({
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
                         Sold Out
                     </span>
+                )}
+                {showImage && imageUrl && (
+                    <div className='w-full rounded-t-lg overflow-hidden'>
+                        <img src={imageUrl} alt={value} className='w-full h-full object-cover' />
+                    </div>
                 )}
                 <span className="pt-2 w-full text-center text-xs whitespace-pre-line break-words">
                     {value === "Default Title" ? "" : value.split('|').join('\n')}
@@ -102,7 +113,7 @@ const Card: React.FC<CardProps> = ({
                         </div>
                     ) : null}
 
-                    {discountText && (
+                    {discountText && showDiscount && (
                         <p className={` text-xs mt-1 ${isSoldOut ? 'text-red-300' : 'text-red-600'}`}>
                             {discountText}
                         </p>
@@ -129,7 +140,6 @@ const Card: React.FC<CardProps> = ({
                     <IoHeartCircle size={16} color="#FD4D77" /> Most Loved
                 </div>
             )} */}
-
         </div >
     );
 };
