@@ -84,8 +84,6 @@ export default function useCheckout() {
   ) => {
     e.preventDefault();
 
-    console.log("utm_params", utm_params)
-
     if (!loaded) {
       //console.log("Script not loaded yet. Loading now...");
       loadScripts();

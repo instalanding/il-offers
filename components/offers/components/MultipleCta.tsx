@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 
 const MultiCta = ({ value, style, checkoutData }: any) => {
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
-
     const getVisitorId = async () => {
         if (typeof window === "undefined") return;
 
@@ -27,10 +26,9 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             return null;
         }
     };
-
     const redirectToExternal = (url: string) => {
-        // Set the external URL you want to redirect to
-        window.location.replace(url);
+        // Open the external URL in a new tab
+        window.open(url, '_blank', 'noopener,noreferrer');
     };
 
     async function redirect(redirect_url: string, cta_type: string) {
@@ -86,6 +84,27 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             console.error('Record clicks error:', error);
         }
     }
+
+    const handleButtonClick = async (cta: any) => {
+        // Record clicks
+        await recordClicks(cta.type);
+
+        // Facebook Pixel
+        if (cta.pixels?.[0]?.pixel_id) {
+            const noscript = document.createElement("noscript");
+            const img = document.createElement("img");
+            img.height = 1;
+            img.width = 1;
+            img.style.display = "none";
+            img.src = `https://www.facebook.com/tr?id=${cta.pixels[0].pixel_id}&ev=${cta.pixels[0].pixel_event}&noscript=1`;
+            img.alt = "Facebook Pixel";
+            noscript.appendChild(img);
+            document.body.appendChild(noscript);
+        }
+
+        // Redirect
+        redirect(cta.url, cta.type);
+    };
 
     return (
         <Accordion
@@ -150,10 +169,7 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
                         </div>
                         {/* <Link href={cta.url} target="_blank" rel="noopener noreferrer"> */}
                         <Button
-                            onClick={() => {
-                                recordClicks(cta.type)
-                                redirect(cta.url, cta.type)
-                            }}
+                            onClick={() => handleButtonClick(cta)}
                             style={{
                                 background: cta.color,
                                 color: cta.textColor,
