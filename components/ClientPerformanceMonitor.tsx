@@ -16,7 +16,7 @@ export default function ClientPerformanceMonitor() {
   const [lcpTime, setLcpTime] = useState<number | null>(null);
   const [lcpElement, setLcpElement] = useState<string | null>(null);
   const [fontLoadTime, setFontLoadTime] = useState<number | null>(null);
-  const [resourceLoadTimes, setResourceLoadTimes] = useState<{[key: string]: number}>({});
+  const [resourceLoadTimes, setResourceLoadTimes] = useState<{ [key: string]: number }>({});
 
   useEffect(() => {
     // Only run in browser
@@ -28,7 +28,6 @@ export default function ClientPerformanceMonitor() {
       document.fonts.ready.then(() => {
         const fontEnd = performance.now();
         setFontLoadTime(Math.round(fontEnd - fontStart));
-        console.log(`All fonts loaded in ${Math.round(fontEnd - fontStart)}ms`);
       });
     }
 
@@ -38,55 +37,55 @@ export default function ClientPerformanceMonitor() {
         const lcpObserver = new PerformanceObserver((entryList) => {
           const entries = entryList.getEntries();
           const lastEntry = entries[entries.length - 1];
-          
+
           if (lastEntry) {
             // Log LCP time to console
             const lcpTimeValue = Math.round(lastEntry.startTime);
             console.log(`LCP: ${lcpTimeValue} ms`);
             setLcpTime(lcpTimeValue);
-            
+
             // Get information about the LCP element
-            const lcpElementInfo = (lastEntry as any).element ? 
-              (lastEntry as any).element.tagName + 
+            const lcpElementInfo = (lastEntry as any).element ?
+              (lastEntry as any).element.tagName +
               ((lastEntry as any).element.id ? `#${(lastEntry as any).element.id}` : '') +
               ((lastEntry as any).element.src ? ` (src: ${(lastEntry as any).element.src.split('/').pop()})` : '')
               : 'Unknown element';
-            
+
             setLcpElement(lcpElementInfo);
           }
         });
-        
+
         lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
       }
-      
+
       // Track resource loading times (including images, which affect LCP)
       const resourceObserver = new PerformanceObserver((entryList) => {
         const entries = entryList.getEntries();
-        
+
         const imageEntries = entries.filter(entry => {
           // Cast to PerformanceResourceEntry to access initiatorType
           const resourceEntry = entry as PerformanceResourceEntry;
-          return resourceEntry.initiatorType === 'img' || 
-                 (resourceEntry.initiatorType === 'css' && entry.name.includes('googleapis.com/css')) ||
-                 resourceEntry.initiatorType === 'fetch';
+          return resourceEntry.initiatorType === 'img' ||
+            (resourceEntry.initiatorType === 'css' && entry.name.includes('googleapis.com/css')) ||
+            resourceEntry.initiatorType === 'fetch';
         });
-        
-        const newResourceTimes: {[key: string]: number} = {};
-        
+
+        const newResourceTimes: { [key: string]: number } = {};
+
         imageEntries.forEach(entry => {
           const url = entry.name;
           const filename = url.split('/').pop() || url;
           const loadTime = Math.round(entry.duration);
-          
+
           newResourceTimes[filename] = loadTime;
           console.log(`Resource loaded: ${filename} in ${loadTime}ms`);
         });
-        
-        setResourceLoadTimes(prev => ({...prev, ...newResourceTimes}));
+
+        setResourceLoadTimes(prev => ({ ...prev, ...newResourceTimes }));
       });
-      
+
       resourceObserver.observe({ type: 'resource', buffered: true });
-      
+
       // Add preloading hints to critical images
       setTimeout(() => {
         // Find the largest image on the page - likely to be the LCP element
@@ -96,7 +95,7 @@ export default function ClientPerformanceMonitor() {
           const sortedImages = images
             .filter(img => img.width > 0 && img.height > 0)
             .sort((a, b) => (b.width * b.height) - (a.width * a.height));
-          
+
           // Preload the largest visible images
           sortedImages.slice(0, 3).forEach(img => {
             if (img.src && !document.querySelector(`link[rel=preload][href="${img.src}"]`)) {
@@ -105,7 +104,7 @@ export default function ClientPerformanceMonitor() {
           });
         }
       }, 2000);
-      
+
     } catch (e) {
       console.error('Error measuring performance:', e);
     }
@@ -124,13 +123,13 @@ export default function ClientPerformanceMonitor() {
       )}
       {lcpElement && <div className="text-gray-300">LCP Element: {lcpElement}</div>}
       {fontLoadTime && <div className="text-gray-300">Font Load Time: {fontLoadTime}ms</div>}
-      
+
       {Object.keys(resourceLoadTimes).length > 0 && (
         <details>
           <summary className="cursor-pointer text-gray-300 mt-1">Resource Load Times</summary>
           <div className="pl-2 mt-1 max-h-40 overflow-y-auto">
             {Object.entries(resourceLoadTimes)
-              .sort(([,a], [,b]) => b - a)
+              .sort(([, a], [, b]) => b - a)
               .map(([resource, time]) => (
                 <div key={resource} className={`${time > 1000 ? 'text-red-400' : time > 500 ? 'text-yellow-400' : 'text-gray-300'}`}>
                   {resource.substring(0, 20)}{resource.length > 20 ? '...' : ''}: {time}ms
@@ -140,7 +139,7 @@ export default function ClientPerformanceMonitor() {
           </div>
         </details>
       )}
-      
+
       <div className="text-xs text-gray-400 mt-2">Add ?debug=true to URL to show this on production</div>
     </div>
   );

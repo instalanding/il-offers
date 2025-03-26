@@ -44,10 +44,12 @@ export function CampaignWithParams({
   campaignData,
   reviews,
   userIp,
+  collectionById,
 }: {
   campaignData: any;
   reviews: any;
   userIp: string;
+  collectionById: any;
 }) {
   const searchParams = useSearchParams();
   const variant = searchParams.get("variant");
@@ -64,23 +66,20 @@ export function CampaignWithParams({
     )
   );
 
-  const fontFamily = filteredCampaign[0].config.font_family;
+  const fontFamily = filteredCampaign[0]?.config?.font_family;
 
   useEffect(() => {
-    const cleanup = loadFont(filteredCampaign[0].config.font_family);
-    return cleanup;
+    if (fontFamily) {
+      const cleanup = loadFont(fontFamily);
+      return cleanup;
+    }
   }, [fontFamily]);
 
   useEffect(() => {
-    // Only proceed if we have UTM parameters
     if (Object.keys(utm_params).length > 0) {
-      // Store UTM parameters in localStorage
       localStorage.setItem('utm_params', JSON.stringify(utm_params));
-      console.log('UTM params stored in localStorage:', utm_params);
     }
   }, [utm_params]);
-
-  console.log(reviews, "reviews");
 
   return (
     <Campaigns
@@ -88,6 +87,7 @@ export function CampaignWithParams({
         ...(filteredCampaign.length > 0 ? filteredCampaign[0] : {}),
         collections: { variants: campaignData },
         reviews: reviews,
+        collectionById: collectionById,
       }}
       userIp={userIp}
       utm_params={utm_params}
