@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, lazy, Suspense, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,7 +7,6 @@ import TextComponent from './components/TextComponent';
 import createGradient from "../../lib/createGradient";
 import { firePixels } from "../../utils/firePixels";
 import ImagePreloader from '../ImagePreloader';
-import OptimizedImage from '@/components/OptimizedImage';
 
 const CarouselComponent = dynamic(() => import('./components/CarouselComponent'), {
     loading: () => <div className="h-64 animate-pulse bg-gray-200 rounded"></div>
@@ -22,6 +21,7 @@ const Checkout = dynamic(() => import('./components/Checkout'));
 const Ticker = dynamic(() => import('./components/Ticker'));
 const Tags = dynamic(() => import('./components/Tags'));
 const Lists = dynamic(() => import('./components/Lists'));
+const CollectionsComponent = dynamic(() => import('./components/CollectionsComponent'));
 
 const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
 
@@ -70,6 +70,7 @@ interface CampaignData {
             inventory: number;
         }>;
     };
+    collectionById: any,
     inventory?: number,
     advertiser: {
         _id: string;
@@ -276,24 +277,24 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     if (!campaign) return <></>;
 
     const campaignConfig = {
-        font_family: campaign.config.font_family,
-        primaryColor: campaign.config.primary_color,
-        secondaryColor: campaign.config.secondary_color,
-        headerText: campaign.config.header_text,
-        footerText: campaign.config.footer_text,
-        buttonText: campaign.config.button_text,
+        font_family: campaign?.config?.font_family,
+        primaryColor: campaign?.config?.primary_color,
+        secondaryColor: campaign?.config?.secondary_color,
+        headerText: campaign?.config?.header_text,
+        footerText: campaign?.config?.footer_text,
+        buttonText: campaign?.config?.button_text,
     };
 
     const price = {
         offerPrice: {
-            prefix: campaign.price.offerPrice.prefix,
-            value: campaign.price.offerPrice.value,
+            prefix: campaign.price?.offerPrice?.prefix,
+            value: campaign.price?.offerPrice?.value,
         },
         originalPrice: {
-            prefix: campaign.price.originalPrice.prefix,
-            value: campaign.price.originalPrice.value,
+            prefix: campaign.price?.originalPrice?.prefix,
+            value: campaign.price?.originalPrice?.value,
         },
-        quantity: campaign.price.quantity
+        quantity: campaign.price?.quantity
     }
 
     const checkoutData = {
@@ -304,7 +305,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         checkout_name: campaign.advertiser?.checkout?.checkout_name,
         userIp: userIp,
         utm_params: utm_params,
-        pixel: (campaign.advertiser.pixel?.ids[0] || campaign.advertiser.pixel?.id) ?? [""],
+        pixel: (campaign.advertiser?.pixel?.ids[0] || campaign.advertiser?.pixel?.id) ?? [""],
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
@@ -330,7 +331,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     const gradientStyle = gradientResult.gradient || 'linear-gradient(180deg, rgba(0,0,0,0.5), white)';
     return (
         <>
-            {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
+            {campaign.advertiser?.pixel && campaign.advertiser?.pixel.ids &&
                 firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
 
             <RecordImpressions
@@ -354,7 +355,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                         />
                     )}
 
-                    <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
+                    <Header config={campaignConfig} logo={campaign.advertiser?.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
                             case 'carousel':
@@ -401,18 +402,17 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                     />
                                 );
                             case 'variants':
+                                // Find the carousel block to get its images
+                                const carouselBlock = blocks.find(b => b.type === 'carousel');
                                 return (
                                     <VariantsComponent
                                         key={block.id}
                                         value={{
-                                            options: block.value?.options || {
-                                                option1: { enabled: true, label: 'Select an option', displayStyle: 'capsule' },
-                                                option2: { enabled: true, label: 'Choose a variant', displayStyle: 'capsule' },
-                                                option3: { enabled: true, label: 'Pick one', displayStyle: 'capsule' }
-                                            }
+                                            options: block.value?.options
                                         }}
                                         style={block.style}
                                         collections={campaignData.collections}
+                                        images={carouselBlock?.images || []}
                                     />
                                 );
                             case 'multiple-cta':
@@ -424,22 +424,22 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style}
                                     />
                                 );
-                            // case 'checkout':
-                            //     return (
-                            //         <Checkout
-                            //             key={block.id}
-                            //             value={block.value}
-                            //             style={block.style}
-                            //             checkoutData={{
-                            //                 ...checkoutData,
-                            //                 variant_id: campaign.variant_id,
-                            //                 inventory: getCurrentVariantInventory()
-                            //             }}
-                            //             quantity={quantity}
-                            //             handleIncrease={handleIncrease}
-                            //             handleDecrease={handleDecrease}
-                            //         />
-                            //     );
+                            case 'checkout':
+                                return (
+                                    <Checkout
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style}
+                                        checkoutData={{
+                                            ...checkoutData,
+                                            variant_id: campaign.variant_id,
+                                            inventory: getCurrentVariantInventory()
+                                        }}
+                                        quantity={quantity}
+                                        handleIncrease={handleIncrease}
+                                        handleDecrease={handleDecrease}
+                                    />
+                                );
                             case 'ticker':
                                 return (
                                     <Ticker
@@ -454,6 +454,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         value={block.value}
                                         style={block.style} />
                                 );
+
                            case 'lists':
                                     return (    
                                         <Lists
@@ -461,6 +462,17 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                             value={block.value}
                                             style={block.style} />
                                     );
+
+                            case 'collections':
+                                return (
+                                    <CollectionsComponent
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style}
+                                        collectionById={campaignData.collectionById}
+                                    />
+                                );
+
                             default:
                                 return null;
                         }
