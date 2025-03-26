@@ -26,10 +26,9 @@ const MultiCta = ({ value, style, checkoutData }: any) => {
             return null;
         }
     };
-
     const redirectToExternal = (url: string) => {
-        // Set the external URL you want to redirect to
-        window.location.replace(url);
+        // Open the external URL in a new tab
+        window.open(url, '_blank', 'noopener,noreferrer');
     };
 
     async function redirect(redirect_url: string, cta_type: string) {
