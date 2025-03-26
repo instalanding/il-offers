@@ -275,24 +275,24 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     if (!campaign) return <></>;
 
     const campaignConfig = {
-        font_family: campaign.config.font_family,
-        primaryColor: campaign.config.primary_color,
-        secondaryColor: campaign.config.secondary_color,
-        headerText: campaign.config.header_text,
-        footerText: campaign.config.footer_text,
-        buttonText: campaign.config.button_text,
+        font_family: campaign?.config?.font_family,
+        primaryColor: campaign?.config?.primary_color,
+        secondaryColor: campaign?.config?.secondary_color,
+        headerText: campaign?.config?.header_text,
+        footerText: campaign?.config?.footer_text,
+        buttonText: campaign?.config?.button_text,
     };
 
     const price = {
         offerPrice: {
-            prefix: campaign.price.offerPrice.prefix,
-            value: campaign.price.offerPrice.value,
+            prefix: campaign.price?.offerPrice?.prefix,
+            value: campaign.price?.offerPrice?.value,
         },
         originalPrice: {
-            prefix: campaign.price.originalPrice.prefix,
-            value: campaign.price.originalPrice.value,
+            prefix: campaign.price?.originalPrice?.prefix,
+            value: campaign.price?.originalPrice?.value,
         },
-        quantity: campaign.price.quantity
+        quantity: campaign.price?.quantity
     }
 
     const checkoutData = {
@@ -303,7 +303,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
         checkout_name: campaign.advertiser?.checkout?.checkout_name,
         userIp: userIp,
         utm_params: utm_params,
-        pixel: (campaign.advertiser.pixel?.ids[0] || campaign.advertiser.pixel?.id) ?? [""],
+        pixel: (campaign.advertiser?.pixel?.ids[0] || campaign.advertiser?.pixel?.id) ?? [""],
         advertiser_id: campaign.advertiser?._id,
         coupon_code: campaign.advertiser?.coupon ?? "",
         inventory: campaign.inventory,
@@ -330,7 +330,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
 
     return (
         <>
-            {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
+            {campaign.advertiser?.pixel && campaign.advertiser?.pixel.ids &&
                 firePixels(campaign.advertiser.pixel.ids, campaign, checkoutData, price)}
 
             <RecordImpressions
@@ -354,7 +354,7 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                         />
                     )}
 
-                    <Header config={campaignConfig} logo={campaign.advertiser.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
+                    <Header config={campaignConfig} logo={campaign.advertiser?.store_logo?.url} offerId={campaign.offer_id} storeUrl={checkoutData.store_url} utm_params={utm_params} />
                     {blocks.map((block: Block) => {
                         switch (block.type) {
                             case 'carousel':
