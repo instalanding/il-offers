@@ -39,6 +39,7 @@
     "iframe-resizer-react": "^5.1.5",
     "input-otp": "^1.2.4",
     "jspdf": "^2.5.1",
+    "lucide-react": "^0.484.0",
     "luxon": "^3.5.0",
     "mongodb": "^6.8.0",
     "mongoose": "^8.4.4",
