@@ -328,7 +328,6 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
     const primaryColor = gradientResult.primaryColor || '#000000';
     const secondaryColor = gradientResult.secondaryColor || '#333333';
     const gradientStyle = gradientResult.gradient || 'linear-gradient(180deg, rgba(0,0,0,0.5), white)';
-console.log("ss",blocks)
     return (
         <>
             {campaign.advertiser.pixel && campaign.advertiser.pixel.ids &&
