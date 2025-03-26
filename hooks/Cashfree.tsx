@@ -30,7 +30,7 @@ const useCashfreePayment = () => {
     const getSessionId = async (body: RequestBody) => {
         try {
             const res = await axios.post("api/cashfree/payment", body);
-           // console.log("API Response:", res.data.data.payment_session_id);
+            // console.log("API Response:", res.data.data.payment_session_id);
             if (res.data.data && res.data.data.payment_session_id) {
                 //console.log(res.data.data);
                 setOrderId(res.data.data.order_id);
@@ -68,7 +68,6 @@ const useCashfreePayment = () => {
                 redirectTarget: `${process.env.NEXT_PUBLIC_CLIENT_URL}${offer_id}`,
             };
             cashfree.checkout(checkoutOptions).then((res: any) => {
-                console.log("Payment initialized");
                 verifyPayment(orderId);
             });
         } catch (error) {
