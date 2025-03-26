@@ -34,7 +34,7 @@ const ShopifyCheckout = ({
     useEffect(() => {
         setTimeout(() => {
           localStorage.clear();
-        }, 30000);
+        }, 300000);
       }, []);
 
     const handleCheckoutButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {

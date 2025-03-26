@@ -71,7 +71,7 @@ export default function useCheckout() {
   useEffect(() => {
     setTimeout(() => {
       localStorage.clear();
-    }, 30000);
+    }, 300000);
   }, []);
 
   const handleCheckout = async (
