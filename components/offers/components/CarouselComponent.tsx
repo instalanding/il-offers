@@ -58,6 +58,7 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
                         width={480}
                         height={480}
                         className={'main-product-image'}
+                        isLCP={true}
                     />
                 </div>
             // </CarouselItem>
