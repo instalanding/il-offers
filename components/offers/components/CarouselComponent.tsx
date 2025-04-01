@@ -57,7 +57,6 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
                         alt="Main Product Image"
                         width={480}
                         height={480}
-                        className="main-product-image w-full h-auto max-w-full object-contain"
                         priority={true}
                         quality={90}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
