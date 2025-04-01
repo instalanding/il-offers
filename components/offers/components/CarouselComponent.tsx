@@ -42,7 +42,7 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
     // Preload badge image if needed - only run when showBadge changes
     useEffect(() => {
         if (showBadge) {
-            const img = new Image();
+            const img = new window.Image();
             img.src = badgeUrl;
         }
     }, [showBadge, badgeUrl]);
