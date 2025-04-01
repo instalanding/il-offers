@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ClientComponent from "./ClientComponent";
 
 type Params = {
   slug: string;
@@ -14,6 +15,7 @@ type SearchParams = {
   engine?: string;
   user_ip?: string;
   variant?: string;
+  variant_id?: string;
   debug?: string;
 };
 
@@ -27,22 +29,13 @@ async function getCampaignData(slug: string) {
 
 const page = async ({
   params,
-  searchParams,
 }: {
   params: Params;
-  searchParams: SearchParams;
 }) => {
-  const campaign = await getCampaignData(params.slug);
+  const allCampaigns = await getCampaignData(params.slug);
+
   return (
-    <div>
-      <Image
-        src={campaign[0].meta_description?.image?.url}
-        alt={campaign.name}
-        width={480}
-        height={480}
-      />
-      <pre>{JSON.stringify(campaign, null, 2)}</pre>
-    </div>
+    <ClientComponent campaigns={allCampaigns} />
   );
 };
 
