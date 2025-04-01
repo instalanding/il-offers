@@ -42,7 +42,7 @@ export function optimizeCloudinaryUrl(
  */
 export function generateImageSrcSet(
   url: string,
-  sizes: number[] = [320, 640, 960, 1280, 1920],
+  sizes: number[] = [320, 640, 960],
   quality: number = 80
 ): string {
   if (!url) return '';
