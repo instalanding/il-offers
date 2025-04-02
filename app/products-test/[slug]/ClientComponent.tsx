@@ -46,6 +46,7 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
           <pre>{JSON.stringify(blocks, null, 2)}</pre>
           <h1>Campaign</h1>
           <pre>{JSON.stringify(campaign, null, 2)}</pre>
+          <CampaignBlocks blocks={blocks} />
         </div>
         <div className="sticky bottom-0 right-0 bg-white border-t border-gray-300 p-3">
           hello
