@@ -3,7 +3,7 @@
 import CampaignBlocks from "@/components-new/CampaignBlocks";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const ClientComponent = ({ campaigns }: { campaigns: any }) => {
   const searchParams = useSearchParams();
@@ -15,19 +15,24 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
     allParams[key] = value;
   });
 
-  const filteredCampaigns = campaigns.filter((campaign: any) => {
-    return campaign.variant_id === allParams.variant;
-  });
-
-  const campaign = filteredCampaigns.length > 0 ? filteredCampaigns[0] : campaigns[0];
+  const [campaign, setCampaign] = useState<any>(campaigns[0]);
 
   useEffect(() => {
-    if (!allParams.variant && campaign.variant_id) {
+    const filteredCampaigns = campaigns.filter((campaign: any) => {
+      return campaign.variant_id === allParams.variant;
+    });
+
+    console.log(filteredCampaigns);
+
+    if (filteredCampaigns.length > 0) {
+      setCampaign(filteredCampaigns[0]);
+    } else {
+      setCampaign(campaigns[0]);
       const newParams = new URLSearchParams(searchParams.toString());
-      newParams.set('variant', campaign.variant_id);
+      newParams.set("variant", campaigns[0].variant_id);
       router.push(`?${newParams.toString()}`);
     }
-  }, [campaign.variant_id, allParams.variant, router, searchParams]);
+  }, [allParams.variant]);
 
   const blocks = JSON.parse(campaign.blocks);
 
@@ -43,9 +48,9 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
             width={480}
             height={480}
           />
-          <h1>Blocks</h1>
+          <h1>Blocks:</h1>
           <pre>{JSON.stringify(blocks, null, 2)}</pre>
-          <h1>Campaign</h1>
+          <h1>Campaign:</h1>
           <pre>{JSON.stringify(campaign, null, 2)}</pre>
           <CampaignBlocks blocks={blocks} />
         </div>
