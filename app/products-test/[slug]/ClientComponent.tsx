@@ -1,5 +1,6 @@
 "use client";
 
+import CampaignBlocks from "@/components-new/CampaignBlocks";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
