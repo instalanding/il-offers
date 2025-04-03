@@ -53,8 +53,6 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
             height={480}
             priority={true}
             quality={75}
-            sizes="(max-width: 480px) 100vw, 480px"
-            className="w-full h-auto"
             loading="eager"
             fetchPriority="high"
           />
