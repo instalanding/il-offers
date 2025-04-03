@@ -49,19 +49,19 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
 
     // Memoize rendering of the carousel items to prevent recreating on each render
     const carouselItems = useMemo(() =>
-        // finalImages.map((image, index) => (
-            // <CarouselItem key={`carousel-item-${index}-${image.url}`}>
+        finalImages.map((image, index) => (
+            <CarouselItem key={`carousel-item-${index}-${image.url}`}>
                 <div className="relative">
                     <ProductImage
-                        src={finalImages[0]?.url}
-                        alt={0 === 0 ? "Main Product Image" : `Product Image ${0 + 1}`}
+                        src={image?.url}
+                        alt={index === 0 ? "Main Product Image" : `Product Image ${index + 1}`}
                         width={480}
                         height={480}
-                        className={`w-full ${0 === 0 ? 'main-product-image' : ''}`}
-                        isLCP={0 === 0} // Mark the first image as LCP
+                        className={`w-full ${index === 0 ? 'main-product-image' : ''}`}
+                        isLCP={index === 0} // Mark the first image as LCP
                     />
 
-                    {/* {showBadge && index === 0 && (
+                    {showBadge && index === 0 && (
                         <div className="absolute top-2 left-1 z-10">
                             <img
                                 ref={badgeRef}
@@ -72,22 +72,22 @@ const CarouselComponent: React.FC<CarouselProps> = ({ images, variantId }) => {
                                 className="w-[60px] h-[60px]"
                             />
                         </div>
-                    )} */}
+                    )}
                 </div>
-            // </CarouselItem>
-        // )),
-        ,[finalImages, showBadge, badgeUrl]
+            </CarouselItem>
+        )),
+        [finalImages, showBadge, badgeUrl]
     );
 
     return (
         <div className="carousel-wrapper">
-            {/* <Carousel opts={{ startIndex: initialSlide }}>
-                <CarouselContent> */}
+            <Carousel opts={{ startIndex: initialSlide }}>
+                <CarouselContent>
                     {carouselItems}
-                {/* </CarouselContent>
+                </CarouselContent>
                 <CarouselPrevious className="left-[7px] shadow-md" />
                 <CarouselNext className="right-[7px] shadow-md" />
-            </Carousel> */}
+            </Carousel>
         </div>
     );
 };
