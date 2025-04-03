@@ -2,6 +2,7 @@
 
 import CampaignBlocks from "@/components-new/CampaignBlocks";
 import Footer from "@/components-new/footer/Footer";
+import Header from "@/components-new/header/Header";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -39,6 +40,7 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
     <div className="flex justify-center h-screen p-3 max-sm:p-0">
       <div className="w-[400px] border border-gray-300 rounded-md flex flex-col">
         <div className="flex-1 overflow-y-auto flex-grow">
+          <Header campaign={campaign} />
           <h1>All Search Parameters:</h1>
           <pre>{JSON.stringify(allParams, null, 2)}</pre>
           <Image

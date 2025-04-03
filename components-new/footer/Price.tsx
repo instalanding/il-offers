@@ -10,7 +10,7 @@ const Price = ({ price, config }: { price: any; config: any }) => {
   return (
     <div>
       {price?.offerPrice?.value ? (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 px-2">
           {price?.originalPrice?.value &&
           parseFloat(price.offerPrice.value) <
             parseFloat(price.originalPrice.value) ? (
