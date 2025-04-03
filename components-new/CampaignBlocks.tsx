@@ -21,7 +21,7 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
 };
 const CampaignBlocks: React.FC<CampaignBlocksProps> = memo(({ blocks, campaign }) => {
   return (
-    <div className="space-y-4 p-4">
+    <div>
         {blocks.map((block) => {
         const Component = blockComponents[block.type]; 
         if (!Component) return <></>; 
