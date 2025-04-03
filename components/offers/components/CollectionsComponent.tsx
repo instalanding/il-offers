@@ -52,7 +52,9 @@ const CollectionsComponent: React.FC<CollectionsComponentProps> = ({ value, styl
 
     const handleProductClick = (variant: CampaignData) => {
         if (variant.product_handle) {
-            router.push(`/products/${variant.product_handle}?variant=${variant.variant_id}`);
+            // Open in new tab using window.open
+            window.location.href = `/products/${variant.product_handle}?variant=${variant.variant_id}`;
+            // window.open(`/products/${variant.product_handle}?variant=${variant.variant_id}`);
         }
     };
 
