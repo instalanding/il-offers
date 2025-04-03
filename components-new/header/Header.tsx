@@ -16,7 +16,7 @@ const Header = ({ campaign }: { campaign: any }) => {
       )}
       <div className="flex justify-center items-center p-2">
         <Link href={`https://${storeUrl}`} target="_blank">
-          <Image src={storeLogo} alt={"logo"} width={150} height={150} />
+          <Image src={storeLogo} alt={"logo"} height={150} />
         </Link>
       </div>
     </div>
