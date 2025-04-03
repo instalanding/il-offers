@@ -47,6 +47,12 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
             alt={"Campaign image"}
             width={480}
             height={480}
+            priority={true}
+            quality={75}
+            sizes="(max-width: 480px) 100vw, 480px"
+            className="w-full h-auto"
+            loading="eager"
+            fetchPriority="high"
           />
           <h1>Blocks:</h1>
           <pre>{JSON.stringify(blocks, null, 2)}</pre>
