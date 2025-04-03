@@ -25,9 +25,8 @@ interface StarProps {
 }
 
 const ReviewsComponent: React.FC<RatingsComponentProps> = ({ value, style }) => {
-    console.log(value,"val")
+
     const reviews = value.reviews.slice(0, value.topReviewsCount);
-    console.log("revies",reviews)
     const totalStars = 5;
 
     return (

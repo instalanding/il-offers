@@ -1,6 +1,7 @@
 "use client";
 
 import CampaignBlocks from "@/components-new/CampaignBlocks";
+import Footer from "@/components-new/footer/Footer";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,8 +23,6 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
       return campaign.variant_id === allParams.variant;
     });
 
-    console.log(filteredCampaigns);
-
     if (filteredCampaigns.length > 0) {
       setCampaign(filteredCampaigns[0]);
     } else {
@@ -43,7 +42,10 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
           <h1>All Search Parameters:</h1>
           <pre>{JSON.stringify(allParams, null, 2)}</pre>
           <Image
-            src={campaign.meta_description?.image.url}
+            src={
+              "https://res.cloudinary.com/dnwpamfwv/image/fetch/f_webp,q_70,w_400/" +
+              campaign.meta_description?.image.url
+            }
             alt={"Campaign image"}
             width={480}
             height={480}
@@ -60,8 +62,8 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
           <pre>{JSON.stringify(campaign, null, 2)}</pre>
           <CampaignBlocks blocks={blocks} campaign={campaign} />
         </div>
-        <div className="sticky bottom-0 right-0 bg-white border-t border-gray-300 p-3">
-          hello
+        <div className="sticky bottom-0 right-0 border-t border-gray-300">
+          <Footer campaign={campaign} />
         </div>
       </div>
     </div>

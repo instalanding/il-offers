@@ -20,7 +20,7 @@ const CampaignBlocks: React.FC<CampaignBlocksProps> = memo(({ blocks, campaign }
             value={{ ...block.value, reviews: campaign.reviews }}
             style={block.style}
           />
-        ) : <></>
+        ) : null
       )}
     </div>
   );
