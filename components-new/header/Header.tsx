@@ -6,20 +6,17 @@ const Header = ({ campaign }: { campaign: any }) => {
   const storeUrl = campaign.advertiser.store_url;
   return (
     <div>
-      <p
-        className="text-center text-sm text-white p-1"
-        style={{ backgroundColor: campaign.config.primary_color }}
-      >
-        {campaign.config.header_text}
-      </p>
+      {campaign.config.header_text && (
+        <p
+          className="text-center text-sm text-white p-1"
+          style={{ backgroundColor: campaign.config.primary_color }}
+        >
+          {campaign.config.header_text}
+        </p>
+      )}
       <div className="flex justify-center items-center p-2">
         <Link href={`https://${storeUrl}`} target="_blank">
-          <Image
-            src={storeLogo}
-            alt={"logo"}
-            width={150}
-            height={150}
-          />
+          <Image src={storeLogo} alt={"logo"} width={150} height={150} />
         </Link>
       </div>
     </div>
