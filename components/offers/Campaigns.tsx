@@ -21,6 +21,7 @@ const Checkout = dynamic(() => import('./components/Checkout'));
 const Ticker = dynamic(() => import('./components/Ticker'));
 const Tags = dynamic(() => import('./components/Tags'));
 const Lists = dynamic(() => import('./components/Lists'));
+const Timer = dynamic(() => import('./components/Timer'));
 const CollectionsComponent = dynamic(() => import('./components/CollectionsComponent'));
 const Table = dynamic(() => import('./components/Table'));
 const RecordImpressions = dynamic(() => import('../recordImpressions/page'), { ssr: false });
@@ -455,13 +456,13 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         style={block.style} />
                                 );
 
-                           case 'lists':
-                                    return (    
-                                        <Lists
-                                            key={block.id}
-                                            value={block.value}
-                                            style={block.style} />
-                                    );
+                            case 'lists':
+                                return (
+                                    <Lists
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style} />
+                                );
 
                             case 'collections':
                                 return (
@@ -472,15 +473,23 @@ const Campaigns: React.FC<V2Props> = ({ campaignData, userIp, utm_params, preser
                                         collectionById={campaignData.collectionById}
                                     />
                                 );
-                                case 'table':
-                                    return (
-                                        <Table
+                            case 'table':
+                                return (
+                                    <Table
                                         key={block.id}
                                         value={block.value}
                                         style={block.style}
-                                         /> 
-                                
-                                    );
+                                    />
+
+                                );
+                            case 'timer':
+                                return (
+                                    <Timer
+                                        key={block.id}
+                                        value={block.value}
+                                        style={block.style}
+                                    />
+                                );
                             default:
                                 return null;
                         }
