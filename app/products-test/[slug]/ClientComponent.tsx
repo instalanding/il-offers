@@ -41,8 +41,6 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
       <div className="w-[400px] border border-gray-300 rounded-md flex flex-col">
         <div className="flex-1 overflow-y-auto flex-grow">
           <Header campaign={campaign} />
-          <h1>All Search Parameters:</h1>
-          <pre>{JSON.stringify(allParams, null, 2)}</pre>
           <Image
             src={
               "https://res.cloudinary.com/dnwpamfwv/image/fetch/f_webp,q_70,w_400/" +
@@ -56,11 +54,15 @@ const ClientComponent = ({ campaigns }: { campaigns: any }) => {
             loading="eager"
             fetchPriority="high"
           />
-          <h1>Blocks:</h1>
-          <pre>{JSON.stringify(blocks, null, 2)}</pre>
-          <h1>Campaign:</h1>
-          <pre>{JSON.stringify(campaign, null, 2)}</pre>
           <CampaignBlocks blocks={blocks} campaign={campaign} />
+          <div>
+            <h1>All Search Parameters:</h1>
+            <pre>{JSON.stringify(allParams, null, 2)}</pre>
+            <h1>Blocks:</h1>
+            <pre>{JSON.stringify(blocks, null, 2)}</pre>
+            <h1>Campaign:</h1>
+            <pre>{JSON.stringify(campaign, null, 2)}</pre>
+          </div>
         </div>
         <div className="sticky bottom-0 right-0 border-t border-gray-300">
           <Footer campaign={campaign} />
