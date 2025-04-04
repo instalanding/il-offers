@@ -1,14 +1,17 @@
-
-
 import React, { memo } from "react";
 import dynamic from "next/dynamic";
-import TextComponent from './blocks/TextComponent';
+import TextComponent from "./blocks/TextComponent";
 
 // const ReviewsComponent = dynamic(() => import("./blocks/ReviewsComponent"), { ssr: false , loading: () => <p>Loading reviews...</p> });
 // const HtmlComponent = dynamic(() => import('./blocks/HtmlComponent'),{ ssr: false , loading: () => <p>Loading Html...</p> });
 
 import ReviewsComponent from "./blocks/ReviewsComponent";
 import HtmlComponent from "./blocks/HtmlComponent";
+import RatingsComponent from "./blocks/RatingsComponent";
+import AccordionComponent from "./blocks/AccordionComponent"
+import MultiCta from "./blocks/MultipleCta";
+import Tags from "./blocks/Tags";
+import Ticker from "./blocks/Ticker";
 
 interface CampaignBlocksProps {
   blocks: any[];
@@ -17,24 +20,35 @@ interface CampaignBlocksProps {
 const blockComponents: Record<string, React.ComponentType<any>> = {
   reviews: ReviewsComponent,
   text: TextComponent,
-  html:HtmlComponent
+  html: HtmlComponent,
+  ratings: RatingsComponent,
+  accordion: AccordionComponent,
+  ticker:Ticker,
+  tags:Tags,
+  "multiple-cta":MultiCta
 };
-const CampaignBlocks: React.FC<CampaignBlocksProps> = memo(({ blocks, campaign }) => {
-  return (
-    <div>
+const CampaignBlocks: React.FC<CampaignBlocksProps> = memo(
+  ({ blocks, campaign }) => {
+    return (
+      <div>
         {blocks.map((block) => {
-        const Component = blockComponents[block.type]; 
-        if (!Component) return <></>; 
-        return (
-          <Component
-            key={block.id}
-            value={block.type !== "reviews" ? block.value : { ...block.value, reviews: campaign.reviews }}
-            style={block.style}
-          />
-        );
-      })}
-    </div>
-  );
-});
+          const Component = blockComponents[block.type];
+          if (!Component) return <></>;
+          return (
+            <Component
+              key={block.id}
+              value={
+                block.type !== "reviews"
+                  ? block.value
+                  : { ...block.value, reviews: campaign.reviews }
+              }
+              style={block.style}
+            />
+          );
+        })}
+      </div>
+    );
+  }
+);
 
 export default CampaignBlocks;
