@@ -10,6 +10,8 @@ import HtmlComponent from "./blocks/HtmlComponent";
 import RatingsComponent from "./blocks/RatingsComponent";
 import AccordionComponent from "./blocks/AccordionComponent"
 import MultiCta from "./blocks/MultipleCta";
+import Tags from "./blocks/Tags";
+import Ticker from "./blocks/Ticker";
 
 interface CampaignBlocksProps {
   blocks: any[];
@@ -21,6 +23,8 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   html: HtmlComponent,
   ratings: RatingsComponent,
   accordion: AccordionComponent,
+  ticker:Ticker,
+  tags:Tags,
   "multiple-cta":MultiCta
 };
 const CampaignBlocks: React.FC<CampaignBlocksProps> = memo(
